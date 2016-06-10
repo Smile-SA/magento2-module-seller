@@ -102,7 +102,7 @@ class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements
      */
     public function setName($name)
     {
-        $this->setData($name);
+        $this->setData(self::KEY_NAME, $name);
 
         return $this;
     }
