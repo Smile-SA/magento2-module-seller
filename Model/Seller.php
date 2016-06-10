@@ -1,17 +1,58 @@
 <?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\Seller
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
 
 namespace Smile\Seller\Model;
 
-class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements
-    //\Magento\Framework\DataObject\IdentityInterface,
-    \Smile\Seller\Api\Data\SellerInterface
+use Smile\Seller\Api\Data\SellerInterface;
+
+/**
+ * Seller Model
+ *
+ * @category Smile
+ * @package  Smile\Seller
+ * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ */
+class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements SellerInterface
 {
+    /**
+     * Default cache tag
+     */
     const CACHE_TAG = self::ENTITY;
 
+    /**
+     * "Name" attribute code
+     */
     const KEY_NAME        = 'name';
+
+    /**
+     * "Is active" attribute code
+     */
     const KEY_IS_ACTIVE   = 'is_active';
+
+    /**
+     * "Update At" attribute code
+     */
     const KEY_UPDATED_AT  = 'updated_at';
+
+    /**
+     * "Created At" attribute code
+     */
     const KEY_CREATED_AT  = 'created_at';
+
+    /**
+     * "Seller code" attribute code
+     */
     const KEY_SELLER_CODE = 'seller_code';
 
     /**

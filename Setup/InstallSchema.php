@@ -1,4 +1,16 @@
 <?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\Seller
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
 
 namespace Smile\Seller\Setup;
 
@@ -6,6 +18,13 @@ use Magento\Framework\Setup\InstallSchemaInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\SchemaSetupInterface;
 
+/**
+ * Seller Schema install class.
+ *
+ * @category Smile
+ * @package  Smile\Seller
+ * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ */
 class InstallSchema implements InstallSchemaInterface
 {
     private $backendTypes = [
@@ -28,6 +47,13 @@ class InstallSchema implements InstallSchemaInterface
         $setup->endSetup();
     }
 
+    /**
+     * Process the Seller's EAV table creation
+     *
+     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup The Setup
+     *
+     * @throws \Zend_Db_Exception
+     */
     private function createSellerEntityTable(SchemaSetupInterface $setup)
     {
         $table = $setup->getConnection()
@@ -51,7 +77,7 @@ class InstallSchema implements InstallSchemaInterface
                 \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
                 64,
                 [],
-                'Sellet code'
+                'Seller code'
             )
             ->addColumn(
                 'created_at',
@@ -73,6 +99,13 @@ class InstallSchema implements InstallSchemaInterface
         $setup->getConnection()->createTable($table);
     }
 
+    /**
+     * Process the Seller's EAV Attributes tables creation
+     *
+     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup The Setup
+     *
+     * @throws \Zend_Db_Exception
+     */
     private function createAttributesTables(SchemaSetupInterface $setup)
     {
         foreach ($this->backendTypes as $backendType => $valueFieldProperties) {

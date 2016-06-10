@@ -1,55 +1,83 @@
 <?php
-
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\Seller
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
 namespace Smile\Seller\Api\Data;
 
 /**
- * @api
+ * Seller Interface
+ *
+ * @category Smile
+ * @package  Smile\Seller
+ * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 interface SellerInterface extends \Magento\Framework\Api\CustomAttributesDataInterface
 {
+    /**
+     * Entity type code
+     */
     const ENTITY = 'smile_seller';
 
     /**
+     * Get Seller Id
+     *
      * @return int|null
      */
     public function getId();
 
     /**
-     * @param int $id
+     * Set Seller Id
+     *
+     * @param int $id The id
+     *
      * @return $this
      */
     public function setId($id);
 
     /**
-     * Get category name
+     * Get seller name
      *
      * @return string
      */
     public function getName();
 
     /**
-     * Set category name
+     * Set seller name
      *
-     * @param string $name
+     * @param string $name The seller name
+     *
      * @return $this
      */
     public function setName($name);
 
     /**
-     * Check whether category is active
+     * Check whether seller is active
      *
      * @return bool|null
      */
     public function getIsActive();
 
     /**
+     * Retrieve Seller Code
+     *
      * @return string
      */
     public function getSellerCode();
 
     /**
+     * Set Seller Code
      *
-     * @param string $sellerCode
+     * @param string $sellerCode The seller code
+     *
      * @return $this
      */
     public function setSellerCode($sellerCode);
@@ -57,29 +85,40 @@ interface SellerInterface extends \Magento\Framework\Api\CustomAttributesDataInt
     /**
      * Set whether category is active
      *
-     * @param bool $isActive
+     * @param bool $isActive If seller is active
+     *
      * @return $this
      */
     public function setIsActive($isActive);
 
     /**
+     * Retrieve Seller creation date
+     *
      * @return string|null
      */
     public function getCreatedAt();
 
     /**
-     * @param string $createdAt
+     * Set Seller creation date
+     *
+     * @param string $createdAt The creation date
+     *
      * @return $this
      */
     public function setCreatedAt($createdAt);
 
     /**
+     * Get Seller update date
+     *
      * @return string|null
      */
     public function getUpdatedAt();
 
     /**
+     * Set seller update date
+     *
      * @param string $updatedAt
+     *
      * @return $this
      */
     public function setUpdatedAt($updatedAt);
@@ -97,6 +136,7 @@ interface SellerInterface extends \Magento\Framework\Api\CustomAttributesDataInt
      * Set an extension attributes object.
      *
      * @param \Smile\Seller\Api\Data\SellerExtensionInterface $extensionAttributes
+     *
      * @return $this
      */
     public function setExtensionAttributes(\Smile\Seller\Api\Data\SellerExtensionInterface $extensionAttributes);

@@ -1,15 +1,29 @@
 <?php
 /**
- * Catalog entity setup
+ * DISCLAIMER
  *
- * Copyright © 2016 Magento. All rights reserved.
- * See COPYING.txt for license details.
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\Seller
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Open Software License ("OSL") v. 3.0
  */
+
 namespace Smile\Seller\Setup;
 
 use Magento\Eav\Setup\EavSetup;
 use Smile\Seller\Api\Data\SellerInterface;
 
+/**
+ * Seller Setup class : contains EAV Attributes declarations.
+ *
+ * @category Smile
+ * @package  Smile\Seller
+ * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ */
 class SellerSetup extends EavSetup
 {
 
@@ -45,9 +59,9 @@ class SellerSetup extends EavSetup
                         'input' => 'date',
                         'sort_order' => 20,
                     ],
-                    'sku' => [
+                    'seller_code' => [
                         'type' => 'static',
-                        'label' => 'SKU',
+                        'label' => 'Seller Code',
                         'input' => 'text',
                         'frontend_class' => 'validate-length maximum-length-64',
                         //@todo 'backend' => 'Magento\Catalog\Model\Product\Attribute\Backend\Sku',

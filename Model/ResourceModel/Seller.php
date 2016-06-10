@@ -1,23 +1,34 @@
 <?php
 /**
- * Copyright © 2016 Magento. All rights reserved.
- * See COPYING.txt for license details.
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\Seller
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Open Software License ("OSL") v. 3.0
  */
 
-/**
- * Catalog category model
- *
- * @author      Magento Core Team <core@magentocommerce.com>
- */
 namespace Smile\Seller\Model\ResourceModel;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
+
+/**
+ * Seller Resource Model
+ *
+ * @category Smile
+ * @package  Smile\Seller
+ * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ */
 class Seller extends \Magento\Eav\Model\Entity\AbstractEntity
 {
     /**
-     * Id of 'is_active' category attribute
+     * Id of 'is_active' seller attribute
      *
      * @var int
      */
@@ -47,7 +58,15 @@ class Seller extends \Magento\Eav\Model\Entity\AbstractEntity
      */
     protected $entityManager;
 
-
+    /**
+     * Seller constructor.
+     *
+     * @param \Magento\Eav\Model\Entity\Context              $context       Entity Context
+     * @param \Magento\Store\Model\StoreManagerInterface     $storeManager  Store Manager
+     * @param \Magento\Framework\Event\ManagerInterface      $eventManager  Event Manager
+     * @param \Magento\Framework\EntityManager\EntityManager $entityManager Entity Manager
+     * @param array                                          $data          Seller data
+     */
     public function __construct(
         \Magento\Eav\Model\Entity\Context $context,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
@@ -65,6 +84,7 @@ class Seller extends \Magento\Eav\Model\Entity\AbstractEntity
      * Entity type getter and lazy loader
      *
      * @return \Magento\Eav\Model\Entity\Type
+     *
      * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function getEntityType()
@@ -78,7 +98,8 @@ class Seller extends \Magento\Eav\Model\Entity\AbstractEntity
     /**
      * Set store Id
      *
-     * @param integer $storeId
+     * @param integer $storeId The store Id
+     *
      * @return $this
      */
     public function setStoreId($storeId)
@@ -101,9 +122,10 @@ class Seller extends \Magento\Eav\Model\Entity\AbstractEntity
     }
 
     /**
-     * Check if category id exist
+     * Check if seller id exist
      *
-     * @param int $entityId
+     * @param int $entityId The Seller Id
+     *
      * @return bool
      */
     public function checkId($entityId)
@@ -120,9 +142,10 @@ class Seller extends \Magento\Eav\Model\Entity\AbstractEntity
     }
 
     /**
-     * Check array of category identifiers
+     * Check array of seller identifiers
      *
-     * @param array $ids
+     * @param array $ids The seller ids
+     *
      * @return array
      */
     public function verifyIds(array $ids)
@@ -149,21 +172,23 @@ class Seller extends \Magento\Eav\Model\Entity\AbstractEntity
      */
     public function getIsActiveAttributeId()
     {
-        if ($this->_isActiveAttributeId === null) {
-            $this->_isActiveAttributeId = (int)$this->_eavConfig
+        if ($this->isActiveAttributeId === null) {
+            $this->isActiveAttributeId = (int) $this->_eavConfig
                 ->getAttribute($this->getEntityType(), 'is_active')
                 ->getAttributeId();
         }
-        return $this->_isActiveAttributeId;
+
+        return $this->isActiveAttributeId;
     }
 
 
     /**
      * Reset firstly loaded attributes
      *
-     * @param \Magento\Framework\DataObject $object
-     * @param integer $entityId
-     * @param array|null $attributes
+     * @param \Magento\Framework\DataObject $object     Object being loaded
+     * @param integer                       $entityId   The entity Id
+     * @param array|null                    $attributes The attributes
+     *
      * @return $this
      */
     public function load($object, $entityId, $attributes = [])
@@ -193,13 +218,16 @@ class Seller extends \Magento\Eav\Model\Entity\AbstractEntity
     /**
      * Save entity's attributes into the object's resource
      *
-     * @param  \Magento\Framework\Model\AbstractModel $object
+     * @param \Magento\Framework\Model\AbstractModel $object The Object
+     *
      * @return $this
+     *
      * @throws \Exception
      */
     public function save(\Magento\Framework\Model\AbstractModel $object)
     {
         $this->getEntityManager()->save($object);
+
         return $this;
     }
 }

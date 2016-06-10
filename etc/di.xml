@@ -1,3 +1,18 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\Seller
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+-->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
 
     <preference for="Smile\Seller\Api\Data\SellerInterface" type="Smile\Seller\Model\Seller" />
@@ -11,7 +26,7 @@
             </argument>
         </arguments>
     </type>
-    
+
     <type name="Magento\Framework\EntityManager\MetadataPool">
         <arguments>
             <argument name="metadata" xsi:type="array">
@@ -26,7 +41,7 @@
             </argument>
         </arguments>
     </type>
-    
+
     <virtualType name="Smile\Seller\EntityCreator\MetadataPool" type="Magento\Framework\EntityManager\MetadataPool">
         <arguments>
             <argument name="metadata" xsi:type="array">
@@ -38,27 +53,27 @@
             </argument>
         </arguments>
     </virtualType>
-    
+
     <virtualType name="Smile\Seller\Model\Entity\CreationScopeResolver" type="Magento\Framework\Model\Entity\ScopeResolver">
         <arguments>
             <argument name="metadataPool" xsi:type="object">Smile\Seller\EntityCreator\MetadataPool</argument>
         </arguments>
     </virtualType>
-    
+
     <virtualType name="Smile\Seller\Model\ResourceModel\CreateHandler" type="Magento\Eav\Model\ResourceModel\CreateHandler">
         <arguments>
             <argument name="metadataPool" xsi:type="object">Smile\Seller\EntityCreator\MetadataPool</argument>
             <argument name="scopeResolver" xsi:type="object">Smile\Seller\Model\Entity\CreationScopeResolver</argument>
         </arguments>
     </virtualType>
-    
+
     <virtualType name="Smile\Seller\Model\ResourceModel\UpdateHandler" type="Magento\Eav\Model\ResourceModel\UpdateHandler">
         <arguments>
             <!-- TODO -->
             <argument name="attributePersistor" xsi:type="object">Smile\Seller\Model\ResourceModel\AttributePersistor</argument>
         </arguments>
     </virtualType>
-    
+
     <type name="Magento\Framework\EntityManager\Operation\AttributePool">
         <arguments>
             <argument name="extensionActions" xsi:type="array">
@@ -71,7 +86,7 @@
             </argument>
         </arguments>
     </type>
-    
+
     <type name="Magento\Framework\EntityManager\HydratorPool">
         <arguments>
             <argument name="hydrators" xsi:type="array">
