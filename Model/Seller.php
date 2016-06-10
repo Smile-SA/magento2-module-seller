@@ -193,4 +193,13 @@ class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements
         return ['name'];
     }
 
+    /**
+     * Internal Constructor
+     *
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     */
+    protected function _construct()
+    {
+        $this->_init('Smile\Seller\Model\ResourceModel\Seller');
+    }
 }

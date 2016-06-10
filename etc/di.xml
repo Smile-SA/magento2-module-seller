@@ -17,8 +17,8 @@
 
     <preference for="Smile\Seller\Api\Data\SellerInterface" type="Smile\Seller\Model\Seller" />
     <preference for="Smile\Seller\Api\Data\SellerAttributeInterface" type="Smile\Seller\Model\ResourceModel\Seller\Attribute" />
+    <preference for="Smile\Seller\Api\SellerRepositoryInterface" type="Smile\Seller\Model\SellerRepository" />
 
-    <!-- TODO : repo -->
     <type name="Magento\Framework\Model\Entity\RepositoryFactory">
         <arguments>
             <argument name="entities" xsi:type="array">
