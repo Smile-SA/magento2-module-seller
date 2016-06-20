@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\Seller
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <preference for="Smile\Seller\Model\Locator\LocatorInterface" type="Smile\Seller\Model\Locator\RegistryLocator"/>
+
+    <virtualType name="Smile\Seller\Ui\DataProvider\Seller\Form\Modifier\Pool" type="Magento\Ui\DataProvider\Modifier\Pool">
+        <arguments>
+            <argument name="modifiers" xsi:type="array">
+                <item name="eav" xsi:type="array">
+                    <item name="class" xsi:type="string">Smile\Seller\Ui\DataProvider\Seller\Form\Modifier\Eav</item>
+                    <item name="sortOrder" xsi:type="number">10</item>
+                </item>
+                <item name="general" xsi:type="array">
+                    <item name="class" xsi:type="string">Smile\Seller\Ui\DataProvider\Seller\Form\Modifier\General</item>
+                    <item name="sortOrder" xsi:type="number">50</item>
+                </item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Smile\Seller\Ui\DataProvider\Seller\Form\SellerDataProvider">
+        <arguments>
+            <argument name="pool" xsi:type="object">Smile\Seller\Ui\DataProvider\Seller\Form\Modifier\Pool</argument>
+        </arguments>
+    </type>
+
+</config>
