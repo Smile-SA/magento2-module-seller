@@ -44,7 +44,8 @@ class SellerRepository implements SellerRepositoryInterface
     /**
      * SellerRepository constructor.
      *
-     * @param EntityManager $entityManager The entity manager
+     * @param EntityManager $entityManager    The entity manager
+     * @param SellerFactory $sellerFactory    The seller factory
      *
      */
     public function __construct(EntityManager $entityManager, SellerFactory $sellerFactory)

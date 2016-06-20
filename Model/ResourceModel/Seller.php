@@ -230,4 +230,24 @@ class Seller extends \Magento\Eav\Model\Entity\AbstractEntity
 
         return $this;
     }
+
+    /**
+     * Retrieve Attribute set data by id or name
+     *
+     * @param int|string|null $attributeSetId The attribute Set Id or Name
+     *
+     * @return mixed
+     */
+    public function getAttributeSetIdByName($attributeSetId)
+    {
+        $select = $this->_resource->getConnection()->select();
+        $field  = 'attribute_set_name';
+        $table  = $this->_resource->getTableName("eav_attribute_set");
+
+        $select->from($table, "attribute_set_id")
+            ->where($this->getConnection()->prepareSqlCondition("entity_type_id", ['eq' => $this->getTypeId()]))
+            ->where($this->getConnection()->prepareSqlCondition($field, ['eq' => $attributeSetId]));
+
+        return $this->_resource->getConnection()->fetchOne($select);
+    }
 }

@@ -109,6 +109,11 @@ class Collection extends AbstractCollection
     protected function _construct()
     {
         $this->_init('Smile\Seller\Model\Seller', 'Smile\Seller\Model\ResourceModel\Seller');
+        if ($this->sellerAttributeSetId == null) {
+            if ($this->sellerAttributeSetName !== null) {
+                $this->sellerAttributeSetId = $this->getResource()->getAttributeSetIdByName($this->sellerAttributeSetName);
+            }
+        }
     }
 
     /**
@@ -120,36 +125,10 @@ class Collection extends AbstractCollection
     {
         parent::_initSelect();
 
-        if ($this->sellerAttributeSetId == null) {
-            if ($this->sellerAttributeSetName !== null) {
-                $this->sellerAttributeSetId = $this->getAttributeSetIdByName($this->sellerAttributeSetName);
-            }
-        }
-
         if ($this->sellerAttributeSetId !== null) {
             $this->addFieldToFilter('attribute_set_id', (int) $this->sellerAttributeSetId);
         }
 
         return $this;
-    }
-
-    /**
-     * Retrieve Attribute set data by id or name
-     *
-     * @param int|string|null $attributeSetId The attribute Set Id or Name
-     *
-     * @return mixed
-     */
-    public function getAttributeSetIdByName($attributeSetId)
-    {
-        $select = $this->_resource->getConnection()->select();
-        $field  = 'attribute_set_name';
-        $table  = $this->_resource->getTableName("eav_attribute_set");
-
-        $select->from($table, "attribute_set_id")
-            ->where($this->_getConditionSql("entity_type_id", ['eq' => $this->getEntity()->getTypeId()]))
-            ->where($this->_getConditionSql($field, ['eq' => $attributeSetId]));
-
-        return $this->_resource->getConnection()->fetchOne($select);
     }
 }
