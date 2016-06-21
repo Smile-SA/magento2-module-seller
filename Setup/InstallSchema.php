@@ -165,7 +165,7 @@ class InstallSchema implements InstallSchemaInterface
             ->addForeignKey(
                 $setup->getFkName($backendTableName, 'entity_id', 'smile_seller_entity_', 'entity_id'),
                 'entity_id',
-                $setup->getTable('catalog_category_entity'),
+                $setup->getTable('smile_seller_entity'),
                 'entity_id',
                 \Magento\Framework\DB\Ddl\Table::ACTION_CASCADE
             )
