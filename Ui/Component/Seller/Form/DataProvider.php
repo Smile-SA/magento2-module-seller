@@ -40,11 +40,6 @@ use Smile\Seller\Model\SellerFactory;
 class DataProvider extends AbstractDataProvider
 {
     /**
-     * @var string
-     */
-    protected $requestScopeFieldName = 'store';
-
-    /**
      * @var array
      */
     protected $loadedData;
@@ -120,7 +115,6 @@ class DataProvider extends AbstractDataProvider
      * @param string                    $requestFieldName        Request Field Name
      * @param EavValidationRules        $eavValidationRules      EAV Validation Rules
      * @param SellerCollectionFactory   $sellerCollectionFactory Seller Collection Factory
-     * @param StoreManagerInterface     $storeManager            The Store Manager
      * @param Registry                  $registry                The Registry
      * @param Config                    $eavConfig               EAV Configuration
      * @param RequestInterface          $request                 The Request
@@ -135,7 +129,6 @@ class DataProvider extends AbstractDataProvider
         $requestFieldName,
         EavValidationRules $eavValidationRules,
         SellerCollectionFactory $sellerCollectionFactory,
-        StoreManagerInterface $storeManager,
         Registry $registry,
         Config $eavConfig,
         RequestInterface $request,
@@ -150,9 +143,8 @@ class DataProvider extends AbstractDataProvider
 
         $this->eavConfig = $eavConfig;
         $this->registry = $registry;
-        $this->storeManager = $storeManager;
         $this->request = $request;
-        $this->sellerRepositrory = $sellerRepository;
+        $this->sellerRepository = $sellerRepository;
 
         parent::__construct($name, $primaryFieldName, $requestFieldName, $meta, $data);
 
@@ -218,7 +210,9 @@ class DataProvider extends AbstractDataProvider
         if ($seller) {
             $sellerData = $seller->getData();
             $sellerData = $this->filterFields($sellerData);
-            $this->loadedData[$seller->getId()] = $sellerData;
+            if (!empty($sellerData)) {
+                $this->loadedData[$seller->getId()] = $sellerData;
+            }
         }
 
         return $this->loadedData;
@@ -261,7 +255,6 @@ class DataProvider extends AbstractDataProvider
                 $meta[$code]['validation'] = $rules;
             }
 
-            $meta[$code]['scopeLabel'] = $this->getScopeLabel($attribute);
             $meta[$code]['componentType'] = Field::NAME;
         }
 
@@ -289,42 +282,16 @@ class DataProvider extends AbstractDataProvider
         }
 
         $requestId = $this->request->getParam($this->requestFieldName);
-        $requestScope = $this->request->getParam($this->requestScopeFieldName, Store::DEFAULT_STORE_ID);
 
         if ($requestId) {
-            $seller = $this->sellerRepository->get($requestId, $requestScope);
+            $seller = $this->sellerRepository->get($requestId);
+        }
+
+        if (!$seller || !$seller->getId()) {
+            $seller = $this->collection->getNewEmptyItem();
         }
 
         return $seller;
-    }
-
-    /**
-     * Retrieve label of attribute scope
-     * GLOBAL | WEBSITE | STORE
-     *
-     * @param SellerAttributeInterface $attribute
-     *
-     * @return string
-     */
-    public function getScopeLabel(SellerAttributeInterface $attribute)
-    {
-        $html = '';
-
-        if (!$attribute || $this->storeManager->isSingleStoreMode()
-            || $attribute->getFrontendInput() === AttributeInterface::FRONTEND_INPUT
-        ) {
-            return $html;
-        }
-
-        if ($attribute->isScopeGlobal()) {
-            $html .= __('[GLOBAL]');
-        } elseif ($attribute->isScopeWebsite()) {
-            $html .= __('[WEBSITE]');
-        } elseif ($attribute->isScopeStore()) {
-            $html .= __('[STORE VIEW]');
-        }
-
-        return $html;
     }
 
     /**
