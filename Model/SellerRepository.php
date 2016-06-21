@@ -83,7 +83,13 @@ class SellerRepository implements SellerRepositoryInterface
     public function get($sellerId, $storeId = null)
     {
         if (!isset($this->sellerRepositoryById[$sellerId])) {
-            $seller = $this->entityManager->load($this->sellerFactory->create(), $sellerId);
+            $sellerModel = $this->sellerFactory->create();
+
+            if (null !== $storeId) {
+                $sellerModel->setStoreId($storeId);
+            }
+
+            $seller = $this->entityManager->load($sellerModel, $sellerId);
 
             if (!$seller->getId()) {
                 $exception = new NoSuchEntityException();

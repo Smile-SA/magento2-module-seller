@@ -10,7 +10,7 @@
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\Seller\Ui\Component\Listing\Column\Seller;
+namespace Smile\Seller\Ui\Component\Seller\Listing\Column\Seller;
 
 use Magento\Store\Ui\Component\Listing\Column\Store\Options as StoreOptions;
 

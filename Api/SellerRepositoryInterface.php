@@ -40,7 +40,7 @@ interface SellerRepositoryInterface
      * @param int $sellerId The seller Id
      * @param int $storeId  The store Id
      *
-     * @return \Magento\Catalog\Api\Data\CategoryInterface
+     * @return \Smile\Seller\Api\Data\SellerInterface
      *
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */

@@ -10,7 +10,9 @@
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\Seller\Ui\Component;
+namespace Smile\Seller\Ui\Component\Seller\Listing;
+
+use Magento\Ui\DataProvider\AbstractDataProvider;
 
 /**
  * Data Provider for UI components based on Sellers
@@ -19,7 +21,7 @@ namespace Smile\Seller\Ui\Component;
  * @package  Smile\Seller
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class DataProvider extends \Magento\Ui\DataProvider\AbstractDataProvider
+class DataProvider extends AbstractDataProvider
 {
     /**
      * Seller collection

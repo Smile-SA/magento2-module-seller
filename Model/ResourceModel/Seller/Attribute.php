@@ -44,4 +44,34 @@ class Attribute extends \Magento\Eav\Model\Entity\Attribute implements SellerAtt
     {
         return in_array($this->getAttributeCode(), $this->globalAttributes);
     }
+
+    /**
+     * Retrieve attribute is global scope flag
+     *
+     * @return bool
+     */
+    public function isScopeGlobal()
+    {
+        return $this->getIsGlobal() == self::SCOPE_GLOBAL;
+    }
+
+    /**
+     * Retrieve attribute is website scope website
+     *
+     * @return bool
+     */
+    public function isScopeWebsite()
+    {
+        return $this->getIsGlobal() == self::SCOPE_WEBSITE;
+    }
+
+    /**
+     * Retrieve attribute is store scope flag
+     *
+     * @return bool
+     */
+    public function isScopeStore()
+    {
+        return !$this->isScopeGlobal() && !$this->isScopeWebsite();
+    }
 }

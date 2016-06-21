@@ -25,5 +25,11 @@ interface SellerAttributeInterface extends \Magento\Eav\Api\Data\AttributeInterf
 {
     const ENTITY_TYPE_CODE = 'smile_seller';
 
+    const SCOPE_STORE_TEXT = 'store';
+
+    const SCOPE_GLOBAL_TEXT = 'global';
+
+    const SCOPE_WEBSITE_TEXT = 'website';
+
     public function getScope();
 }
