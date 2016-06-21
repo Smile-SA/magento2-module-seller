@@ -26,9 +26,23 @@ interface SellerAttributeInterface extends \Magento\Eav\Api\Data\AttributeInterf
     const ENTITY_TYPE_CODE = 'smile_seller';
 
     /**
-     * Retrieve scope of an attribute
+     * Check if attribute has a global scope
      *
-     * @return mixed
+     * @return bool
      */
-    public function getScope();
+    public function isScopeGlobal();
+
+    /**
+     * Check if attribute has a website scope
+     *
+     * @return bool
+     */
+    public function isScopeWebsite();
+
+    /**
+     * Retrieve attribute has a store scope
+     *
+     * @return bool
+     */
+    public function isScopeStore();
 }

@@ -19,6 +19,8 @@ use Smile\Seller\Api\Data\SellerInterface;
 /**
  * Seller Model
  *
+ * @SuppressWarnings(PHPMD.CamelCasePropertyName) The properties are inherited
+ *
  * @category Smile
  * @package  Smile\Seller
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>

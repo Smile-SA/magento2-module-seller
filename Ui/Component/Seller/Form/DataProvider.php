@@ -95,11 +95,6 @@ class DataProvider extends AbstractDataProvider
     private $eavConfig;
 
     /**
-     * @var StoreManagerInterface
-     */
-    private $storeManager;
-
-    /**
      * @var SellerRepositoryInterface
      */
     private $sellerRepository;

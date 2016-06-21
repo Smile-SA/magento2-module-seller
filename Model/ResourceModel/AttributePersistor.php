@@ -40,7 +40,7 @@ class AttributePersistor extends \Magento\Eav\Model\ResourceModel\AttributePersi
     protected function getScopeValue(ScopeInterface $scope, AbstractAttribute $attribute, $useDefault = false)
     {
         if ($attribute instanceof SellerAttributeInterface) {
-            $useDefault = $useDefault || $attribute->getScope() == ScopedAttributeInterface::SCOPE_GLOBAL;
+            $useDefault = $useDefault || $attribute->isScopeGlobal();
         }
 
         return parent::getScopeValue($scope, $attribute, $useDefault);

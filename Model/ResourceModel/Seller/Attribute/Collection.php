@@ -26,6 +26,8 @@ class Collection extends \Magento\Eav\Model\ResourceModel\Entity\Attribute\Colle
     /**
      * Main select object initialization.
      *
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName) The method is inherited
+     *
      * @return $this
      */
     protected function _initSelect()

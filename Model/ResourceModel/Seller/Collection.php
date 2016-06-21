@@ -27,6 +27,8 @@ use Psr\Log\LoggerInterface;
 /**
  * Sellers Collection
  *
+ * @SuppressWarnings(PHPMD.CamelCasePropertyName) The properties are inherited
+ *
  * @category Smile
  * @package  Smile\Seller
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
@@ -104,6 +106,8 @@ class Collection extends AbstractCollection
     /**
      * Init collection and determine table names
      *
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName) The method is inherited
+     *
      * @return void
      */
     protected function _construct()
@@ -118,6 +122,8 @@ class Collection extends AbstractCollection
 
     /**
      * Init select. Retrieve only sellers of current attribute set if specified.
+     *
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName) The method is inherited
      *
      * @return $this
      */

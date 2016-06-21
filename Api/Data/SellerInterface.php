@@ -37,11 +37,11 @@ interface SellerInterface extends \Magento\Framework\Api\CustomAttributesDataInt
     /**
      * Set Seller Id
      *
-     * @param int $id The id
+     * @param int $entityId The id
      *
      * @return $this
      */
-    public function setId($id);
+    public function setId($entityId);
 
     /**
      * Get seller name

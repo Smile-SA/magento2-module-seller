@@ -101,9 +101,10 @@ class DataProvider extends AbstractDataProvider
     {
         if (isset($this->addFieldStrategies[$field])) {
             $this->addFieldStrategies[$field]->addField($this->getCollection(), $field, $alias);
-        } else {
-            parent::addField($field, $alias);
+
+            return ;
         }
+        parent::addField($field, $alias);
     }
 
     /**
@@ -118,8 +119,9 @@ class DataProvider extends AbstractDataProvider
                     $filter->getField(),
                     [$filter->getConditionType() => $filter->getValue()]
                 );
-        } else {
-            parent::addFilter($filter);
+
+            return;
         }
+        parent::addFilter($filter);
     }
 }
