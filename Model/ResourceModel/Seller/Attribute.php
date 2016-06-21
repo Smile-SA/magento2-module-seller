@@ -32,7 +32,7 @@ class Attribute extends \Magento\Eav\Model\Entity\Attribute implements SellerAtt
      * @var array
      */
     private $globalAttributes = [
-        Seller::KEY_SELLER_CODE
+        Seller::KEY_SELLER_CODE,
     ];
 
     /**

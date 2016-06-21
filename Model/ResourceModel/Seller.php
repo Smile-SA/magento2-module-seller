@@ -30,14 +30,14 @@ class Seller extends \Magento\Eav\Model\Entity\AbstractEntity
     /**
      * Id of 'is_active' seller attribute
      *
-     * @var int
+     * @var integer
      */
     protected $isActiveAttributeId = null;
 
     /**
      * Store id
      *
-     * @var int
+     * @var integer
      */
     protected $storeId = null;
 
@@ -92,6 +92,7 @@ class Seller extends \Magento\Eav\Model\Entity\AbstractEntity
         if (empty($this->_type)) {
             $this->setType(\Smile\Seller\Model\Seller::ENTITY);
         }
+
         return parent::getEntityType();
     }
 
@@ -105,6 +106,7 @@ class Seller extends \Magento\Eav\Model\Entity\AbstractEntity
     public function setStoreId($storeId)
     {
         $this->storeId = $storeId;
+
         return $this;
     }
 
@@ -118,6 +120,7 @@ class Seller extends \Magento\Eav\Model\Entity\AbstractEntity
         if ($this->storeId === null) {
             return $this->storeManager->getStore()->getId();
         }
+
         return $this->storeId;
     }
 
@@ -199,6 +202,7 @@ class Seller extends \Magento\Eav\Model\Entity\AbstractEntity
         if (!$this->getEntityManager()->has($object)) {
             $object->isObjectNew(true);
         }
+
         return $this;
     }
 
@@ -212,6 +216,7 @@ class Seller extends \Magento\Eav\Model\Entity\AbstractEntity
             'catalog_category_delete_after_done',
             ['product' => $object]
         );
+
         return $this;
     }
 

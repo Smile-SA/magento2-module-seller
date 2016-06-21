@@ -4,7 +4,7 @@
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future.
  *
- * @seller    Smile
+ * @category  Smile
  * @package   Smile\Seller
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
@@ -12,28 +12,25 @@
  */
 namespace Smile\Seller\Ui\Component\Seller\Form;
 
-use Magento\Framework\App\RequestInterface;
-use Magento\Framework\Registry;
-use Magento\Ui\DataProvider\AbstractDataProvider;
-use Smile\Seller\Api\Data\SellerAttributeInterface;
-use Smile\Seller\Api\Data\SellerInterface;
-use Smile\Seller\Api\SellerRepositoryInterface;
-use Smile\Seller\Model\Seller;
-use Magento\Eav\Api\Data\AttributeInterface;
 use Magento\Eav\Model\Config;
 use Magento\Eav\Model\Entity\Type;
-use Smile\Seller\Model\ResourceModel\Seller\CollectionFactory as SellerCollectionFactory;
+use Magento\Framework\App\RequestInterface;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Registry;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Ui\Component\Form\Field;
+use Magento\Ui\DataProvider\AbstractDataProvider;
 use Magento\Ui\DataProvider\EavValidationRules;
-use Magento\Framework\Exception\NoSuchEntityException;
-use Smile\Seller\Model\SellerFactory;
+use Smile\Seller\Api\Data\SellerInterface;
+use Smile\Seller\Api\SellerRepositoryInterface;
+use Smile\Seller\Model\ResourceModel\Seller\CollectionFactory as SellerCollectionFactory;
+use Smile\Seller\Model\Seller;
 
 /**
  * Seller Data provider for adminhtml edit form
  *
- * @seller   Smile
+ * @category Smile
  * @package  Smile\Seller
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
@@ -152,48 +149,6 @@ class DataProvider extends AbstractDataProvider
     }
 
     /**
-     * Prepare meta data
-     *
-     * @param array $meta The meta data
-     *
-     * @return array
-     */
-    public function prepareMeta($meta)
-    {
-        $meta = array_replace_recursive(
-            $meta,
-            $this->prepareFieldsMeta(
-                $this->getFieldsMap(),
-                $this->getAttributesMeta($this->eavConfig->getEntityType(SellerInterface::ENTITY))
-            )
-        );
-
-        return $meta;
-    }
-
-    /**
-     * Prepare fields meta based on xml declaration of form and fields metadata
-     *
-     * @param array $fieldsMap  The field Map
-     * @param array $fieldsMeta The fields meta
-     *
-     * @return array
-     */
-    private function prepareFieldsMeta($fieldsMap, $fieldsMeta)
-    {
-        $result = [];
-        foreach ($fieldsMap as $fieldSet => $fields) {
-            foreach ($fields as $field) {
-                if (isset($fieldsMeta[$field])) {
-                    $result[$fieldSet]['children'][$field]['arguments']['data']['config'] = $fieldsMeta[$field];
-                }
-            }
-        }
-
-        return $result;
-    }
-
-    /**
      * Get Component data
      *
      * @return array
@@ -201,7 +156,6 @@ class DataProvider extends AbstractDataProvider
     public function getData()
     {
         if (isset($this->loadedData)) {
-
             return $this->loadedData;
         }
 
@@ -219,14 +173,34 @@ class DataProvider extends AbstractDataProvider
     }
 
     /**
+     * Prepare meta data
+     *
+     * @param array $meta The meta data
+     *
+     * @return array
+     */
+    private function prepareMeta($meta)
+    {
+        $meta = array_replace_recursive(
+            $meta,
+            $this->prepareFieldsMeta(
+                $this->getFieldsMap(),
+                $this->getAttributesMeta($this->eavConfig->getEntityType(SellerInterface::ENTITY))
+            )
+        );
+
+        return $meta;
+    }
+
+    /**
      * Get attributes meta
      *
-     * @param Type $entityType
+     * @param Type $entityType The entity type
      *
      * @return array
      * @throws \Magento\Framework\Exception\LocalizedException
      */
-    public function getAttributesMeta(Type $entityType)
+    private function getAttributesMeta(Type $entityType)
     {
         $meta = [];
         $attributes = $entityType->getAttributeCollection();
@@ -234,15 +208,13 @@ class DataProvider extends AbstractDataProvider
         /* @var \Smile\Seller\Model\ResourceModel\Seller\Attribute $attribute */
         foreach ($attributes as $attribute) {
             $code = $attribute->getAttributeCode();
-            // use getDataUsingMethod, since some getters are defined and apply additional processing of returning value
+            // Use getDataUsingMethod, since some getters are defined and apply additional processing of returning value.
             foreach ($this->metaProperties as $metaName => $origName) {
                 $value = $attribute->getDataUsingMethod($origName);
                 $meta[$code][$metaName] = $value;
 
                 if ('frontend_input' === $origName) {
-                    $meta[$code]['formElement'] = isset($this->formElement[$value])
-                        ? $this->formElement[$value]
-                        : $value;
+                    $meta[$code]['formElement'] = isset($this->formElement[$value]) ? $this->formElement[$value] : $value;
                 }
 
                 if ($attribute->usesSource()) {
@@ -273,11 +245,10 @@ class DataProvider extends AbstractDataProvider
      * @return Seller
      * @throws NoSuchEntityException
      */
-    public function getCurrentSeller()
+    private function getCurrentSeller()
     {
         $seller = $this->registry->registry('current_seller');
         if ($seller) {
-
             return $seller;
         }
 
@@ -297,11 +268,11 @@ class DataProvider extends AbstractDataProvider
     /**
      * Filter fields
      *
-     * @param array $sellerData
+     * @param array $sellerData The seller data
      *
      * @return array
      */
-    protected function filterFields($sellerData)
+    private function filterFields($sellerData)
     {
         return array_diff_key($sellerData, array_flip($this->ignoreFields));
     }
@@ -309,15 +280,36 @@ class DataProvider extends AbstractDataProvider
     /**
      * @return array
      */
-    protected function getFieldsMap()
+    private function getFieldsMap()
     {
         return [
-            'general' =>
-                [
-                    'seller_code',
-                    'name',
-                    'is_active',
-                ],
+            'general' => [
+                'seller_code',
+                'name',
+                'is_active',
+            ],
         ];
+    }
+
+    /**
+     * Prepare fields meta based on xml declaration of form and fields metadata
+     *
+     * @param array $fieldsMap  The field Map
+     * @param array $fieldsMeta The fields meta
+     *
+     * @return array
+     */
+    private function prepareFieldsMeta($fieldsMap, $fieldsMeta)
+    {
+        $result = [];
+        foreach ($fieldsMap as $fieldSet => $fields) {
+            foreach ($fields as $field) {
+                if (isset($fieldsMeta[$field])) {
+                    $result[$fieldSet]['children'][$field]['arguments']['data']['config'] = $fieldsMeta[$field];
+                }
+            }
+        }
+
+        return $result;
     }
 }

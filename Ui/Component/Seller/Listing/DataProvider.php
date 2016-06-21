@@ -43,14 +43,14 @@ class DataProvider extends AbstractDataProvider
     /**
      * Construct
      *
-     * @param string                                                    $name                 Component name
-     * @param string                                                    $primaryFieldName     Primary field Name
-     * @param string                                                    $requestFieldName     Request field name
-     * @param CollectionFactory                                         $collectionFactory    The collection factory
-     * @param \Magento\Ui\DataProvider\AddFieldToCollectionInterface[]  $addFieldStrategies   Add field Strategy
-     * @param \Magento\Ui\DataProvider\AddFilterToCollectionInterface[] $addFilterStrategies  Add filter Strategy
-     * @param array                                                     $meta                 Component Meta
-     * @param array                                                     $data                 Component extra data
+     * @param string                                                    $name                Component name
+     * @param string                                                    $primaryFieldName    Primary field Name
+     * @param string                                                    $requestFieldName    Request field name
+     * @param CollectionFactory                                         $collectionFactory   The collection factory
+     * @param \Magento\Ui\DataProvider\AddFieldToCollectionInterface[]  $addFieldStrategies  Add field Strategy
+     * @param \Magento\Ui\DataProvider\AddFilterToCollectionInterface[] $addFilterStrategies Add filter Strategy
+     * @param array                                                     $meta                Component Meta
+     * @param array                                                     $data                Component extra data
      */
     public function __construct(
         $name,
@@ -92,8 +92,8 @@ class DataProvider extends AbstractDataProvider
     /**
      * Add field to select
      *
-     * @param string|array $field
-     * @param string|null  $alias
+     * @param string|array $field The field
+     * @param string|null  $alias Alias for the field
      *
      * @return void
      */

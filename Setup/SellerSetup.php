@@ -64,7 +64,6 @@ class SellerSetup extends EavSetup
                         'label' => 'Seller Code',
                         'input' => 'text',
                         'frontend_class' => 'validate-length maximum-length-64',
-                        //@todo 'backend' => 'Magento\Catalog\Model\Product\Attribute\Backend\Sku',
                         'unique' => true,
                     ],
                     'is_active' => [
@@ -85,7 +84,7 @@ class SellerSetup extends EavSetup
                         'type' => 'varchar',
                         'label' => 'Image',
                         'input' => 'image',
-                        //'backend' => 'Magento\Catalog\Model\Category\Attribute\Backend\Image',
+                        // 'backend' => 'Magento\Catalog\Model\Category\Attribute\Backend\Image',
                         'required' => false,
                         'sort_order' => 5,
                     ],
@@ -101,7 +100,7 @@ class SellerSetup extends EavSetup
                         'label' => 'Meta Keywords',
                         'input' => 'textarea',
                         'required' => false,
-                        'sort_order' => 7
+                        'sort_order' => 7,
                     ],
                     'meta_description' => [
                         'type' => 'text',
@@ -109,7 +108,7 @@ class SellerSetup extends EavSetup
                         'input' => 'textarea',
                         'required' => false,
                         'sort_order' => 8,
-                    ]
+                    ],
                 ],
             ],
         ];

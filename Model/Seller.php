@@ -188,6 +188,11 @@ class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements
         return $this->_setExtensionAttributes($extensionAttributes);
     }
 
+    /**
+     * Retrieve custom attributes codes list
+     *
+     * @return array
+     */
     protected function getCustomAttributesCodes()
     {
         return ['name'];

@@ -27,6 +27,9 @@ use Magento\Framework\Setup\SchemaSetupInterface;
  */
 class InstallSchema implements InstallSchemaInterface
 {
+    /**
+     * @var array The attributes backend tables definitions.
+     */
     private $backendTypes = [
         'datetime' => ['value', \Magento\Framework\DB\Ddl\Table::TYPE_DATETIME, null, [], 'Value'],
         'decimal'  => ['value', \Magento\Framework\DB\Ddl\Table::TYPE_DECIMAL, '12,4', [], 'Value'],
@@ -64,7 +67,7 @@ class InstallSchema implements InstallSchemaInterface
                 null,
                 ['identity' => true, 'unsigned' => true, 'nullable' => false, 'primary' => true],
                 'Entity ID'
-                )
+            )
             ->addColumn(
                 'attribute_set_id',
                 \Magento\Framework\DB\Ddl\Table::TYPE_SMALLINT,
@@ -148,11 +151,11 @@ class InstallSchema implements InstallSchemaInterface
                     $backendTableName,
                     ['entity_id', 'attribute_id', 'store_id'],
                     \Magento\Framework\DB\Adapter\AdapterInterface::INDEX_TYPE_UNIQUE
-                    ),
+                ),
                 ['entity_id', 'attribute_id', 'store_id'],
                 ['type' => \Magento\Framework\DB\Adapter\AdapterInterface::INDEX_TYPE_UNIQUE]
             )
-            ->addIndex($setup->getIdxName($backendTableName, ['entity_id']),['entity_id'])
+            ->addIndex($setup->getIdxName($backendTableName, ['entity_id']), ['entity_id'])
             ->addIndex($setup->getIdxName($backendTableName, ['attribute_id']), ['attribute_id'])
             ->addIndex($setup->getIdxName($backendTableName, ['store_id']), ['store_id'])
             ->addForeignKey(

@@ -44,8 +44,8 @@ class SellerRepository implements SellerRepositoryInterface
     /**
      * SellerRepository constructor.
      *
-     * @param EntityManager $entityManager    The entity manager
-     * @param SellerFactory $sellerFactory    The seller factory
+     * @param EntityManager $entityManager The entity manager
+     * @param SellerFactory $sellerFactory The seller factory
      *
      */
     public function __construct(EntityManager $entityManager, SellerFactory $sellerFactory)
@@ -58,7 +58,7 @@ class SellerRepository implements SellerRepositoryInterface
     /**
      * Create seller service
      *
-     * @param \Smile\Seller\Api\Data\SellerInterface $seller
+     * @param \Smile\Seller\Api\Data\SellerInterface $seller The seller
      *
      * @return \Smile\Seller\Api\Data\SellerInterface
      * @throws \Magento\Framework\Exception\CouldNotSaveException

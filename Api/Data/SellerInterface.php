@@ -117,12 +117,11 @@ interface SellerInterface extends \Magento\Framework\Api\CustomAttributesDataInt
     /**
      * Set seller update date
      *
-     * @param string $updatedAt
+     * @param string $updatedAt Update date
      *
      * @return $this
      */
     public function setUpdatedAt($updatedAt);
-
 
     /**
      * Retrieve existing extension attributes object or create a new one.
@@ -135,7 +134,7 @@ interface SellerInterface extends \Magento\Framework\Api\CustomAttributesDataInt
     /**
      * Set an extension attributes object.
      *
-     * @param \Smile\Seller\Api\Data\SellerExtensionInterface $extensionAttributes
+     * @param \Smile\Seller\Api\Data\SellerExtensionInterface $extensionAttributes The additional attributes
      *
      * @return $this
      */

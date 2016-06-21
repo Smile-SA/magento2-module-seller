@@ -26,7 +26,7 @@ interface SellerRepositoryInterface
     /**
      * Create seller service
      *
-     * @param \Smile\Seller\Api\Data\SellerInterface $seller
+     * @param \Smile\Seller\Api\Data\SellerInterface $seller The seller
      *
      * @return \Smile\Seller\Api\Data\SellerInterface
      *
