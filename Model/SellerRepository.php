@@ -42,17 +42,24 @@ class SellerRepository implements SellerRepositoryInterface
     private $sellerFactory;
 
     /**
+     * @var null Attribute set name of the entity
+     */
+    private $sellerAttributeSetName = null;
+
+    /**
      * SellerRepository constructor.
      *
-     * @param EntityManager $entityManager The entity manager
-     * @param SellerFactory $sellerFactory The seller factory
+     * @param EntityManager $entityManager    The entity manager
+     * @param SellerFactory $sellerFactory    The seller factory
+     * @param string|null   $attributeSetName The seller attribute Set Name, if any
      *
      */
-    public function __construct(EntityManager $entityManager, SellerFactory $sellerFactory)
+    public function __construct(EntityManager $entityManager, SellerFactory $sellerFactory, $attributeSetName = null)
     {
-        $this->entityManager        = $entityManager;
-        $this->sellerFactory        = $sellerFactory;
-        $this->sellerRepositoryById = [];
+        $this->entityManager          = $entityManager;
+        $this->sellerFactory          = $sellerFactory;
+        $this->sellerRepositoryById   = [];
+        $this->sellerAttributeSetName = $attributeSetName;
     }
 
     /**
@@ -65,6 +72,7 @@ class SellerRepository implements SellerRepositoryInterface
      */
     public function save(\Smile\Seller\Api\Data\SellerInterface $seller)
     {
+        $this->applyAttributeSet($seller);
         $seller = $this->entityManager->save($seller);
         if ($seller->getId()) {
             $this->sellerRepositoryById[$seller->getId()] = $seller;
@@ -140,5 +148,24 @@ class SellerRepository implements SellerRepositoryInterface
         $seller = $this->get($sellerId);
 
         return $this->delete($seller);
+    }
+
+    /**
+     * Apply correct attribute set to the current seller item
+     *
+     * @param \Smile\Seller\Api\Data\SellerInterface $seller The seller
+     *
+     * @return \Smile\Seller\Api\Data\SellerInterface
+     */
+    private function applyAttributeSet(\Smile\Seller\Api\Data\SellerInterface $seller)
+    {
+        if (null !== $this->sellerAttributeSetName) {
+            $attributeSetId = $seller->getResource()->getAttributeSetIdByName($this->sellerAttributeSetName);
+            if (null !== $attributeSetId) {
+                $seller->setAttributeSetId($attributeSetId);
+            }
+        }
+
+        return $seller;
     }
 }
