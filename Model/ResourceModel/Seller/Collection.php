@@ -232,7 +232,7 @@ class Collection extends AbstractCollection
 
         $entityIdField = $this->getEntityPkName($this->getEntity());
 
-        $select = $this->getBaseSelect($table, $attributeIds);
+        $select = $this->getBaseAttributesSelect($table, $attributeIds);
 
         $storeCondition = $this->getDefaultStoreId();
 
@@ -254,7 +254,7 @@ class Collection extends AbstractCollection
     }
 
     /**
-     * Retrieve Base select for this collection.
+     * Retrieve Base select for attributes of this collection.
      *
      * @param string $table        The attribute table
      * @param array  $attributeIds The attribute ids
@@ -263,7 +263,7 @@ class Collection extends AbstractCollection
      *
      * @return \Magento\Framework\Db\Select
      */
-    private function getBaseSelect($table, $attributeIds = [])
+    private function getBaseAttributesSelect($table, $attributeIds = [])
     {
         $connection    = $this->getConnection();
         $entityTable   = $this->getEntity()->getEntityTable();
