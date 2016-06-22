@@ -107,6 +107,13 @@ class DataProvider extends AbstractDataProvider
     private $storeManager;
 
     /**
+     * Data Provider Request Scope Parameter Identifier name
+     *
+     * @var string
+     */
+    private $requestScopeFieldName = 'store';
+
+    /**
      * DataProvider constructor
      *
      * @param string                    $name                    Component Name
