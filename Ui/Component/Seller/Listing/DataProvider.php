@@ -65,7 +65,6 @@ class DataProvider extends AbstractDataProvider
         parent::__construct($name, $primaryFieldName, $requestFieldName, $meta, $data);
 
         $this->collection = $collectionFactory->create();
-        $this->collection->addAttributeToSelect("name");
 
         $this->addFieldStrategies  = $addFieldStrategies;
         $this->addFilterStrategies = $addFilterStrategies;
