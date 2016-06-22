@@ -214,6 +214,8 @@ class Collection extends AbstractCollection
     /**
      * Retrieve attributes load select
      *
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName) The method is inherited
+     *
      * @param string    $table        The table to load attributes from
      * @param array|int $attributeIds The attribute ids to load
      *
@@ -224,12 +226,15 @@ class Collection extends AbstractCollection
         if (empty($attributeIds)) {
             $attributeIds = $this->_selectAttributes;
         }
+
         $storeId    = $this->getStoreId();
         $connection = $this->getConnection();
 
-        $entityTable   = $this->getEntity()->getEntityTable();
-        $indexList     = $connection->getIndexList($entityTable);
-        $entityIdField = $indexList[$connection->getPrimaryKeyName($entityTable)]['COLUMNS_LIST'][0];
+        $entityIdField = $this->getEntityPkName($this->getEntity());
+
+        $select = $this->getBaseSelect($table, $attributeIds);
+
+        $storeCondition = $this->getDefaultStoreId();
 
         if ($storeId) {
             $joinCondition = [
@@ -238,46 +243,47 @@ class Collection extends AbstractCollection
                 $connection->quoteInto('t_s.store_id = ?', $storeId),
             ];
 
-            $select = $connection->select()->from(
-                ['t_d' => $table],
-                ['attribute_id']
-            )->join(
-                ['e' => $entityTable],
-                "e.{$entityIdField} = t_d.{$entityIdField}",
-                ['e.entity_id']
-            )->where(
-                "e.entity_id IN (?)",
-                array_keys($this->_itemsById)
-            )->where(
-                't_d.attribute_id IN (?)',
-                $attributeIds
-            )->joinLeft(
-                ['t_s' => $table],
-                implode(' AND ', $joinCondition),
-                []
-            )->where(
-                't_d.store_id = ?',
-                $connection->getIfNullSql('t_s.store_id', \Magento\Store\Model\Store::DEFAULT_STORE_ID)
-            );
-        } else {
-            $select = $connection->select()->from(
-                ['t_d' => $table],
-                ['attribute_id']
-            )->join(
-                ['e' => $entityTable],
-                "e.{$entityIdField} = t_d.{$entityIdField}",
-                ['e.entity_id']
-            )->where(
-                "e.entity_id IN (?)",
-                array_keys($this->_itemsById)
-            )->where(
-                'attribute_id IN (?)',
-                $attributeIds
-            )->where(
-                'store_id = ?',
-                $this->getDefaultStoreId()
-            );
+            $select->joinLeft(['t_s' => $table], implode(' AND ', $joinCondition), []);
+
+            $storeCondition = $connection->getIfNullSql('t_s.store_id', \Magento\Store\Model\Store::DEFAULT_STORE_ID);
         }
+
+        $select->where('t_d.store_id = ?', $storeCondition);
+
+        return $select;
+    }
+
+    /**
+     * Retrieve Base select for this collection.
+     *
+     * @param string $table        The attribute table
+     * @param array  $attributeIds The attribute ids
+     *
+     * @throws \Magento\Framework\Exception\LocalizedException
+     *
+     * @return \Magento\Framework\Db\Select
+     */
+    private function getBaseSelect($table, $attributeIds = [])
+    {
+        $connection    = $this->getConnection();
+        $entityTable   = $this->getEntity()->getEntityTable();
+
+        $entityIdField = $this->getEntityPkName($this->getEntity());
+
+        $select = $connection->select()->from(
+            ['t_d' => $table],
+            ['attribute_id']
+        )->join(
+            ['e' => $entityTable],
+            "e.{$entityIdField} = t_d.{$entityIdField}",
+            ['e.entity_id']
+        )->where(
+            "e.entity_id IN (?)",
+            array_keys($this->_itemsById)
+        )->where(
+            't_d.attribute_id IN (?)',
+            $attributeIds
+        );
 
         return $select;
     }
