@@ -12,6 +12,7 @@
  */
 namespace Smile\Seller\Ui\Component\Seller\Form;
 
+use Magento\Eav\Api\Data\AttributeInterface;
 use Magento\Eav\Model\Config;
 use Magento\Eav\Model\Entity\Type;
 use Magento\Framework\App\RequestInterface;
@@ -22,6 +23,7 @@ use Magento\Store\Model\StoreManagerInterface;
 use Magento\Ui\Component\Form\Field;
 use Magento\Ui\DataProvider\AbstractDataProvider;
 use Magento\Ui\DataProvider\EavValidationRules;
+use Smile\Seller\Api\Data\SellerAttributeInterface;
 use Smile\Seller\Api\Data\SellerInterface;
 use Smile\Seller\Api\SellerRepositoryInterface;
 use Smile\Seller\Model\ResourceModel\Seller\CollectionFactory as SellerCollectionFactory;
@@ -39,14 +41,14 @@ class DataProvider extends AbstractDataProvider
     /**
      * @var array
      */
-    protected $loadedData;
+    private $loadedData;
 
     /**
      * EAV attribute properties to fetch from meta storage
      *
      * @var array
      */
-    protected $metaProperties = [
+    private $metaProperties = [
         'dataType'  => 'frontend_input',
         'visible'   => 'is_visible',
         'required'  => 'is_required',
@@ -62,7 +64,7 @@ class DataProvider extends AbstractDataProvider
      *
      * @var array
      */
-    protected $formElement = [
+    private $formElement = [
         'text'    => 'input',
         'boolean' => 'checkbox',
     ];
@@ -72,22 +74,22 @@ class DataProvider extends AbstractDataProvider
      *
      * @var array
      */
-    protected $ignoreFields = [];
+    private $ignoreFields = [];
 
     /**
      * @var EavValidationRules
      */
-    protected $eavValidationRules;
+    private $eavValidationRules;
 
     /**
      * @var Registry
      */
-    protected $registry;
+    private $registry;
 
     /**
      * @var RequestInterface
      */
-    protected $request;
+    private $request;
 
     /**
      * @var Config
@@ -100,6 +102,11 @@ class DataProvider extends AbstractDataProvider
     private $sellerRepository;
 
     /**
+     * @var StoreManagerInterface
+     */
+    private $storeManager;
+
+    /**
      * DataProvider constructor
      *
      * @param string                    $name                    Component Name
@@ -107,6 +114,7 @@ class DataProvider extends AbstractDataProvider
      * @param string                    $requestFieldName        Request Field Name
      * @param EavValidationRules        $eavValidationRules      EAV Validation Rules
      * @param SellerCollectionFactory   $sellerCollectionFactory Seller Collection Factory
+     * @param StoreManagerInterface     $storeManager            Store Manager Interface
      * @param Registry                  $registry                The Registry
      * @param Config                    $eavConfig               EAV Configuration
      * @param RequestInterface          $request                 The Request
@@ -121,6 +129,7 @@ class DataProvider extends AbstractDataProvider
         $requestFieldName,
         EavValidationRules $eavValidationRules,
         SellerCollectionFactory $sellerCollectionFactory,
+        StoreManagerInterface $storeManager,
         Registry $registry,
         Config $eavConfig,
         RequestInterface $request,
@@ -137,6 +146,7 @@ class DataProvider extends AbstractDataProvider
         $this->registry = $registry;
         $this->request = $request;
         $this->sellerRepository = $sellerRepository;
+        $this->storeManager = $storeManager;
 
         parent::__construct($name, $primaryFieldName, $requestFieldName, $meta, $data);
 
@@ -165,6 +175,35 @@ class DataProvider extends AbstractDataProvider
         }
 
         return $this->loadedData;
+    }
+
+    /**
+     * Retrieve label of attribute scope
+     *
+     * GLOBAL | WEBSITE | STORE
+     *
+     * @param SellerAttributeInterface $attribute The attribute
+     *
+     * @return string
+     */
+    private function getScopeLabel(SellerAttributeInterface $attribute)
+    {
+        $html = '';
+        if (!$attribute || $this->storeManager->isSingleStoreMode()
+            || $attribute->getFrontendInput() === AttributeInterface::FRONTEND_INPUT
+        ) {
+            return $html;
+        }
+
+        if ($attribute->isScopeGlobal()) {
+            $html .= __('[GLOBAL]');
+        } elseif ($attribute->isScopeWebsite()) {
+            $html .= __('[WEBSITE]');
+        } elseif ($attribute->isScopeStore()) {
+            $html .= __('[STORE VIEW]');
+        }
+
+        return $html;
     }
 
     /**
@@ -222,6 +261,7 @@ class DataProvider extends AbstractDataProvider
                 $meta[$code]['validation'] = $rules;
             }
 
+            $meta[$code]['scopeLabel'] = $this->getScopeLabel($attribute);
             $meta[$code]['componentType'] = Field::NAME;
         }
 
@@ -247,10 +287,11 @@ class DataProvider extends AbstractDataProvider
             return $seller;
         }
 
-        $requestId = $this->request->getParam($this->requestFieldName);
+        $requestId    = $this->request->getParam($this->requestFieldName);
+        $requestScope = $this->request->getParam($this->requestScopeFieldName, Store::DEFAULT_STORE_ID);
 
         if ($requestId) {
-            $seller = $this->sellerRepository->get($requestId);
+            $seller = $this->sellerRepository->get($requestId, $requestScope);
         }
 
         if (!$seller || !$seller->getId()) {

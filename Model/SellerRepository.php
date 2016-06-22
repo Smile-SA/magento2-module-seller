@@ -74,9 +74,7 @@ class SellerRepository implements SellerRepositoryInterface
     {
         $this->applyAttributeSet($seller);
         $seller = $this->entityManager->save($seller);
-        if ($seller->getId()) {
-            $this->sellerRepositoryById[$seller->getId()] = $seller;
-        }
+        unset($this->sellerRepositoryById[$seller->getId()]);
     }
 
     /**
@@ -90,11 +88,13 @@ class SellerRepository implements SellerRepositoryInterface
      */
     public function get($sellerId, $storeId = null)
     {
-        if (!isset($this->sellerRepositoryById[$sellerId])) {
+        $cacheKey = (null !== $storeId) ? $storeId : 'all';
+
+        if (!isset($this->sellerRepositoryById[$sellerId][$cacheKey])) {
             $sellerModel = $this->sellerFactory->create();
 
             if (null !== $storeId) {
-                $sellerModel->setStoreId($storeId);
+                $sellerModel->setStoreId((int) $storeId);
             }
 
             $seller = $this->entityManager->load($sellerModel, $sellerId);
@@ -104,10 +104,10 @@ class SellerRepository implements SellerRepositoryInterface
                 throw $exception->singleField($seller->getIdFieldName(), $sellerId);
             }
 
-            $this->sellerRepositoryById[$sellerId] = $seller;
+            $this->sellerRepositoryById[$sellerId][$cacheKey] = $seller;
         }
 
-        return $this->sellerRepositoryById[$sellerId];
+        return $this->sellerRepositoryById[$sellerId][$cacheKey];
     }
 
     /**
