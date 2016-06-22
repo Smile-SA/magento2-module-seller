@@ -22,6 +22,7 @@ use Magento\Framework\Data\Collection\EntityFactory;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Validator\UniversalFactory;
+use Magento\Store\Model\StoreManagerInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -60,6 +61,20 @@ class Collection extends AbstractCollection
     private $sellerAttributeSetName = null;
 
     /**
+     * Current scope (store Id)
+     *
+     * @var integer
+     */
+    private $storeId;
+
+    /**
+     * Store manager
+     *
+     * @var \Magento\Store\Model\StoreManagerInterface
+     */
+    private $storeManager;
+
+    /**
      * Collection constructor.
      *
      * @param \Magento\Framework\Data\Collection\EntityFactory             $entityFactory    Entity Factory
@@ -70,6 +85,7 @@ class Collection extends AbstractCollection
      * @param \Magento\Framework\App\ResourceConnection                    $resource         Resource Connection
      * @param \Magento\Eav\Model\EntityFactory                             $eavEntityFactory EAV Entity Factory
      * @param \Magento\Eav\Model\ResourceModel\Helper                      $resourceHelper   Resource Helper
+     * @param \Magento\Store\Model\StoreManagerInterface                   $storeManager     The Store Manager
      * @param \Magento\Framework\Validator\UniversalFactory                $universalFactory Universal Factory
      * @param \Magento\Framework\DB\Adapter\AdapterInterface|null          $connection       Database Connection
      * @param null                                                         $attributeSetName Seller Attribute Set Name
@@ -83,11 +99,13 @@ class Collection extends AbstractCollection
         ResourceConnection $resource,
         EavEntityFactory $eavEntityFactory,
         Helper $resourceHelper,
+        StoreManagerInterface $storeManager,
         UniversalFactory $universalFactory,
         AdapterInterface $connection = null,
         $attributeSetName = null
     ) {
         $this->sellerAttributeSetName = $attributeSetName;
+        $this->storeManager           = $storeManager;
 
         parent::__construct(
             $entityFactory,
@@ -101,6 +119,61 @@ class Collection extends AbstractCollection
             $universalFactory,
             $connection
         );
+    }
+
+    /**
+     * Set store scope
+     *
+     * @param int|string|\Magento\Store\Model\Store $store The store
+     *
+     * @return $this
+     */
+    public function setStore($store)
+    {
+        $this->setStoreId($this->storeManager->getStore($store)->getId());
+
+        return $this;
+    }
+
+    /**
+     * Set store scope
+     *
+     * @param int|string|\Magento\Store\Model\Store $storeId The store Id or Store
+     *
+     * @return $this
+     */
+    public function setStoreId($storeId)
+    {
+        if ($storeId instanceof \Magento\Store\Model\Store) {
+            $storeId = $storeId->getId();
+        }
+        $this->storeId = (int) $storeId;
+
+        return $this;
+    }
+
+    /**
+     * Return current store id
+     *
+     * @return int
+     */
+    public function getStoreId()
+    {
+        if ($this->storeId === null) {
+            $this->setStoreId($this->storeManager->getStore()->getId());
+        }
+
+        return $this->storeId;
+    }
+
+    /**
+     * Retrieve default store id
+     *
+     * @return int
+     */
+    public function getDefaultStoreId()
+    {
+        return \Magento\Store\Model\Store::DEFAULT_STORE_ID;
     }
 
     /**
@@ -136,5 +209,76 @@ class Collection extends AbstractCollection
         }
 
         return $this;
+    }
+
+    /**
+     * Retrieve attributes load select
+     *
+     * @param string    $table        The table to load attributes from
+     * @param array|int $attributeIds The attribute ids to load
+     *
+     * @return \Magento\Eav\Model\Entity\Collection\AbstractCollection
+     */
+    protected function _getLoadAttributesSelect($table, $attributeIds = [])
+    {
+        if (empty($attributeIds)) {
+            $attributeIds = $this->_selectAttributes;
+        }
+        $storeId    = $this->getStoreId();
+        $connection = $this->getConnection();
+
+        $entityTable   = $this->getEntity()->getEntityTable();
+        $indexList     = $connection->getIndexList($entityTable);
+        $entityIdField = $indexList[$connection->getPrimaryKeyName($entityTable)]['COLUMNS_LIST'][0];
+
+        if ($storeId) {
+            $joinCondition = [
+                't_s.attribute_id = t_d.attribute_id',
+                "t_s.{$entityIdField} = t_d.{$entityIdField}",
+                $connection->quoteInto('t_s.store_id = ?', $storeId),
+            ];
+
+            $select = $connection->select()->from(
+                ['t_d' => $table],
+                ['attribute_id']
+            )->join(
+                ['e' => $entityTable],
+                "e.{$entityIdField} = t_d.{$entityIdField}",
+                ['e.entity_id']
+            )->where(
+                "e.entity_id IN (?)",
+                array_keys($this->_itemsById)
+            )->where(
+                't_d.attribute_id IN (?)',
+                $attributeIds
+            )->joinLeft(
+                ['t_s' => $table],
+                implode(' AND ', $joinCondition),
+                []
+            )->where(
+                't_d.store_id = ?',
+                $connection->getIfNullSql('t_s.store_id', \Magento\Store\Model\Store::DEFAULT_STORE_ID)
+            );
+        } else {
+            $select = $connection->select()->from(
+                ['t_d' => $table],
+                ['attribute_id']
+            )->join(
+                ['e' => $entityTable],
+                "e.{$entityIdField} = t_d.{$entityIdField}",
+                ['e.entity_id']
+            )->where(
+                "e.entity_id IN (?)",
+                array_keys($this->_itemsById)
+            )->where(
+                'attribute_id IN (?)',
+                $attributeIds
+            )->where(
+                'store_id = ?',
+                $this->getDefaultStoreId()
+            );
+        }
+
+        return $select;
     }
 }
