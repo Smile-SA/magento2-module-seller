@@ -147,7 +147,6 @@ class DataProvider extends AbstractDataProvider
         $this->eavValidationRules = $eavValidationRules;
 
         $this->collection = $sellerCollectionFactory->create();
-        $this->collection->addAttributeToSelect('*');
 
         $this->eavConfig = $eavConfig;
         $this->registry = $registry;
