@@ -137,7 +137,12 @@ class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements
      */
     public function getExtensionAttributes()
     {
-        return $this->getData(self::EXTENSION_ATTRIBUTES_KEY);
+        $extensionAttributes = $this->_getExtensionAttributes();
+        if (!$extensionAttributes) {
+            return $this->extensionAttributesFactory->create('Smile\Seller\Api\Data\SellerInterface');
+        }
+
+        return $extensionAttributes;
     }
 
     /**
@@ -197,7 +202,10 @@ class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements
      */
     protected function getCustomAttributesCodes()
     {
-        return ['name'];
+        $attributesCodes = parent::getCustomAttributesCodes();
+        $attributesCodes[] = 'name';
+
+        return $attributesCodes;
     }
 
     /**
