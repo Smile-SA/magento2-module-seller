@@ -45,7 +45,7 @@
     <virtualType name="Smile\Seller\EntityCreator\MetadataPool" type="Magento\Framework\EntityManager\MetadataPool">
         <arguments>
             <argument name="metadata" xsi:type="array">
-                <item name="Smile\Seller\Api\Data\ProductInterface" xsi:type="array">
+                <item name="Smile\Seller\Api\Data\SellerInterface" xsi:type="array">
                     <item name="entityContext" xsi:type="array">
                         <item name="store" xsi:type="string">Magento\Store\Model\DefaultStoreScopeProvider</item>
                     </item>
