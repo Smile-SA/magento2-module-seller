@@ -151,6 +151,23 @@ class SellerRepository implements SellerRepositoryInterface
     }
 
     /**
+     * Retrieve Attribute Set Id to use for this entity, if any
+     *
+     * @return null|int
+     */
+    public function getEntityAttributeSetId()
+    {
+        $attributeSetId = null;
+
+        if (null !== $this->sellerAttributeSetName) {
+            $sellerModel    = $this->sellerFactory->create();
+            $attributeSetId = $sellerModel->getResource()->getAttributeSetIdByName($this->sellerAttributeSetName);
+        }
+
+        return $attributeSetId;
+    }
+
+    /**
      * Apply correct attribute set to the current seller item
      *
      * @param \Smile\Seller\Api\Data\SellerInterface $seller The seller
@@ -159,11 +176,9 @@ class SellerRepository implements SellerRepositoryInterface
      */
     private function applyAttributeSet(\Smile\Seller\Api\Data\SellerInterface $seller)
     {
-        if (null !== $this->sellerAttributeSetName) {
-            $attributeSetId = $seller->getResource()->getAttributeSetIdByName($this->sellerAttributeSetName);
-            if (null !== $attributeSetId) {
-                $seller->setAttributeSetId($attributeSetId);
-            }
+        $attributeSetId = $this->getEntityAttributeSetId();
+        if (null !== $attributeSetId) {
+            $seller->setAttributeSetId($attributeSetId);
         }
 
         return $seller;
