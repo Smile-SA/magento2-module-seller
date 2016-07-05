@@ -19,6 +19,7 @@ use Magento\Eav\Model\ResourceModel\Helper;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\Data\Collection\Db\FetchStrategyInterface;
 use Magento\Framework\Data\Collection\EntityFactory;
+use Magento\Framework\Data\CollectionDataSourceInterface;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Validator\UniversalFactory;
@@ -34,7 +35,7 @@ use Psr\Log\LoggerInterface;
  * @package  Smile\Seller
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class Collection extends AbstractCollection
+class Collection extends AbstractCollection implements CollectionDataSourceInterface
 {
     /**
      * Event prefix
