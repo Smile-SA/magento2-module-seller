@@ -78,6 +78,8 @@ class Collection extends AbstractCollection implements CollectionDataSourceInter
     /**
      * Collection constructor.
      *
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList) Parent construct already has 10 arguments.
+     *
      * @param \Magento\Framework\Data\Collection\EntityFactory             $entityFactory    Entity Factory
      * @param \Psr\Log\LoggerInterface                                     $logger           Logger
      * @param \Magento\Framework\Data\Collection\Db\FetchStrategyInterface $fetchStrategy    Fetch Strategy
