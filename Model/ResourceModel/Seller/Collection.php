@@ -257,6 +257,74 @@ class Collection extends AbstractCollection implements CollectionDataSourceInter
     }
 
     /**
+     * Adding join statement to collection select instance
+     *
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName) The method is inherited
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList) The method is inherited
+     * @SuppressWarnings(PHPMD.ElseExpression) The method is inspired from \Magento\Catalog\Model\ResourceModel\Collection\AbstractCollection
+     *
+     * @param string $method     The join method
+     * @param object $attribute  The attribute to join
+     * @param string $tableAlias The table alias
+     * @param array  $condition  The condition
+     * @param string $fieldCode  The field code
+     * @param string $fieldAlias The field alias
+     *
+     * @return \Magento\Eav\Model\Entity\Collection\AbstractCollection
+     */
+    protected function _joinAttributeToSelect($method, $attribute, $tableAlias, $condition, $fieldCode, $fieldAlias)
+    {
+        $storeId = $this->getStoreId();
+        if (isset($this->_joinAttributes[$fieldCode]['store_id'])) {
+            $storeId = $this->_joinAttributes[$fieldCode]['store_id'];
+        }
+
+        $connection = $this->getConnection();
+
+        if ($storeId != $this->getDefaultStoreId() && !$attribute->isScopeGlobal()) {
+            /**
+             * Add joining default value for not default store
+             * if value for store is null - we use default value
+             */
+            $defCondition = '(' . implode(') AND (', $condition) . ')';
+            $defAlias = $tableAlias . '_default';
+            $defAlias = $this->getConnection()->getTableName($defAlias);
+            $defFieldAlias = str_replace($tableAlias, $defAlias, $fieldAlias);
+            $tableAlias = $this->getConnection()->getTableName($tableAlias);
+
+            $defCondition = str_replace($tableAlias, $defAlias, $defCondition);
+            $defCondition .= $connection->quoteInto(
+                " AND " . $connection->quoteColumnAs("{$defAlias}.store_id", null) . " = ?",
+                $this->getDefaultStoreId()
+            );
+
+            $this->getSelect()->{$method}(
+                [$defAlias => $attribute->getBackend()->getTable()],
+                $defCondition,
+                []
+            );
+
+            $method = 'joinLeft';
+            $fieldAlias = $this->getConnection()->getCheckSql(
+                "{$tableAlias}.value_id > 0",
+                $fieldAlias,
+                $defFieldAlias
+            );
+            $this->_joinAttributes[$fieldCode]['condition_alias'] = $fieldAlias;
+            $this->_joinAttributes[$fieldCode]['attribute'] = $attribute;
+        } else {
+            $storeId = $this->getDefaultStoreId();
+        }
+
+        $condition[] = $connection->quoteInto(
+            $connection->quoteColumnAs("{$tableAlias}.store_id", null) . ' = ?',
+            $storeId
+        );
+
+        return parent::_joinAttributeToSelect($method, $attribute, $tableAlias, $condition, $fieldCode, $fieldAlias);
+    }
+
+    /**
      * Retrieve Base select for attributes of this collection.
      *
      * @param string $table        The attribute table
