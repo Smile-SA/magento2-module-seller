@@ -25,7 +25,7 @@ use Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface;
  * @package  Smile\Seller
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class Attribute extends \Magento\Eav\Model\Entity\Attribute implements SellerAttributeInterface, ScopedAttributeInterface
+class Attribute extends \Magento\Eav\Model\Entity\Attribute implements SellerAttributeInterface, ScopedAttributeInterface//, \Serializable
 {
     /**
      * Attributes shared between all entities
@@ -63,5 +63,15 @@ class Attribute extends \Magento\Eav\Model\Entity\Attribute implements SellerAtt
     public function isScopeStore()
     {
         return !$this->isScopeGlobal() && !$this->isScopeWebsite();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function __sleep()
+    {
+        $this->unsetData('entity_type');
+
+        return parent::__sleep();
     }
 }
