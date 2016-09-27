@@ -175,6 +175,19 @@ class DataProvider extends AbstractDataProvider
         if ($seller) {
             $sellerData = $seller->getData();
             $sellerData = $this->filterFields($sellerData);
+
+            // Parse Image attributes Data.
+            foreach ($this->eavConfig->getEntityAttributeCodes(SellerInterface::ENTITY) as $code) {
+                $attribute = $this->eavConfig->getAttribute(SellerInterface::ENTITY, $code);
+                if ($attribute->getFrontendInput() === 'image') {
+                    if (isset($sellerData[$code])) {
+                        unset($sellerData[$code]);
+                        $sellerData[$code][0]['name'] = $seller->getData($code);
+                        $sellerData[$code][0]['url']  = $seller->getImageAttributeUrl($code);
+                    }
+                }
+            }
+
             if (!empty($sellerData)) {
                 $this->loadedData[$seller->getId()] = $sellerData;
             }
