@@ -255,4 +255,16 @@ class Seller extends \Magento\Eav\Model\Entity\AbstractEntity
 
         return $this->_resource->getConnection()->fetchOne($select);
     }
+
+    /**
+     * Before Saving a Seller.
+     * Enforce loading of all attributes to ensure their beforeSave is correctly processed.
+     *
+     * @param \Magento\Framework\DataObject $object The object (seller) being saved.
+     */
+    public function beforeSave(\Magento\Framework\DataObject $object)
+    {
+        $this->loadAllAttributes($object);
+        parent::beforeSave($object);
+    }
 }

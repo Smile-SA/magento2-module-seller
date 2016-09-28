@@ -14,6 +14,13 @@
 
 namespace Smile\Seller\Model;
 
+use Magento\Framework\Api\AttributeValueFactory;
+use Magento\Framework\Api\ExtensionAttributesFactory;
+use Magento\Framework\Data\Collection\AbstractDb;
+use Magento\Framework\Model\Context;
+use Magento\Framework\Model\ResourceModel\AbstractResource;
+use Magento\Framework\Registry;
+use Magento\Store\Model\StoreManagerInterface;
 use Smile\Seller\Api\Data\SellerInterface;
 
 /**
@@ -58,6 +65,11 @@ class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements
     const KEY_SELLER_CODE = 'seller_code';
 
     /**
+     * The image path used to store seller image attributes.
+     */
+    const IMAGE_PATH = 'seller';
+
+    /**
      * Prefix of model events names.
      *
      * @var string
@@ -91,6 +103,46 @@ class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements
         self::KEY_CREATED_AT,
         self::KEY_SELLER_CODE,
     ];
+
+    /**
+     * @var \Magento\Store\Model\StoreManagerInterface
+     */
+    private $storeManager;
+
+    /**
+     * Seller constructor.
+     *
+     * @param \Magento\Framework\Model\Context                        $context                Application Context
+     * @param \Magento\Framework\Registry                             $registry               Application Registry
+     * @param \Magento\Framework\Api\ExtensionAttributesFactory       $extensionFactory       Extension Attributes Factory
+     * @param \Magento\Framework\Api\AttributeValueFactory            $customAttributeFactory Custom Attributes Factory
+     * @param \Magento\Store\Model\StoreManagerInterface              $storeManager           Store Manager
+     * @param \Magento\Framework\Model\ResourceModel\AbstractResource $resource               Resource Model
+     * @param \Magento\Framework\Data\Collection\AbstractDb           $resourceCollection     Resource Collection
+     * @param array                                                   $data                   Model Data
+     */
+    public function __construct(
+        Context $context,
+        Registry $registry,
+        ExtensionAttributesFactory $extensionFactory,
+        AttributeValueFactory $customAttributeFactory,
+        StoreManagerInterface $storeManager,
+        AbstractResource $resource = null,
+        AbstractDb $resourceCollection = null,
+        array $data = []
+    ) {
+        $this->storeManager = $storeManager;
+
+        parent::__construct(
+            $context,
+            $registry,
+            $extensionFactory,
+            $customAttributeFactory,
+            $resource,
+            $resourceCollection,
+            $data
+        );
+    }
 
     /**
      * {@inheritDoc}
@@ -193,6 +245,32 @@ class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements
     public function setExtensionAttributes(\Smile\Seller\Api\Data\SellerExtensionInterface $extensionAttributes)
     {
         return $this->_setExtensionAttributes($extensionAttributes);
+    }
+
+    /**
+     * Retrieve Image URL for an attribute having image backend.
+     *
+     * @param string $attributeCode The attributeCode
+     *
+     * @return bool|string
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    public function getImageAttributeUrl($attributeCode)
+    {
+        $url = false;
+        $image = $this->getData($attributeCode);
+        if ($image) {
+            if (!is_string($image)) {
+                throw new \Magento\Framework\Exception\LocalizedException(
+                    __('Something went wrong while getting the image url.')
+                );
+            }
+
+            $url  = $this->storeManager->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA);
+            $url .= self::IMAGE_PATH . '/' . $image;
+        }
+
+        return $url;
     }
 
     /**
