@@ -32,12 +32,12 @@ use Smile\Seller\Api\Data\SellerInterface;
  * @package  Smile\Seller
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements SellerInterface
+class Seller extends \Magento\Framework\Model\AbstractExtensibleModel
 {
     /**
      * Default cache tag
      */
-    const CACHE_TAG = self::ENTITY;
+    const CACHE_TAG = SellerInterface::ENTITY;
 
     /**
      * "Name" attribute code
@@ -74,7 +74,7 @@ class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements
      *
      * @var string
      */
-    protected $_eventPrefix = self::ENTITY;
+    protected $_eventPrefix = SellerInterface::ENTITY;
 
     /**
      * Parameter name in event.

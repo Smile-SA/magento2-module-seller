@@ -14,6 +14,8 @@
 
 namespace Smile\Seller\Model\ResourceModel;
 
+use Smile\Seller\Api\Data\SellerInterface;
+
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
@@ -90,7 +92,7 @@ class Seller extends \Magento\Eav\Model\Entity\AbstractEntity
     public function getEntityType()
     {
         if (empty($this->_type)) {
-            $this->setType(\Smile\Seller\Model\Seller::ENTITY);
+            $this->setType(SellerInterface::ENTITY);
         }
 
         return parent::getEntityType();

@@ -14,6 +14,8 @@
 
 namespace Smile\Seller\Model\ResourceModel\Seller\Attribute;
 
+use Smile\Seller\Api\Data\SellerInterface;
+
 /**
  * Seller Attributes Collection
  *
@@ -35,7 +37,7 @@ class Collection extends \Magento\Eav\Model\ResourceModel\Entity\Attribute\Colle
         $this->getSelect()->from(['main_table' => $this->getResource()->getMainTable()])
             ->where(
                 'main_table.entity_type_id=?',
-                $this->eavConfig->getEntityType(\Smile\Seller\Model\Seller::ENTITY)->getId()
+                $this->eavConfig->getEntityType(SellerInterface::ENTITY)->getId()
             );
 
         return $this;
