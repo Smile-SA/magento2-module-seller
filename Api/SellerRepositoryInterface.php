@@ -71,4 +71,15 @@ interface SellerRepositoryInterface
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function deleteByIdentifier($sellerId);
+
+    /**
+     * Get a seller by its code
+     *
+     * @param string $sellerCode Seller code
+     *
+     * @return \Smile\Seller\Api\Data\SellerInterface
+     *
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function getByCode($sellerCode);
 }

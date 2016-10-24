@@ -183,4 +183,24 @@ class SellerRepository implements SellerRepositoryInterface
 
         return $seller;
     }
+
+    /**
+     * Get a retailer by its code
+     *
+     * @param string $codeRetailer Retailer code
+     *
+     * @return SellerInterface
+     *
+     * @throws NoSuchEntityException
+     */
+    public function getByCode($codeRetailer)
+    {
+        $seller = $this->sellerFactory->create();
+        /** @var SellerInterface $seller */
+        $seller->getResource()->load($seller, $codeRetailer, 'code');
+        if (!$seller->getId()) {
+            throw new NoSuchEntityException(__('Retailer with code "%1" does not exist.', $codeRetailer));
+        }
+        return $seller;
+    }
 }
