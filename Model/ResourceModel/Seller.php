@@ -255,4 +255,14 @@ class Seller extends \Magento\Eav\Model\Entity\AbstractEntity
 
         return $this->_resource->getConnection()->fetchOne($select);
     }
+
+   /**
+    * Get default attribute source model
+    *
+    * @return string
+    */
+   public function getDefaultAttributeSourceModel()
+   {
+       return 'Magento\Eav\Model\Entity\Attribute\Source\Table';
+   }
 }
