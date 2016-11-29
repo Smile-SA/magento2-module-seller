@@ -32,7 +32,7 @@ use Smile\Seller\Api\Data\SellerInterface;
  * @package  Smile\Seller
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class Seller extends \Magento\Framework\Model\AbstractExtensibleModel
+class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements SellerInterface
 {
     /**
      * Default cache tag
