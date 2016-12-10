@@ -200,8 +200,8 @@ class Seller extends \Magento\Eav\Model\Entity\AbstractEntity
     {
         $this->_attributes = [];
         $this->loadAttributesMetadata($attributes);
-        $object = $this->getEntityManager()->load($object, $entityId);
-        if (!$this->getEntityManager()->has($object)) {
+        $object = $this->entityManager->load($object, $entityId);
+        if (!$this->entityManager->has($object)) {
             $object->isObjectNew(true);
         }
 
@@ -213,7 +213,7 @@ class Seller extends \Magento\Eav\Model\Entity\AbstractEntity
      */
     public function delete($object)
     {
-        $this->getEntityManager()->delete($object);
+        $this->entityManager->delete($object);
         $this->eventManager->dispatch(
             'catalog_category_delete_after_done',
             ['product' => $object]
@@ -233,7 +233,7 @@ class Seller extends \Magento\Eav\Model\Entity\AbstractEntity
      */
     public function save(\Magento\Framework\Model\AbstractModel $object)
     {
-        $this->getEntityManager()->save($object);
+        $this->entityManager->save($object);
 
         return $this;
     }

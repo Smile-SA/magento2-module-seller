@@ -47,19 +47,29 @@ class SellerRepository implements SellerRepositoryInterface
     private $sellerAttributeSetName = null;
 
     /**
+     * @var Seller\CollectionFactory
+     */
+    private $sellerCollectionFactory;
+
+    /**
      * SellerRepository constructor.
      *
-     * @param EntityManager $entityManager    The entity manager
-     * @param SellerFactory $sellerFactory    The seller factory
-     * @param string|null   $attributeSetName The seller attribute Set Name, if any
-     *
+     * @param EntityManager            $entityManager           The entity manager
+     * @param SellerFactory            $sellerFactory           The seller factory
+     * @param Seller\CollectionFactory $sellerCollectionFactory The seller collection
+     * @param string|null              $attributeSetName        The seller attribute Set Name, if any
      */
-    public function __construct(EntityManager $entityManager, SellerFactory $sellerFactory, $attributeSetName = null)
-    {
-        $this->entityManager          = $entityManager;
-        $this->sellerFactory          = $sellerFactory;
-        $this->sellerRepositoryById   = [];
-        $this->sellerAttributeSetName = $attributeSetName;
+    public function __construct(
+        EntityManager $entityManager,
+        SellerFactory $sellerFactory,
+        Seller\CollectionFactory $sellerCollectionFactory,
+        $attributeSetName = null
+    ) {
+        $this->entityManager           = $entityManager;
+        $this->sellerFactory           = $sellerFactory;
+        $this->sellerRepositoryById    = [];
+        $this->sellerAttributeSetName  = $attributeSetName;
+        $this->sellerCollectionFactory = $sellerCollectionFactory;
     }
 
     /**
@@ -181,6 +191,29 @@ class SellerRepository implements SellerRepositoryInterface
             $seller->setAttributeSetId($attributeSetId);
         }
 
+        return $seller;
+    }
+
+    /**
+     * Get a retailer by its code
+     *
+     * @param string $codeRetailer Retailer code
+     *
+     * @return SellerInterface
+     *
+     * @throws NoSuchEntityException
+     */
+    public function getByCode($codeRetailer)
+    {
+        /** @var Seller\Collection $seller */
+        $sellerCollection = $this->sellerCollectionFactory
+            ->create()
+            ->addFieldToFilter('seller_code', ['eq' => $codeRetailer]);
+        /** @var SellerInterface $seller */
+        $seller = $sellerCollection->getFirstItem();
+        if (!$seller->getId()) {
+            throw new NoSuchEntityException(__('Retailer with code "%1" does not exist.', $codeRetailer));
+        }
         return $seller;
     }
 }
