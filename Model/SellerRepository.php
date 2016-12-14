@@ -15,6 +15,7 @@ namespace Smile\Seller\Model;
 use Magento\Framework\EntityManager\EntityManager;
 use Smile\Seller\Api\Data\SellerInterfaceFactory;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Smile\Seller\Model\ResourceModel\Seller as ResourceModel;
 
 /**
  * Seller Repository
@@ -41,6 +42,11 @@ class SellerRepository
     private $sellerFactory;
 
     /**
+     * @var ResourceModel
+     */
+    private $resourceModel;
+
+    /**
      * @var null Attribute set name of the entity
      */
     private $sellerAttributeSetName = null;
@@ -48,14 +54,16 @@ class SellerRepository
     /**
      * SellerRepository constructor.
      *
-     * @param EntityManager          $entityManager    The entity manager
-     * @param SellerInterfaceFactory $sellerFactory    The seller factory
-     * @param string|null            $attributeSetName The seller attribute Set Name, if any
+     * @param EntityManager          $entityManager    The entity manager.
+     * @param ResourceModel          $resourceModel    Resource model.
+     * @param SellerInterfaceFactory $sellerFactory    The seller factory.
+     * @param string|null            $attributeSetName The seller attribute Set Name, if any.
      *
      */
-    public function __construct(EntityManager $entityManager, $sellerFactory, $attributeSetName = null)
+    public function __construct(EntityManager $entityManager, ResourceModel $resourceModel, $sellerFactory, $attributeSetName = null)
     {
         $this->entityManager          = $entityManager;
+        $this->resourceModel          = $resourceModel;
         $this->sellerFactory          = $sellerFactory;
         $this->sellerAttributeSetName = $attributeSetName;
     }
@@ -71,18 +79,23 @@ class SellerRepository
     public function save(\Smile\Seller\Api\Data\SellerInterface $seller)
     {
         $this->applyAttributeSet($seller);
+
+        $this->resourceModel->beforeSave($seller);
         $seller = $this->entityManager->save($seller);
+        $this->resourceModel->afterSave($seller);
+
         unset($this->sellerRepositoryById[$seller->getId()]);
     }
 
     /**
      * Get info about seller by seller id
      *
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     *
      * @param int $sellerId The seller Id
      * @param int $storeId  The store Id
      *
      * @return \Smile\Seller\Api\Data\SellerInterface
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function get($sellerId, $storeId = null)
     {
@@ -96,6 +109,7 @@ class SellerRepository
             }
 
             $seller = $this->entityManager->load($sellerModel, $sellerId);
+            $this->resourceModel->afterLoad($sellerModel);
 
             if (!$seller->getId()) {
                 $exception = new NoSuchEntityException();
@@ -111,18 +125,21 @@ class SellerRepository
     /**
      * Delete seller
      *
-     * @param \Smile\Seller\Api\Data\SellerInterface $seller seller which will deleted
-     *
-     * @return bool Will returned True if deleted
      * @throws \Magento\Framework\Exception\InputException
      * @throws \Magento\Framework\Exception\StateException
      * @throws \Magento\Framework\Exception\NoSuchEntityException
+     *
+     * @param \Smile\Seller\Api\Data\SellerInterface $seller seller which will deleted
+     *
+     * @return bool Will returned True if deleted
      */
     public function delete(\Smile\Seller\Api\Data\SellerInterface $seller)
     {
         $sellerId = $seller->getId();
 
+        $this->resourceModel->beforeDelete($seller);
         $deleteResult = $this->entityManager->delete($seller);
+        $this->resourceModel->afterDelete($seller);
 
         if ($deleteResult && isset($this->sellerRepositoryById[$sellerId])) {
             unset($this->sellerRepositoryById[$sellerId]);
@@ -134,12 +151,13 @@ class SellerRepository
     /**
      * Delete seller by identifier
      *
-     * @param int $sellerId The seller id
-     *
-     * @return bool Will returned True if deleted
      * @throws \Magento\Framework\Exception\InputException
      * @throws \Magento\Framework\Exception\StateException
      * @throws \Magento\Framework\Exception\NoSuchEntityException
+     *
+     * @param int $sellerId The seller id
+     *
+     * @return bool Will returned True if deleted
      */
     public function deleteByIdentifier($sellerId)
     {

@@ -200,10 +200,14 @@ class Seller extends \Magento\Eav\Model\Entity\AbstractEntity
     {
         $this->_attributes = [];
         $this->loadAttributesMetadata($attributes);
+
         $object = $this->getEntityManager()->load($object, $entityId);
+
         if (!$this->getEntityManager()->has($object)) {
             $object->isObjectNew(true);
         }
+
+        $this->afterLoad($object);
 
         return $this;
     }
@@ -213,7 +217,9 @@ class Seller extends \Magento\Eav\Model\Entity\AbstractEntity
      */
     public function delete($object)
     {
+        $this->beforeDelete($object);
         $this->getEntityManager()->delete($object);
+        $this->afterDelete($object);
 
         return $this;
     }
@@ -229,7 +235,9 @@ class Seller extends \Magento\Eav\Model\Entity\AbstractEntity
      */
     public function save(\Magento\Framework\Model\AbstractModel $object)
     {
+        $this->beforeSave($object);
         $this->getEntityManager()->save($object);
+        $this->afterSave($object);
 
         return $this;
     }
