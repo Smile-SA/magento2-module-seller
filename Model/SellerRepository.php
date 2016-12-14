@@ -13,9 +13,8 @@
 namespace Smile\Seller\Model;
 
 use Magento\Framework\EntityManager\EntityManager;
-use Magento\Framework\Exception\NoSuchEntityException;
-use Smile\Seller\Api\SellerRepositoryInterface;
 use Smile\Seller\Api\Data\SellerInterfaceFactory;
+use Magento\Framework\Exception\NoSuchEntityException;
 
 /**
  * Seller Repository
@@ -24,7 +23,7 @@ use Smile\Seller\Api\Data\SellerInterfaceFactory;
  * @package  Smile\Seller
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class SellerRepository implements SellerRepositoryInterface
+class SellerRepository
 {
     /**
      * @var \Magento\Framework\EntityManager\EntityManager
@@ -34,7 +33,7 @@ class SellerRepository implements SellerRepositoryInterface
     /**
      * @var array
      */
-    private $sellerRepositoryById;
+    private $sellerRepositoryById = [];
 
     /**
      * @var array
@@ -49,16 +48,15 @@ class SellerRepository implements SellerRepositoryInterface
     /**
      * SellerRepository constructor.
      *
-     * @param EntityManager $entityManager    The entity manager
-     * @param SellerFactory $sellerFactory    The seller factory
-     * @param string|null   $attributeSetName The seller attribute Set Name, if any
+     * @param EntityManager          $entityManager    The entity manager
+     * @param SellerInterfaceFactory $sellerFactory    The seller factory
+     * @param string|null            $attributeSetName The seller attribute Set Name, if any
      *
      */
-    public function __construct(EntityManager $entityManager, SellerFactory $sellerFactory, $attributeSetName = null)
+    public function __construct(EntityManager $entityManager, $sellerFactory, $attributeSetName = null)
     {
         $this->entityManager          = $entityManager;
         $this->sellerFactory          = $sellerFactory;
-        $this->sellerRepositoryById   = [];
         $this->sellerAttributeSetName = $attributeSetName;
     }
 
