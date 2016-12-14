@@ -80,14 +80,6 @@ class SellerSetup extends EavSetup
                         'required' => false,
                         'sort_order' => 4,
                     ],
-                    'image' => [
-                        'type' => 'varchar',
-                        'label' => 'Image',
-                        'input' => 'image',
-                        // 'backend' => 'Magento\Catalog\Model\Category\Attribute\Backend\Image',
-                        'required' => false,
-                        'sort_order' => 5,
-                    ],
                     'meta_title' => [
                         'type' => 'varchar',
                         'label' => 'Page Title',
