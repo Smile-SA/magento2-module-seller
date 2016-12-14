@@ -65,11 +65,6 @@ class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements
     const KEY_SELLER_CODE = 'seller_code';
 
     /**
-     * The image path used to store seller image attributes.
-     */
-    const IMAGE_PATH = 'seller';
-
-    /**
      * Prefix of model events names.
      *
      * @var string
@@ -187,19 +182,6 @@ class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements
     /**
      * {@inheritDoc}
      */
-    public function getExtensionAttributes()
-    {
-        $extensionAttributes = $this->_getExtensionAttributes();
-        if (!$extensionAttributes) {
-            return $this->extensionAttributesFactory->create('Smile\Seller\Api\Data\SellerInterface');
-        }
-
-        return $extensionAttributes;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function setName($name)
     {
         $this->setData(self::KEY_NAME, $name);
@@ -240,37 +222,13 @@ class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements
     }
 
     /**
-     * {@inheritDoc}
-     */
-    public function setExtensionAttributes(\Smile\Seller\Api\Data\SellerExtensionInterface $extensionAttributes)
-    {
-        return $this->_setExtensionAttributes($extensionAttributes);
-    }
-
-    /**
-     * Retrieve Image URL for an attribute having image backend.
+     * Get default attribute source model
      *
-     * @param string $attributeCode The attributeCode
-     *
-     * @return bool|string
-     * @throws \Magento\Framework\Exception\LocalizedException
+     * @return string
      */
-    public function getImageAttributeUrl($attributeCode)
+    public function getDefaultAttributeSourceModel()
     {
-        $url = false;
-        $image = $this->getData($attributeCode);
-        if ($image) {
-            if (!is_string($image)) {
-                throw new \Magento\Framework\Exception\LocalizedException(
-                    __('Something went wrong while getting the image url.')
-                );
-            }
-
-            $url  = $this->storeManager->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA);
-            $url .= self::IMAGE_PATH . '/' . $image;
-        }
-
-        return $url;
+        return 'Magento\Eav\Model\Entity\Attribute\Source\Table';
     }
 
     /**
@@ -282,7 +240,7 @@ class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements
     {
         $attributesCodes = parent::getCustomAttributesCodes();
         $attributesCodes[] = 'name';
-
+        // @todo: implement better
         return $attributesCodes;
     }
 

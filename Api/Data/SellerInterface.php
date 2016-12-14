@@ -122,21 +122,4 @@ interface SellerInterface extends \Magento\Framework\Api\CustomAttributesDataInt
      * @return $this
      */
     public function setUpdatedAt($updatedAt);
-
-    /**
-     * Retrieve existing extension attributes object or create a new one.
-     *
-     * @return \Smile\Seller\Api\Data\SellerExtensionInterface|null
-     */
-    public function getExtensionAttributes();
-
-
-    /**
-     * Set an extension attributes object.
-     *
-     * @param \Smile\Seller\Api\Data\SellerExtensionInterface $extensionAttributes The additional attributes
-     *
-     * @return $this
-     */
-    public function setExtensionAttributes(\Smile\Seller\Api\Data\SellerExtensionInterface $extensionAttributes);
 }

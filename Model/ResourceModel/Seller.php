@@ -214,10 +214,6 @@ class Seller extends \Magento\Eav\Model\Entity\AbstractEntity
     public function delete($object)
     {
         $this->getEntityManager()->delete($object);
-        $this->eventManager->dispatch(
-            'catalog_category_delete_after_done',
-            ['product' => $object]
-        );
 
         return $this;
     }

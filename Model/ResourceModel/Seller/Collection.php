@@ -12,19 +12,8 @@
  */
 namespace Smile\Seller\Model\ResourceModel\Seller;
 
-use Magento\Eav\Model\Config;
 use Magento\Eav\Model\Entity\Collection\AbstractCollection;
-use Magento\Eav\Model\EntityFactory as EavEntityFactory;
-use Magento\Eav\Model\ResourceModel\Helper;
-use Magento\Framework\App\ResourceConnection;
-use Magento\Framework\Data\Collection\Db\FetchStrategyInterface;
-use Magento\Framework\Data\Collection\EntityFactory;
 use Magento\Framework\Data\CollectionDataSourceInterface;
-use Magento\Framework\DB\Adapter\AdapterInterface;
-use Magento\Framework\Event\ManagerInterface;
-use Magento\Framework\Validator\UniversalFactory;
-use Magento\Store\Model\StoreManagerInterface;
-use Psr\Log\LoggerInterface;
 
 /**
  * Sellers Collection
@@ -54,12 +43,12 @@ class Collection extends AbstractCollection implements CollectionDataSourceInter
     /**
      * @var null Attribute set id of the entity
      */
-    private $sellerAttributeSetId = null;
+    protected $sellerAttributeSetId = null;
 
     /**
      * @var null Attribute set name of the entity
      */
-    private $sellerAttributeSetName = null;
+    protected $sellerAttributeSetName = null;
 
     /**
      * Current scope (store Id)
@@ -91,20 +80,20 @@ class Collection extends AbstractCollection implements CollectionDataSourceInter
      * @param \Magento\Store\Model\StoreManagerInterface                   $storeManager     The Store Manager
      * @param \Magento\Framework\Validator\UniversalFactory                $universalFactory Universal Factory
      * @param \Magento\Framework\DB\Adapter\AdapterInterface|null          $connection       Database Connection
-     * @param null                                                         $attributeSetName Seller Attribute Set Name
+     * @param string|NULL                                                  $attributeSetName Seller Attribute Set Name
      */
     public function __construct(
-        EntityFactory $entityFactory,
-        LoggerInterface $logger,
-        FetchStrategyInterface $fetchStrategy,
-        ManagerInterface $eventManager,
-        Config $eavConfig,
-        ResourceConnection $resource,
-        EavEntityFactory $eavEntityFactory,
-        Helper $resourceHelper,
-        StoreManagerInterface $storeManager,
-        UniversalFactory $universalFactory,
-        AdapterInterface $connection = null,
+        \Magento\Framework\Data\Collection\EntityFactory $entityFactory,
+        \Psr\Log\LoggerInterface $logger,
+        \Magento\Framework\Data\Collection\Db\FetchStrategyInterface $fetchStrategy,
+        \Magento\Framework\Event\ManagerInterface $eventManager,
+        \Magento\Eav\Model\Config $eavConfig,
+        \Magento\Framework\App\ResourceConnection $resource,
+        \Magento\Eav\Model\EntityFactory $eavEntityFactory,
+        \Magento\Eav\Model\ResourceModel\Helper $resourceHelper,
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
+        \Magento\Framework\Validator\UniversalFactory $universalFactory,
+        \Magento\Framework\DB\Adapter\AdapterInterface $connection = null,
         $attributeSetName = null
     ) {
         $this->sellerAttributeSetName = $attributeSetName;
@@ -189,6 +178,7 @@ class Collection extends AbstractCollection implements CollectionDataSourceInter
     protected function _construct()
     {
         $this->_init('Smile\Seller\Model\Seller', 'Smile\Seller\Model\ResourceModel\Seller');
+
         if ($this->sellerAttributeSetId == null) {
             if ($this->sellerAttributeSetName !== null) {
                 $this->sellerAttributeSetId = $this->getResource()->getAttributeSetIdByName($this->sellerAttributeSetName);
