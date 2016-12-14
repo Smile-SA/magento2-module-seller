@@ -17,7 +17,6 @@ namespace Smile\Seller\Model\ResourceModel;
 use Magento\Framework\Model\Entity\ScopeInterface;
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 use Smile\Seller\Api\Data\SellerAttributeInterface;
-use Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface;
 
 /**
  * Seller Attributes Persistor
@@ -30,6 +29,8 @@ class AttributePersistor extends \Magento\Eav\Model\ResourceModel\AttributePersi
 {
     /**
      * Retrieve a scoped value for an attribute
+     *
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
      * @param \Magento\Framework\Model\Entity\ScopeInterface        $scope      The scope
      * @param \Magento\Eav\Model\Entity\Attribute\AbstractAttribute $attribute  The attribute

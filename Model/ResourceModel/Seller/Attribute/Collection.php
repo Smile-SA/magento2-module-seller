@@ -42,4 +42,14 @@ class Collection extends \Magento\Eav\Model\ResourceModel\Entity\Attribute\Colle
 
         return $this;
     }
+
+    /**
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     *
+     * {@inheritDoc}
+     */
+    protected function _construct()
+    {
+        $this->_init('Smile\Seller\Model\ResourceModel\Seller\Attribute', 'Magento\Eav\Model\ResourceModel\Entity\Attribute');
+    }
 }

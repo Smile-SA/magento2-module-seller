@@ -25,7 +25,7 @@ use Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface;
  * @package  Smile\Seller
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class Attribute extends \Magento\Eav\Model\Entity\Attribute implements SellerAttributeInterface, ScopedAttributeInterface//, \Serializable
+class Attribute extends \Magento\Eav\Model\Entity\Attribute implements SellerAttributeInterface, ScopedAttributeInterface
 {
     /**
      * Attributes shared between all entities
