@@ -12,25 +12,16 @@
  */
 namespace Smile\Seller\Ui\Component\Seller\Form;
 
-use Magento\Eav\Api\Data\AttributeInterface;
-use Magento\Eav\Model\Config;
-use Magento\Eav\Model\Entity\Type;
-use Magento\Framework\App\RequestInterface;
-use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Framework\Registry;
-use Magento\Store\Model\Store;
-use Magento\Store\Model\StoreManagerInterface;
-use Magento\Ui\Component\Form\Field;
 use Magento\Ui\DataProvider\AbstractDataProvider;
+use Magento\Store\Model\StoreManagerInterface;
 use Magento\Ui\DataProvider\EavValidationRules;
-use Smile\Seller\Api\Data\SellerAttributeInterface;
-use Smile\Seller\Api\Data\SellerInterface;
-use Smile\Seller\Api\SellerRepositoryInterface;
-use Smile\Seller\Model\ResourceModel\Seller\CollectionFactory as SellerCollectionFactory;
-use Smile\Seller\Model\Seller;
+use Magento\Eav\Api\Data\AttributeInterface;
 
 /**
  * Seller Data provider for adminhtml edit form
+ *
+ * @todo :
+ * - filter / disable fields when changing scope
  *
  * @category Smile
  * @package  Smile\Seller
@@ -39,24 +30,18 @@ use Smile\Seller\Model\Seller;
 class DataProvider extends AbstractDataProvider
 {
     /**
-     * @var array
-     */
-    private $loadedData;
-
-    /**
      * EAV attribute properties to fetch from meta storage
      *
      * @var array
      */
     private $metaProperties = [
-        'dataType'  => 'frontend_input',
-        'visible'   => 'is_visible',
-        'required'  => 'is_required',
-        'label'     => 'frontend_label',
-        'sortOrder' => 'sort_order',
-        'notice'    => 'note',
-        'default'   => 'default_value',
-        'size'      => 'multiline_count',
+        'formElement' => 'frontend_input',
+        'required'    => 'is_required',
+        'label'       => 'frontend_label',
+        'sortOrder'   => 'sort_order',
+        'notice'      => 'note',
+        'default'     => 'default_value',
+        'size'        => 'multiline_count',
     ];
 
     /**
@@ -70,36 +55,9 @@ class DataProvider extends AbstractDataProvider
     ];
 
     /**
-     * List of fields that should not be added into the form
-     *
-     * @var array
+     * @var mixed
      */
-    private $ignoreFields = [];
-
-    /**
-     * @var EavValidationRules
-     */
-    private $eavValidationRules;
-
-    /**
-     * @var Registry
-     */
-    private $registry;
-
-    /**
-     * @var RequestInterface
-     */
-    private $request;
-
-    /**
-     * @var Config
-     */
-    private $eavConfig;
-
-    /**
-     * @var SellerRepositoryInterface
-     */
-    private $sellerRepository;
+    private $collectionFactory;
 
     /**
      * @var StoreManagerInterface
@@ -107,93 +65,140 @@ class DataProvider extends AbstractDataProvider
     private $storeManager;
 
     /**
-     * Data Provider Request Scope Parameter Identifier name
-     *
-     * @var string
+     * @var EavValidationRules
      */
-    private $requestScopeFieldName = 'store';
+    private $eavValidationRules;
 
     /**
-     * DataProvider constructor
+     * @var FieldMapper
+     */
+    private $fieldMapper;
+
+    /**
      *
-     * @param string                    $name                    Component Name
-     * @param string                    $primaryFieldName        Primary Field Name
-     * @param string                    $requestFieldName        Request Field Name
-     * @param EavValidationRules        $eavValidationRules      EAV Validation Rules
-     * @param SellerCollectionFactory   $sellerCollectionFactory Seller Collection Factory
-     * @param StoreManagerInterface     $storeManager            Store Manager Interface
-     * @param Registry                  $registry                The Registry
-     * @param Config                    $eavConfig               EAV Configuration
-     * @param RequestInterface          $request                 The Request
-     * @param SellerRepositoryInterface $sellerRepository        The Seller Repository
-     * @param array                     $meta                    Component Metadata
-     * @param array                     $data                    Component Data
-     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     * @param string                $name               DataProvider name.
+     * @param string                $primaryFieldName   Database primary key field.
+     * @param string                $requestFieldName   Request identifier field.
+     * @param mixed                 $collectionFactory  Item collection factory.
+     * @param StoreManagerInterface $storeManager       Store manager.
+     * @param EavValidationRules    $eavValidationRules Validation rules
+     * @param FieldMapper           $fieldMapper        Field mapper.
+     * @param array                 $meta               Default meta.
+     * @param array                 $data               Default data.
      */
     public function __construct(
         $name,
         $primaryFieldName,
         $requestFieldName,
-        EavValidationRules $eavValidationRules,
-        SellerCollectionFactory $sellerCollectionFactory,
+        $collectionFactory,
         StoreManagerInterface $storeManager,
-        Registry $registry,
-        Config $eavConfig,
-        RequestInterface $request,
-        SellerRepositoryInterface $sellerRepository,
+        EavValidationRules $eavValidationRules,
+        FieldMapper $fieldMapper,
         array $meta = [],
         array $data = []
     ) {
-        $this->eavValidationRules = $eavValidationRules;
-
-        $this->collection = $sellerCollectionFactory->create();
-
-        $this->eavConfig = $eavConfig;
-        $this->registry = $registry;
-        $this->request = $request;
-        $this->sellerRepository = $sellerRepository;
-        $this->storeManager = $storeManager;
-
         parent::__construct($name, $primaryFieldName, $requestFieldName, $meta, $data);
 
-        $this->meta = $this->prepareMeta($this->meta);
+        $this->collectionFactory    = $collectionFactory;
+        $this->storeManager         = $storeManager;
+        $this->eavValidationRules   = $eavValidationRules;
+        $this->fieldMapper          = $fieldMapper;
+        $this->meta                 = $this->prepareMeta($meta);
     }
 
     /**
-     * Get Component data
-     *
-     * @return array
+     * {@inheritDoc}
      */
     public function getData()
     {
-        if (isset($this->loadedData)) {
-            return $this->loadedData;
+        $data = parent::getData();
+
+        return $data;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getCollection()
+    {
+        if ($this->collection === null) {
+            $this->collection = $this->collectionFactory->create();
+            $this->collection->addAttributeToSelect('*');
         }
 
-        $seller = $this->getCurrentSeller();
+        return $this->collection;
+    }
 
-        if ($seller) {
-            $sellerData = $seller->getData();
-            $sellerData = $this->filterFields($sellerData);
+    /**
+     * Get default scope label.
+     *
+     * @return \Magento\Framework\Phrase
+     */
+    public function getDefaultScopeLabel()
+    {
+        return __('[GLOBAL]');
+    }
 
-            // Parse Image attributes Data.
-            foreach ($this->eavConfig->getEntityAttributeCodes(SellerInterface::ENTITY) as $code) {
-                $attribute = $this->eavConfig->getAttribute(SellerInterface::ENTITY, $code);
-                if ($attribute->getFrontendInput() === 'image') {
-                    if (isset($sellerData[$code])) {
-                        unset($sellerData[$code]);
-                        $sellerData[$code][0]['name'] = $seller->getData($code);
-                        $sellerData[$code][0]['url']  = $seller->getImageAttributeUrl($code);
-                    }
+    /**
+     * Prepare meta data.
+     *
+     * @param array $meta The meta data.
+     *
+     * @return array
+     */
+    private function prepareMeta($meta)
+    {
+        $meta = array_replace_recursive($meta, $this->prepareFieldsMeta($this->getFieldsMap(), $this->getAttributesMeta()));
+
+        return $meta;
+    }
+
+    /**
+     * Get attributes meta.
+     *
+     * @throws \Magento\Framework\Exception\LocalizedException
+     *
+     * @return array
+     */
+    private function getAttributesMeta()
+    {
+        $meta   = [];
+
+        foreach ($this->getAttributes()->getItems() as $attribute) {
+            $code = $attribute->getAttributeCode();
+            foreach ($this->metaProperties as $metaName => $origName) {
+                $value = $attribute->getDataUsingMethod($origName);
+
+                $meta[$code][$metaName] = $value;
+
+                if ('frontend_input' === $origName) {
+                    $meta[$code]['formElement'] = isset($this->formElement[$value]) ? $this->formElement[$value] : $value;
+                }
+                if ($attribute->usesSource()) {
+                    $meta[$code]['options'] = $attribute->getSource()->getAllOptions();
                 }
             }
 
-            if (!empty($sellerData)) {
-                $this->loadedData[$seller->getId()] = $sellerData;
+            $rules = $this->eavValidationRules->build($attribute, $meta[$code]);
+            if (!empty($rules)) {
+                $meta[$code]['validation'] = $rules;
             }
+
+            $meta[$code]['scopeLabel']    = $this->getScopeLabel($attribute);
+            $meta[$code]['componentType'] = \Magento\Ui\Component\Form\Field::NAME;
         }
 
-        return $this->loadedData;
+        return $meta;
+    }
+
+    /**
+     * List of EAV attributes of the current model.
+     *
+     * @return \Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection
+     */
+    private function getAttributes()
+    {
+        return $this->fieldMapper->getAttributesCollection();
     }
 
     /**
@@ -201,11 +206,11 @@ class DataProvider extends AbstractDataProvider
      *
      * GLOBAL | WEBSITE | STORE
      *
-     * @param SellerAttributeInterface $attribute The attribute
+     * @param mixed $attribute The attribute.
      *
      * @return string
      */
-    private function getScopeLabel(SellerAttributeInterface $attribute)
+    private function getScopeLabel($attribute)
     {
         $html = '';
         if (!$attribute || $this->storeManager->isSingleStoreMode()
@@ -226,124 +231,13 @@ class DataProvider extends AbstractDataProvider
     }
 
     /**
-     * Prepare meta data
+     * Field map by fielset code.
      *
-     * @param array $meta The meta data
-     *
-     * @return array
-     */
-    private function prepareMeta($meta)
-    {
-        $meta = array_replace_recursive(
-            $meta,
-            $this->prepareFieldsMeta(
-                $this->getFieldsMap(),
-                $this->getAttributesMeta($this->eavConfig->getEntityType(SellerInterface::ENTITY))
-            )
-        );
-
-        return $meta;
-    }
-
-    /**
-     * Get attributes meta
-     *
-     * @param Type $entityType The entity type
-     *
-     * @return array
-     * @throws \Magento\Framework\Exception\LocalizedException
-     */
-    private function getAttributesMeta(Type $entityType)
-    {
-        $meta = [];
-        $attributes = $entityType->getAttributeCollection();
-
-        /* @var \Smile\Seller\Model\ResourceModel\Seller\Attribute $attribute */
-        foreach ($attributes as $attribute) {
-            $code = $attribute->getAttributeCode();
-            // Use getDataUsingMethod, since some getters are defined and apply additional processing of returning value.
-            foreach ($this->metaProperties as $metaName => $origName) {
-                $value = $attribute->getDataUsingMethod($origName);
-                $meta[$code][$metaName] = $value;
-
-                if ('frontend_input' === $origName) {
-                    $meta[$code]['formElement'] = isset($this->formElement[$value]) ? $this->formElement[$value] : $value;
-                }
-
-                if ($attribute->usesSource()) {
-                    $meta[$code]['options'] = $attribute->getSource()->getAllOptions();
-                }
-            }
-
-            $rules = $this->eavValidationRules->build($attribute, $meta[$code]);
-            if (!empty($rules)) {
-                $meta[$code]['validation'] = $rules;
-            }
-
-            $meta[$code]['scopeLabel'] = $this->getScopeLabel($attribute);
-            $meta[$code]['componentType'] = Field::NAME;
-        }
-
-        $result = [];
-        foreach ($meta as $key => $item) {
-            $result[$key] = $item;
-            $result[$key]['sortOrder'] = 0;
-        }
-
-        return $result;
-    }
-
-    /**
-     * Get current seller
-     *
-     * @return Seller
-     * @throws NoSuchEntityException
-     */
-    private function getCurrentSeller()
-    {
-        $seller = $this->registry->registry('current_seller');
-        if ($seller) {
-            return $seller;
-        }
-
-        $requestId    = $this->request->getParam($this->requestFieldName);
-        $requestScope = $this->request->getParam($this->requestScopeFieldName, Store::DEFAULT_STORE_ID);
-
-        if ($requestId) {
-            $seller = $this->sellerRepository->get($requestId, $requestScope);
-        }
-
-        if (!$seller || !$seller->getId()) {
-            $seller = $this->collection->getNewEmptyItem();
-        }
-
-        return $seller;
-    }
-
-    /**
-     * Filter fields
-     *
-     * @param array $sellerData The seller data
-     *
-     * @return array
-     */
-    private function filterFields($sellerData)
-    {
-        return array_diff_key($sellerData, array_flip($this->ignoreFields));
-    }
-
-    /**
      * @return array
      */
     private function getFieldsMap()
     {
-        return [
-            'general' => [
-                'seller_code',
-                'name',
-                'is_active',
-            ],
-        ];
+        return $this->fieldMapper->getFieldsMap();
     }
 
     /**
@@ -356,9 +250,20 @@ class DataProvider extends AbstractDataProvider
      */
     private function prepareFieldsMeta($fieldsMap, $fieldsMeta)
     {
-        $result = [];
+        $result    = [];
+        $fieldsets = $this->fieldMapper->getFieldsets();
+
         foreach ($fieldsMap as $fieldSet => $fields) {
             foreach ($fields as $field) {
+                if (!isset($result[$fieldSet])) {
+                    $result[$fieldSet]['arguments']['data']['config'] = [
+                        'componentType' => \Magento\Ui\Component\Form\Fieldset::NAME,
+                        'label'         => $fieldsets[$fieldSet]['name'],
+                        'sortOrder'     => $fieldsets[$fieldSet]['sortOrder'],
+                        'collapsible'   => true,
+                    ];
+                }
+
                 if (isset($fieldsMeta[$field])) {
                     $result[$fieldSet]['children'][$field]['arguments']['data']['config'] = $fieldsMeta[$field];
                 }
