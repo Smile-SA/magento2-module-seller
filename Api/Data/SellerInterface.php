@@ -122,4 +122,11 @@ interface SellerInterface extends \Magento\Framework\Api\CustomAttributesDataInt
      * @return $this
      */
     public function setUpdatedAt($updatedAt);
+
+    /**
+     * Retrieve AttributeSetName
+     *
+     * @return string
+     */
+    public function getAttributeSetName();
 }

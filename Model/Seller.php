@@ -232,6 +232,16 @@ class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements
     }
 
     /**
+     * Retrieve AttributeSetName
+     *
+     * @return string
+     */
+    public function getAttributeSetName()
+    {
+        return 'Default';
+    }
+
+    /**
      * Retrieve custom attributes codes list
      *
      * @return array
