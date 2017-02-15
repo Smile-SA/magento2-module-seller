@@ -19,6 +19,8 @@
 
     <preference for="Smile\Seller\Api\Data\SellerAttributeInterface" type="Smile\Seller\Model\ResourceModel\Seller\Attribute" />
 
+    <preference for="Smile\Seller\Api\AttributeRepositoryInterface" type="Smile\Seller\Model\Seller\Attribute\Repository" />
+
     <virtualType name="Smile\Seller\Model\Entity\CreationScopeResolver" type="Magento\Framework\Model\Entity\ScopeResolver">
         <arguments>
             <argument name="metadataPool" xsi:type="object">Smile\Seller\EntityCreator\MetadataPool</argument>

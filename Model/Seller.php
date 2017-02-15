@@ -21,6 +21,7 @@ use Magento\Framework\Model\Context;
 use Magento\Framework\Model\ResourceModel\AbstractResource;
 use Magento\Framework\Registry;
 use Magento\Store\Model\StoreManagerInterface;
+use Smile\Seller\Api\AttributeRepositoryInterface;
 use Smile\Seller\Api\Data\SellerInterface;
 
 /**
@@ -86,6 +87,16 @@ class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements
     protected $_cacheTag = self::CACHE_TAG;
 
     /**
+     * @var string[]
+     */
+    protected $customAttributesCodes = null;
+
+    /**
+     * @var \Smile\Seller\Api\AttributeRepositoryInterface
+     */
+    private $metadataService;
+
+    /**
      * Attributes are that part of interface
      *
      * @var array
@@ -112,6 +123,7 @@ class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements
      * @param \Magento\Framework\Api\ExtensionAttributesFactory       $extensionFactory       Extension Attributes Factory
      * @param \Magento\Framework\Api\AttributeValueFactory            $customAttributeFactory Custom Attributes Factory
      * @param \Magento\Store\Model\StoreManagerInterface              $storeManager           Store Manager
+     * @param \Smile\Seller\Api\AttributeRepositoryInterface          $metadataService        Metadata Service
      * @param \Magento\Framework\Model\ResourceModel\AbstractResource $resource               Resource Model
      * @param \Magento\Framework\Data\Collection\AbstractDb           $resourceCollection     Resource Collection
      * @param array                                                   $data                   Model Data
@@ -122,11 +134,13 @@ class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements
         ExtensionAttributesFactory $extensionFactory,
         AttributeValueFactory $customAttributeFactory,
         StoreManagerInterface $storeManager,
+        AttributeRepositoryInterface $metadataService,
         AbstractResource $resource = null,
         AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         $this->storeManager = $storeManager;
+        $this->metadataService = $metadataService;
 
         parent::__construct(
             $context,
@@ -248,10 +262,12 @@ class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements
      */
     protected function getCustomAttributesCodes()
     {
-        $attributesCodes = parent::getCustomAttributesCodes();
-        $attributesCodes[] = 'name';
-        // @todo: implement better
-        return $attributesCodes;
+        if ($this->customAttributesCodes === null) {
+            $this->customAttributesCodes = $this->getEavAttributesCodes($this->metadataService);
+            $this->customAttributesCodes = array_diff($this->customAttributesCodes, $this->interfaceAttributes);
+        }
+
+        return $this->customAttributesCodes;
     }
 
     /**
