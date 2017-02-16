@@ -19,6 +19,7 @@ use Magento\Framework\Data\CollectionDataSourceInterface;
  * Sellers Collection
  *
  * @SuppressWarnings(PHPMD.CamelCasePropertyName) The properties are inherited
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects) The parent class had already too much coupling.
  *
  * @category Smile
  * @package  Smile\Seller

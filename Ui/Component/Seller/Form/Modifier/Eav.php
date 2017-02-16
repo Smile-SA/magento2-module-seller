@@ -92,6 +92,16 @@ class Eav implements ModifierInterface
         'boolean' => 'checkbox',
     ];
 
+    /**
+     * Eav constructor.
+     *
+     * @param \Smile\Seller\Model\Locator\LocatorInterface              $locator                      Locator
+     * @param \Smile\Seller\Model\Seller\Attribute\ScopeOverriddenValue $scopeOverriddenValue         Scope Overriden Value checker
+     * @param \Magento\Store\Model\StoreManagerInterface                $storeManagerInterface        Store Manager
+     * @param \Smile\Seller\Api\AttributeRepositoryInterface            $attributeRepositoryInterface Attributes Repository
+     * @param \Magento\Ui\DataProvider\EavValidationRules               $eavValidationRules           EAV Validation rules
+     * @param \Smile\Seller\Ui\Component\Seller\Form\FieldMapper        $fieldMapper                  Field Mapper
+     */
     public function __construct(
         LocatorInterface $locator,
         ScopeOverriddenValue $scopeOverriddenValue,
