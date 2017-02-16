@@ -27,7 +27,7 @@ interface AttributeRepositoryInterface extends \Magento\Framework\Api\MetadataSe
      *
      * @param \Magento\Framework\Api\SearchCriteriaInterface $searchCriteria Search Criteria
      *
-     * @return \Magento\Catalog\Api\Data\CategoryAttributeSearchResultsInterface
+     * @return \Magento\Eav\Api\Data\AttributeSearchResultsInterface
      */
     public function getList(\Magento\Framework\Api\SearchCriteriaInterface $searchCriteria);
 
@@ -36,7 +36,7 @@ interface AttributeRepositoryInterface extends \Magento\Framework\Api\MetadataSe
      *
      * @param string $attributeCode The attribute code
      *
-     * @return \Magento\Catalog\Api\Data\CategoryAttributeInterface
+     * @return \Smile\Seller\Api\Data\SellerAttributeInterface
      */
     public function get($attributeCode);
 }
