@@ -1,0 +1,28 @@
+// /**
+//  * DISCLAIMER
+//  *
+//  * Do not edit or add to this file if you wish to upgrade this module to newer
+//  * versions in the future.
+//  *
+//  *
+//  * @category  Smile
+//  * @package   Smile\Seller
+//  * @author    Romain Ruaud <romain.ruaud@smile.fr>
+//  * @copyright 2017 Smile
+//  * @license   Open Software License ("OSL") v. 3.0
+//  */
+
+@retailersuite-icons-admin__font-name-path: '@{baseDir}fonts/retailersuite/retailersuite';
+@retailersuite-icons-admin__font-name : 'retailersuite';
+
+.lib-font-face(
+    @family-name:@retailersuite-icons-admin__font-name,
+    @font-path: @retailersuite-icons-admin__font-name-path,
+    @font-weight: normal,
+    @font-style: normal
+);
+
+.admin__menu .item-sellers.parent.level-0 > a:before {
+    font-family: @retailersuite-icons-admin__font-name;
+    content: "\e900";
+}

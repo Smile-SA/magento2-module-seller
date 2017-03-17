@@ -1,6 +1,6 @@
 {
     "name": "smile/module-seller",
-    "type": "magento2-module",
+    "type": "magento2-component",
     "description": "Smile Retailer Suite - Seller Module",
     "keywords": ["magento2","retailer suite","retailer","shop","seller"],
     "repositories": [
@@ -37,6 +37,14 @@
         "psr-4": {
             "Smile\\Seller\\" : ""
         }
+    },
+    "extra": {
+        "map": [
+            [
+                "lib/web/fonts/retailersuite",
+                "lib/web/fonts/retailersuite"
+            ]
+        ]
     },
     "minimum-stability": "dev",
     "prefer-stable": true
