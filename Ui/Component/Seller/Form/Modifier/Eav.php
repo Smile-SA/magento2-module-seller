@@ -93,6 +93,14 @@ class Eav implements ModifierInterface
     ];
 
     /**
+     * @var array
+     */
+    private $validationRules = [
+        'email' => ['validate-email' => true],
+        'date'  => ['validate-date'  => true],
+    ];
+
+    /**
      * Eav constructor.
      *
      * @param \Smile\Seller\Model\Locator\LocatorInterface              $locator                      Locator
@@ -152,6 +160,7 @@ class Eav implements ModifierInterface
     {
         $meta = [];
 
+        /** @var SellerAttributeInterface $attribute */
         foreach ($this->getAttributes()->getItems() as $attribute) {
             $code = $attribute->getAttributeCode();
 
@@ -169,10 +178,15 @@ class Eav implements ModifierInterface
             }
 
             $rules = $this->eavValidationRules->build($attribute, $meta[$code]);
+            if ($attribute->getFrontendInput() && isset($this->validationRules[$attribute->getFrontendInput()])) {
+                $rules = array_merge($rules, $this->validationRules[$attribute->getFrontendInput()]);
+            }
+
             if (!empty($rules)) {
                 $meta[$code]['validation'] = $rules;
             }
 
+            $meta[$code] += $this->customizeCheckbox($attribute);
             $meta[$code]['componentType'] = \Magento\Ui\Component\Form\Field::NAME;
             $meta[$code] += $this->addUseDefaultValueCheckbox($attribute);
             $meta[$code]['scopeLabel'] = $this->getScopeLabel($attribute);
@@ -310,5 +324,27 @@ class Eav implements ModifierInterface
             && $seller->getId()
             && $seller->getStoreId()
         );
+    }
+
+    /**
+     * Customize checkboxes
+     *
+     * @param SellerAttributeInterface $attribute The attribute
+     *
+     * @return array
+     */
+    private function customizeCheckbox(SellerAttributeInterface $attribute)
+    {
+        $meta = [];
+
+        if ($attribute->getFrontendInput() === 'boolean') {
+            $meta['prefer'] = 'toggle';
+            $meta['valueMap'] = [
+                'true' => '1',
+                'false' => '0',
+            ];
+        }
+
+        return $meta;
     }
 }
