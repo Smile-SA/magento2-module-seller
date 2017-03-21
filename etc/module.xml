@@ -17,6 +17,9 @@
     <module name="Smile_Seller" setup_version="1.0.0">
         <sequence>
             <module name="Magento_Eav" />
+            <!-- Mandatory to ensure creation of new Entity types is processed
+                 after native Magento ones which are using hardcoded entity_type_id -->
+            <module name="Magento_Catalog" />
         </sequence>
     </module>
 </config>
