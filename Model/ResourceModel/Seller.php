@@ -273,4 +273,22 @@ class Seller extends \Magento\Eav\Model\Entity\AbstractEntity
         $this->loadAllAttributes($object);
         parent::beforeSave($object);
     }
+
+    /**
+     * Get Seller identifier by code
+     *
+     * @param string $code The Seller Code
+     *
+     * @return int|false
+     */
+    public function getIdByCode($code)
+    {
+        $connection = $this->getConnection();
+
+        $select = $connection->select()->from($this->getEntityTable(), 'entity_id')->where('seller_code = :seller_code');
+
+        $bind = [':seller_code' => (string) $code];
+
+        return $connection->fetchOne($select, $bind);
+    }
 }

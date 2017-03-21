@@ -123,6 +123,27 @@ class SellerRepository
     }
 
     /**
+     * Retrieve seller by seller code
+     *
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     *
+     * @param int $sellerCode The seller Code
+     * @param int $storeId    The store Id
+     *
+     * @return \Smile\Seller\Api\Data\SellerInterface
+     */
+    public function getByCode($sellerCode, $storeId = null)
+    {
+        $sellerId = $this->resourceModel->getIdByCode($sellerCode);
+
+        if (!$sellerId) {
+            throw new NoSuchEntityException(__('Requested seller doesn\'t exist'));
+        }
+
+        return $this->get($sellerId, $storeId);
+    }
+
+    /**
      * Delete seller
      *
      * @throws \Magento\Framework\Exception\InputException
