@@ -21,13 +21,5 @@
              module="Smile_Seller"
              sortOrder="35"
              resource="Smile_Seller::sellers"/>
-
-        <!-- Manage Sellers -->
-        <add id="Smile_Seller::sellers_menu"
-             title="Sellers"
-             module="Smile_Seller"
-             sortOrder="20"
-             parent="Smile_Seller::sellers"
-             resource="Smile_Seller::seller_menu"/>
     </menu>
 </config>
