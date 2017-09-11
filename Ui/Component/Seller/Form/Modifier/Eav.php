@@ -168,7 +168,6 @@ class Eav implements ModifierInterface
                 $value = $attribute->getDataUsingMethod($origName);
 
                 $meta[$code][$metaName] = $value;
-
                 if ('frontend_input' === $origName) {
                     $meta[$code]['formElement'] = isset($this->formElement[$value]) ? $this->formElement[$value] : $value;
                 }
@@ -186,6 +185,7 @@ class Eav implements ModifierInterface
                 $meta[$code]['validation'] = $rules;
             }
 
+            $meta[$code]['label'] = __($meta[$code]['label']);
             $meta[$code] += $this->customizeCheckbox($attribute);
             $meta[$code]['componentType'] = \Magento\Ui\Component\Form\Field::NAME;
             $meta[$code] += $this->addUseDefaultValueCheckbox($attribute);
@@ -233,7 +233,7 @@ class Eav implements ModifierInterface
                 if (!isset($result[$fieldSet])) {
                     $result[$fieldSet]['arguments']['data']['config'] = [
                         'componentType' => \Magento\Ui\Component\Form\Fieldset::NAME,
-                        'label'         => $fieldsets[$fieldSet]['name'],
+                        'label'         => __($fieldsets[$fieldSet]['name']),
                         'sortOrder'     => $fieldsets[$fieldSet]['sortOrder'],
                         'collapsible'   => true,
                     ];
