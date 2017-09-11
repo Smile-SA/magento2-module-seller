@@ -17,6 +17,7 @@ namespace Smile\Seller\Model;
 use Magento\Framework\Api\AttributeValueFactory;
 use Magento\Framework\Api\ExtensionAttributesFactory;
 use Magento\Framework\Data\Collection\AbstractDb;
+use Magento\Framework\DataObject\IdentityInterface;
 use Magento\Framework\Model\Context;
 use Magento\Framework\Model\ResourceModel\AbstractResource;
 use Magento\Framework\Registry;
@@ -33,7 +34,7 @@ use Smile\Seller\Api\Data\SellerInterface;
  * @package  Smile\Seller
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements SellerInterface
+class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements SellerInterface, IdentityInterface
 {
     /**
      * Default cache tag
@@ -253,6 +254,19 @@ class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements
     public function getAttributeSetName()
     {
         return 'Default';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getIdentities()
+    {
+        $identities = [self::CACHE_TAG . '_' . $this->getId()];
+        if ($this->_appState->getAreaCode() == \Magento\Framework\App\Area::AREA_FRONTEND) {
+            $identities[] = self::CACHE_TAG;
+        }
+
+        return array_unique($identities);
     }
 
     /**
