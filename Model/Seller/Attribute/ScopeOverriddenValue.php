@@ -151,7 +151,7 @@ class ScopeOverriddenValue
         );
 
         return array_filter($searchResult->getItems(), function ($item) {
-            return !$item->isScopeGlobal();
+            return method_exists($item, 'isScopeGlobal') ? !$item->isScopeGlobal() : false;
         });
     }
 }
