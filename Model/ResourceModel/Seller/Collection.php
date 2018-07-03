@@ -272,7 +272,8 @@ class Collection extends AbstractCollection implements CollectionDataSourceInter
 
         $connection = $this->getConnection();
 
-        if ($storeId != $this->getDefaultStoreId() && !$attribute->isScopeGlobal()) {
+        $scopeGlobal = method_exists($attribute, 'isScopeGlobal') ? $attribute->isScopeGlobal() : false;
+        if ($storeId != $this->getDefaultStoreId() && !$scopeGlobal) {
             /**
              * Add joining default value for not default store
              * if value for store is null - we use default value
