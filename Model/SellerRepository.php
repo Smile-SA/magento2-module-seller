@@ -15,6 +15,7 @@ namespace Smile\Seller\Model;
 use Magento\Framework\EntityManager\EntityManager;
 use Smile\Seller\Api\Data\SellerInterfaceFactory;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Smile\Seller\Api\SellerRepositoryInterface;
 use Smile\Seller\Model\ResourceModel\Seller as ResourceModel;
 
 /**
@@ -24,7 +25,7 @@ use Smile\Seller\Model\ResourceModel\Seller as ResourceModel;
  * @package  Smile\Seller
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class SellerRepository
+class SellerRepository implements SellerRepositoryInterface
 {
     /**
      * @var \Magento\Framework\EntityManager\EntityManager
@@ -60,7 +61,7 @@ class SellerRepository
      * @param string|null            $attributeSetName The seller attribute Set Name, if any.
      *
      */
-    public function __construct(EntityManager $entityManager, ResourceModel $resourceModel, $sellerFactory, $attributeSetName = null)
+    public function __construct(EntityManager $entityManager, ResourceModel $resourceModel, SellerInterfaceFactory $sellerFactory, $attributeSetName = null)
     {
         $this->entityManager          = $entityManager;
         $this->resourceModel          = $resourceModel;
