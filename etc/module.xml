@@ -20,6 +20,7 @@
             <!-- Mandatory to ensure creation of new Entity types is processed
                  after native Magento ones which are using hardcoded entity_type_id -->
             <module name="Magento_Catalog" />
+            <module name="Magento_Sales" />
         </sequence>
     </module>
 </config>
