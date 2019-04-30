@@ -1,14 +1,8 @@
 ## Smile Seller
 
-This module is a plugin for [ElasticSuite](https://github.com/Smile-SA/elasticsuite).
-
 It allows to add sellers.
 
 ### Requirements
-
-The module requires :
-
-- [ElasticSuite](https://github.com/Smile-SA/elasticsuite) > 2.1.*
 
 ### How to use
 
