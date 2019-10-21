@@ -109,6 +109,7 @@ class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements
         self::KEY_UPDATED_AT,
         self::KEY_CREATED_AT,
         self::KEY_SELLER_CODE,
+        self::MEDIA_PATH,
     ];
 
     /**
@@ -290,5 +291,21 @@ class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements
     protected function _construct()
     {
         $this->_init('Smile\Seller\Model\ResourceModel\Seller');
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getMediaPath()
+    {
+        return $this->getData(self::MEDIA_PATH);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setMediaPath($path)
+    {
+        return $this->setData(self::MEDIA_PATH, $path);
     }
 }

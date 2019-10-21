@@ -28,6 +28,11 @@ interface SellerInterface extends \Magento\Framework\Api\CustomAttributesDataInt
     const ENTITY = 'smile_seller';
 
     /**
+     * The seller media_path field
+     */
+    const MEDIA_PATH  = 'image';
+
+    /**
      * Get Seller Id
      *
      * @return int|null
@@ -129,4 +134,19 @@ interface SellerInterface extends \Magento\Framework\Api\CustomAttributesDataInt
      * @return string
      */
     public function getAttributeSetName();
+
+    /**
+     * Get Image name
+     *
+     * @return string
+     */
+    public function getMediaPath();
+
+    /**
+     * Set Image name
+     *
+     * @return string
+     */
+
+    public function setMediaPath($path);
 }
