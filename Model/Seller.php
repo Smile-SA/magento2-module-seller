@@ -199,9 +199,7 @@ class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements
      */
     public function setName($name)
     {
-        $this->setData(self::KEY_NAME, $name);
-
-        return $this;
+        return $this->setData(self::KEY_NAME, $name);
     }
 
     /**
@@ -209,7 +207,7 @@ class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements
      */
     public function setSellerCode($sellerCode)
     {
-        $this->setData(self::KEY_SELLER_CODE, $sellerCode);
+        return $this->setData(self::KEY_SELLER_CODE, $sellerCode);
     }
 
     /**
