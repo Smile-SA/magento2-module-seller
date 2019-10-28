@@ -23,7 +23,7 @@ use Magento\Framework\Filesystem\Directory\WriteInterface;
 use Smile\Seller\Api\Data\SellerInterface;
 
 /**
- * PromotionMediaUpload Model
+ * SellerMediaUpload Model
  *
  * @category Smile
  * @package  Smile\RetailerPromotion
@@ -60,7 +60,7 @@ class SellerMediaUpload
     protected $mediaDirectory;
 
     /**
-     * PromotionMediaUpload constructor.
+     * SellerMediaUpload constructor.
      *
      * @param ImageUploader $imageUploader           Image uploader
      * @param DirectoryList $directoryList           Directory List.

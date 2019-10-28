@@ -5,9 +5,9 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile\StoreLocator
- * @author    Romain Ruaud <romain.ruaud@smile.fr>
- * @copyright 2017 Smile
+ * @package   Smile\Seller
+ * @author    Ihor KVASNYTSKYI <ihor.kvasnytskyi@smile-ukraine.com>
+ * @copyright 2019 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\Seller\Setup;
@@ -21,8 +21,8 @@ use Magento\Eav\Setup\EavSetupFactory;
  * Data Upgrade for Seller
  *
  * @category Smile
- * @package  Smile\StoreLocator
- * @author   Romain Ruaud <romain.ruaud@smile.fr>
+ * @package  Smile\Seller
+ * @author   Ihor KVASNYTSKYI <ihor.kvasnytskyi@smile-ukraine.com>
  */
 class UpgradeData implements UpgradeDataInterface
 {
