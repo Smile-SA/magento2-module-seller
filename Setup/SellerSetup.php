@@ -16,6 +16,7 @@ namespace Smile\Seller\Setup;
 
 use Magento\Eav\Setup\EavSetup;
 use Smile\Seller\Api\Data\SellerInterface;
+use Smile\Retailer\Api\Data\RetailerInterface;
 
 /**
  * Seller Setup class : contains EAV Attributes declarations.
@@ -101,8 +102,46 @@ class SellerSetup extends EavSetup
                         'required' => false,
                         'sort_order' => 8,
                     ],
+                    // new
+                    'image' => [
+                        'type' => 'varchar',
+                        'label' => 'Media',
+                        'backend_model' => 'Magento\Catalog\Model\Category\Attribute\Backend\Image',
+                        'frontend_input' => 'image',
+                        'required' => false,
+                        'sort_order' => 17,
+                    ],
                 ],
             ],
         ];
+    }
+
+    /**
+     * Add image attribute to Retailers
+     *
+     * @param \Magento\Eav\Setup\EavSetup $eavSetup EAV module Setup
+     */
+    public function addImage($eavSetup)
+    {
+        $entityId  = SellerInterface::ENTITY;
+        $attrSetId = RetailerInterface::ATTRIBUTE_SET_RETAILER;
+        $groupId   = 'General';
+
+        $eavSetup->addAttribute(
+            SellerInterface::ENTITY,
+            'image',
+            [
+                'type'         => 'varchar',
+                'label'        => 'Media',
+                'input'        => 'image',
+                'required'     => false,
+                'user_defined' => true,
+                'sort_order'   => 17,
+                'backend_model' => 'Magento\Catalog\Model\Category\Attribute\Backend\Image',
+                'global'       => \Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface::SCOPE_GLOBAL,
+            ]
+        );
+
+        $eavSetup->addAttributeToGroup($entityId, $attrSetId, $groupId, 'image', 50);
     }
 }
