@@ -16,6 +16,7 @@ namespace Smile\Seller\Setup;
 
 use Magento\Eav\Setup\EavSetup;
 use Smile\Seller\Api\Data\SellerInterface;
+use Smile\Retailer\Api\Data\RetailerInterface;
 
 /**
  * Seller Setup class : contains EAV Attributes declarations.

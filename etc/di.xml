@@ -43,4 +43,31 @@
         </arguments>
     </virtualType>
 
+    <!-- VIRTUALTYPES -->
+    <virtualType name="Smile\Seller\SellerImageUpload" type="Magento\Catalog\Model\ImageUploader">
+        <arguments>
+            <argument name="baseTmpPath" xsi:type="string">seller</argument>
+            <argument name="basePath" xsi:type="string">seller</argument>
+            <argument name="allowedExtensions" xsi:type="array">
+                <item name="jpg" xsi:type="string">jpg</item>
+                <item name="jpeg" xsi:type="string">jpeg</item>
+                <item name="gif" xsi:type="string">gif</item>
+                <item name="png" xsi:type="string">png</item>
+                <item name="pdf" xsi:type="string">pdf</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Smile\Seller\Model\SellerMediaUpload">
+        <arguments>
+            <argument name="imageUploader" xsi:type="object">Smile\Seller\SellerImageUpload</argument>
+        </arguments>
+    </type>
+
+    <type name="Smile\Retailer\Controller\Adminhtml\Retailer\MediaUpload">
+        <arguments>
+            <argument name="imageUploader" xsi:type="object">Smile\Seller\SellerImageUpload</argument>
+        </arguments>
+    </type>
+
 </config>
