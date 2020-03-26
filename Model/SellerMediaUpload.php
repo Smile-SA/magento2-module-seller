@@ -20,6 +20,7 @@ use Magento\Catalog\Model\ImageUploader;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\MediaStorage\Helper\File\Storage\Database;
 use Magento\Framework\Filesystem\Directory\WriteInterface;
+use Magento\Framework\File\Mime;
 use Smile\Seller\Api\Data\SellerInterface;
 
 /**
@@ -60,12 +61,18 @@ class SellerMediaUpload
     protected $mediaDirectory;
 
     /**
+     * @var Mime
+     */
+    protected $mime;
+
+    /**
      * SellerMediaUpload constructor.
      *
      * @param ImageUploader $imageUploader           Image uploader
      * @param DirectoryList $directoryList           Directory List.
      * @param Database      $coreFileStorageDatabase File Storage Database.
      * @param Filesystem    $filesystem              File System.
+     * @param Mime          $mime                    Mime helper.
      *
      * @throws FileSystemException
      */
@@ -73,7 +80,8 @@ class SellerMediaUpload
         ImageUploader $imageUploader,
         DirectoryList $directoryList,
         Database $coreFileStorageDatabase,
-        Filesystem $filesystem
+        Filesystem $filesystem,
+        Mime $mime
     ) {
         $this->imageUploader           = $imageUploader;
         $this->directoryList           = $directoryList;
@@ -81,6 +89,7 @@ class SellerMediaUpload
         $this->mediaDirectory          = $filesystem->getDirectoryWrite(
             \Magento\Framework\App\Filesystem\DirectoryList::MEDIA
         );
+        $this->mime                    = $mime;
     }
 
     /**
@@ -194,5 +203,36 @@ class SellerMediaUpload
     public function removeFile($fileName)
     {
         unlink($this->getPath($this->imageUploader->getBasePath(), $fileName));
+    }
+
+    /**
+     * Retrieve MIME type of requested file
+     *
+     * @param string $fileName
+     * @return string
+     */
+    public function getMimeType($fileName)
+    {
+        $filePath = $this->getPath($this->imageUploader->getBasePath(), $fileName);
+        $absoluteFilePath = $this->mediaDirectory->getAbsolutePath($filePath);
+
+        $result = $this->mime->getMimeType($absoluteFilePath);
+
+        return $result;
+    }
+
+    /**
+     * Get file statistics data
+     *
+     * @param string $fileName
+     * @return array
+     */
+    public function getStat($fileName)
+    {
+        $filePath = $this->getPath($this->imageUploader->getBasePath(), $fileName);
+
+        $result = $this->mediaDirectory->stat($filePath);
+
+        return $result;
     }
 }
