@@ -12,6 +12,8 @@
  */
 namespace Smile\Seller\Ui\Component\Seller\Form\Modifier;
 
+use Magento\Catalog\Model\Category\Attribute\Backend\Image as ImageBackendModel;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Ui\DataProvider\EavValidationRules;
@@ -22,6 +24,7 @@ use Smile\Seller\Model\Locator\LocatorInterface;
 use Smile\Seller\Model\Seller\Attribute\ScopeOverriddenValue;
 use Magento\Eav\Api\Data\AttributeInterface;
 use Smile\Seller\Ui\Component\Seller\Form\FieldMapper;
+use Smile\Seller\Model\SellerMediaUpload;
 
 /**
  * Scope modifier for Seller Data provider : handles displaying attributes scope, "use default" checkbox etc...
@@ -68,6 +71,11 @@ class Eav implements ModifierInterface
     private $eavValidationRules;
 
     /**
+     * @var SellerMediaUpload
+     */
+    private $media;
+
+    /**
      * EAV attribute properties to fetch from meta storage
      *
      * @var array
@@ -109,6 +117,7 @@ class Eav implements ModifierInterface
      * @param \Smile\Seller\Api\AttributeRepositoryInterface            $attributeRepositoryInterface Attributes Repository
      * @param \Magento\Ui\DataProvider\EavValidationRules               $eavValidationRules           EAV Validation rules
      * @param \Smile\Seller\Ui\Component\Seller\Form\FieldMapper        $fieldMapper                  Field Mapper
+     * @param \Smile\Seller\Model\SellerMediaUpload                     $media                        Seller Media Manager
      */
     public function __construct(
         LocatorInterface $locator,
@@ -116,7 +125,8 @@ class Eav implements ModifierInterface
         StoreManagerInterface $storeManagerInterface,
         AttributeRepositoryInterface $attributeRepositoryInterface,
         EavValidationRules $eavValidationRules,
-        FieldMapper $fieldMapper
+        FieldMapper $fieldMapper,
+        SellerMediaUpload $media
     ) {
         $this->locator = $locator;
         $this->scopeOverriddenValue = $scopeOverriddenValue;
@@ -124,6 +134,7 @@ class Eav implements ModifierInterface
         $this->attributeRepository = $attributeRepositoryInterface;
         $this->eavValidationRules = $eavValidationRules;
         $this->fieldMapper = $fieldMapper;
+        $this->media = $media;
     }
 
     /**
@@ -134,6 +145,7 @@ class Eav implements ModifierInterface
         if ($this->locator->getSeller()) {
             if (isset($data[$this->locator->getSeller()->getId()])) {
                 $data[$this->locator->getSeller()->getId()]['store_id'] = $this->locator->getStore()->getId();
+                $data[$this->locator->getSeller()->getId()] = $this->convertValues($this->locator->getSeller(), $data[$this->locator->getSeller()->getId()]);
             }
         }
 
@@ -346,5 +358,48 @@ class Eav implements ModifierInterface
         }
 
         return $meta;
+    }
+
+    /**
+     * Converts category image data to acceptable for rendering format
+     *
+     * @param \Smile\Seller\Api\Data\SellerInterface $seller The seller
+     * @param array                                  $data   Seller Data
+     *
+     * @return array
+     */
+    private function convertValues($seller, $data)
+    {
+        foreach ($this->getAttributes() as $attribute) {
+            $attributeCode = $attribute->getAttributeCode();
+            if (!isset($data[$attributeCode])) {
+                continue;
+            }
+
+            if ($attribute->getBackend() instanceof ImageBackendModel || $attribute->getFrontendInput() === 'image') {
+                unset($data[$attributeCode]);
+                $fileName = $seller->getData($attributeCode);
+                $stat     = $this->media->getStat($fileName);
+                $mime     = $this->media->getMimeType($fileName);
+
+                $data[$attributeCode][0]['name'] = $fileName;
+                $data[$attributeCode][0]['url']  = $this->getBaseImageUrl() . $fileName;
+                $data[$attributeCode][0]['size'] = isset($stat) ? $stat['size'] : 0;
+                $data[$attributeCode][0]['type'] = $mime;
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * @return string
+     */
+    public function getBaseImageUrl()
+    {
+        $currentStore = $this->storeManager->getStore();
+        $mediaUrl     = $currentStore->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA);
+
+        return $mediaUrl . 'seller/';
     }
 }
