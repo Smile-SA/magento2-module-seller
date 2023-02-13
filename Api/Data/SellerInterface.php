@@ -136,6 +136,12 @@ interface SellerInterface extends \Magento\Framework\Api\CustomAttributesDataInt
     public function getAttributeSetName();
 
     /**
+     * @param $ignored
+     * @return mixed
+     */
+    public function setAttributeSetName($ignored);
+
+    /**
      * Get Image name
      *
      * @return string
