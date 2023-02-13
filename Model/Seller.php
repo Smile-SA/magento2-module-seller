@@ -258,6 +258,14 @@ class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements
     /**
      * {@inheritdoc}
      */
+    public function setAttributeSetName($ignored)
+    {
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getIdentities()
     {
         $identities = [self::CACHE_TAG . '_' . $this->getId()];
