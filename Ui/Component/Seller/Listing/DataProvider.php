@@ -12,7 +12,11 @@
  */
 namespace Smile\Seller\Ui\Component\Seller\Listing;
 
+use Magento\Framework\Api\Filter;
 use Magento\Ui\DataProvider\AbstractDataProvider;
+use Magento\Ui\DataProvider\AddFieldToCollectionInterface;
+use Magento\Ui\DataProvider\AddFilterToCollectionInterface;
+use Smile\Seller\Model\ResourceModel\Seller\Collection;
 
 /**
  * Data Provider for UI components based on Sellers
@@ -26,19 +30,19 @@ class DataProvider extends AbstractDataProvider
     /**
      * Seller collection
      *
-     * @var \Smile\Seller\Model\ResourceModel\Seller\Collection
+     * @var Collection
      */
     protected $collection;
 
     /**
-     * @var \Magento\Ui\DataProvider\AddFieldToCollectionInterface[]
+     * @var AddFieldToCollectionInterface[]
      */
-    protected $addFieldStrategies;
+    protected array $addFieldStrategies;
 
     /**
-     * @var \Magento\Ui\DataProvider\AddFilterToCollectionInterface[]
+     * @var AddFilterToCollectionInterface[]
      */
-    protected $addFilterStrategies;
+    protected array $addFilterStrategies;
 
     /**
      * Construct
@@ -47,15 +51,15 @@ class DataProvider extends AbstractDataProvider
      * @param string                                                    $primaryFieldName    Primary field Name
      * @param string                                                    $requestFieldName    Request field name
      * @param CollectionFactory                                         $collectionFactory   The collection factory
-     * @param \Magento\Ui\DataProvider\AddFieldToCollectionInterface[]  $addFieldStrategies  Add field Strategy
-     * @param \Magento\Ui\DataProvider\AddFilterToCollectionInterface[] $addFilterStrategies Add filter Strategy
+     * @param AddFieldToCollectionInterface[]  $addFieldStrategies  Add field Strategy
+     * @param AddFilterToCollectionInterface[] $addFilterStrategies Add filter Strategy
      * @param array                                                     $meta                Component Meta
      * @param array                                                     $data                Component extra data
      */
     public function __construct(
-        $name,
-        $primaryFieldName,
-        $requestFieldName,
+        string $name,
+        string $primaryFieldName,
+        string $requestFieldName,
         $collectionFactory,
         array $addFieldStrategies = [],
         array $addFilterStrategies = [],
@@ -75,7 +79,7 @@ class DataProvider extends AbstractDataProvider
      *
      * @return array
      */
-    public function getData()
+    public function getData(): array
     {
         if (!$this->getCollection()->isLoaded()) {
             $this->getCollection()->load();
@@ -96,7 +100,7 @@ class DataProvider extends AbstractDataProvider
      *
      * @return void
      */
-    public function addField($field, $alias = null)
+    public function addField($field, $alias = null): void
     {
         if (isset($this->addFieldStrategies[$field])) {
             $this->addFieldStrategies[$field]->addField($this->getCollection(), $field, $alias);
@@ -109,7 +113,7 @@ class DataProvider extends AbstractDataProvider
     /**
      * {@inheritdoc}
      */
-    public function addFilter(\Magento\Framework\Api\Filter $filter)
+    public function addFilter(Filter $filter): void
     {
         if (isset($this->addFilterStrategies[$filter->getField()])) {
             $this->addFilterStrategies[$filter->getField()]
@@ -118,9 +122,9 @@ class DataProvider extends AbstractDataProvider
                     $filter->getField(),
                     [$filter->getConditionType() => $filter->getValue()]
                 );
-
-            return;
         }
-        parent::addFilter($filter);
+        if (!isset($this->addFilterStrategies[$filter->getField()])) {
+            parent::addFilter($filter);
+        }
     }
 }

@@ -31,29 +31,31 @@ class RegistryLocator implements LocatorInterface
     /**
      * @var Registry
      */
-    private $registry;
+    private Registry $registry;
 
     /**
-     * @var SellerInterface
+     * @var ?SellerInterface
      */
-    private $seller;
+    private ?SellerInterface $seller = null;
 
     /**
-     * @var StoreInterface
+     * @var ?StoreInterface
      */
-    private $store;
+    private ?StoreInterface $store = null;
 
     /**
-     * @var \Magento\Store\Model\StoreManagerInterface
+     * @var StoreManagerInterface
      */
-    private $storeManager;
+    private StoreManagerInterface $storeManager;
 
     /**
      * @param Registry              $registry     The application registry
      * @param StoreManagerInterface $storeManager The Store Manager
      */
-    public function __construct(Registry $registry, StoreManagerInterface $storeManager)
-    {
+    public function __construct(
+        Registry $registry,
+        StoreManagerInterface $storeManager
+    ) {
         $this->storeManager = $storeManager;
         $this->registry = $registry;
     }
@@ -63,7 +65,7 @@ class RegistryLocator implements LocatorInterface
      *
      * @throws NotFoundException
      */
-    public function getSeller()
+    public function getSeller(): SellerInterface|null
     {
         if (null !== $this->seller) {
             return $this->seller;
@@ -79,7 +81,7 @@ class RegistryLocator implements LocatorInterface
      * {@inheritdoc}
      * @throws NotFoundException
      */
-    public function getStore()
+    public function getStore(): StoreInterface|null
     {
         if (null !== $this->store) {
             return $this->store;

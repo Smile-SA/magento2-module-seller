@@ -30,7 +30,7 @@ class InstallSchema implements InstallSchemaInterface
     /**
      * @var array The attributes backend tables definitions.
      */
-    private $backendTypes = [
+    private array $backendTypes = [
         'datetime' => ['value', \Magento\Framework\DB\Ddl\Table::TYPE_DATETIME, null, [], 'Value'],
         'decimal'  => ['value', \Magento\Framework\DB\Ddl\Table::TYPE_DECIMAL, '12,4', [], 'Value'],
         'int'      => ['value', \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER, null, [], 'Value'],
@@ -41,7 +41,7 @@ class InstallSchema implements InstallSchemaInterface
     /**
      * {@inheritdoc}
      */
-    public function install(SchemaSetupInterface $setup, ModuleContextInterface $context)
+    public function install(SchemaSetupInterface $setup, ModuleContextInterface $context): void
     {
         $setup->startSetup();
 
@@ -57,7 +57,7 @@ class InstallSchema implements InstallSchemaInterface
      *
      * @throws \Zend_Db_Exception
      */
-    private function createSellerEntityTable(SchemaSetupInterface $setup)
+    private function createSellerEntityTable(SchemaSetupInterface $setup): void
     {
         $table = $setup->getConnection()
             ->newTable($setup->getTable('smile_seller_entity'))
@@ -109,7 +109,7 @@ class InstallSchema implements InstallSchemaInterface
      *
      * @throws \Zend_Db_Exception
      */
-    private function createAttributesTables(SchemaSetupInterface $setup)
+    private function createAttributesTables(SchemaSetupInterface $setup): void
     {
         foreach ($this->backendTypes as $backendType => $valueFieldProperties) {
             $backendTableName = 'smile_seller_entity_' . $backendType;

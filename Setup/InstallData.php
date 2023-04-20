@@ -30,7 +30,7 @@ class InstallData implements InstallDataInterface
     /**
      * @var SellerSetupFactory
      */
-    private $sellerSetupFactory;
+    private SellerSetupFactory $sellerSetupFactory;
 
     /**
      * InstallData constructor
@@ -45,7 +45,7 @@ class InstallData implements InstallDataInterface
     /**
      * {@inheritDoc}
      */
-    public function install(ModuleDataSetupInterface $setup, ModuleContextInterface $context)
+    public function install(ModuleDataSetupInterface $setup, ModuleContextInterface $context): void
     {
         $setup->startSetup();
 

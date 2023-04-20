@@ -31,7 +31,7 @@ class Attribute extends \Magento\Eav\Model\Entity\Attribute implements SellerAtt
      * Attributes shared between all entities
      * @var array
      */
-    private $globalAttributes = [
+    private array $globalAttributes = [
         Seller::KEY_SELLER_CODE,
     ];
 
@@ -40,7 +40,7 @@ class Attribute extends \Magento\Eav\Model\Entity\Attribute implements SellerAtt
      *
      * @return bool
      */
-    public function isScopeGlobal()
+    public function isScopeGlobal(): bool
     {
         return in_array($this->getAttributeCode(), $this->globalAttributes);
     }
@@ -50,7 +50,7 @@ class Attribute extends \Magento\Eav\Model\Entity\Attribute implements SellerAtt
      *
      * @return bool
      */
-    public function isScopeWebsite()
+    public function isScopeWebsite(): bool
     {
         return $this->getIsGlobal() == self::SCOPE_WEBSITE;
     }
@@ -60,7 +60,7 @@ class Attribute extends \Magento\Eav\Model\Entity\Attribute implements SellerAtt
      *
      * @return bool
      */
-    public function isScopeStore()
+    public function isScopeStore(): bool
     {
         return !$this->isScopeGlobal() && !$this->isScopeWebsite();
     }
@@ -68,7 +68,7 @@ class Attribute extends \Magento\Eav\Model\Entity\Attribute implements SellerAtt
     /**
      * {@inheritdoc}
      */
-    public function __sleep()
+    public function __sleep(): array
     {
         $this->unsetData('entity_type');
 

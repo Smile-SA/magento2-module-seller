@@ -34,7 +34,7 @@ class SellerSetup extends EavSetup
      * @return array
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function getDefaultEntities()
+    public function getDefaultEntities(): array
     {
         return [
             SellerInterface::ENTITY => [

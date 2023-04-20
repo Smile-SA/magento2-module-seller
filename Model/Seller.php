@@ -18,6 +18,7 @@ use Magento\Framework\Api\AttributeValueFactory;
 use Magento\Framework\Api\ExtensionAttributesFactory;
 use Magento\Framework\Data\Collection\AbstractDb;
 use Magento\Framework\DataObject\IdentityInterface;
+use Magento\Framework\Model\AbstractExtensibleModel;
 use Magento\Framework\Model\Context;
 use Magento\Framework\Model\ResourceModel\AbstractResource;
 use Magento\Framework\Registry;
@@ -34,7 +35,7 @@ use Smile\Seller\Api\Data\SellerInterface;
  * @package  Smile\Seller
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements SellerInterface, IdentityInterface
+class Seller extends AbstractExtensibleModel implements SellerInterface, IdentityInterface
 {
     /**
      * Default cache tag
@@ -93,16 +94,16 @@ class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements
     protected $customAttributesCodes = null;
 
     /**
-     * @var \Smile\Seller\Api\AttributeRepositoryInterface
+     * @var AttributeRepositoryInterface
      */
-    private $metadataService;
+    private AttributeRepositoryInterface $metadataService;
 
     /**
      * Attributes are that part of interface
      *
      * @var array
      */
-    protected $interfaceAttributes = [
+    protected array $interfaceAttributes = [
         'id',
         self::KEY_NAME,
         self::KEY_IS_ACTIVE,
@@ -113,22 +114,22 @@ class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements
     ];
 
     /**
-     * @var \Magento\Store\Model\StoreManagerInterface
+     * @var StoreManagerInterface
      */
-    private $storeManager;
+    private StoreManagerInterface $storeManager;
 
     /**
      * Seller constructor.
      *
-     * @param \Magento\Framework\Model\Context                        $context                Application Context
-     * @param \Magento\Framework\Registry                             $registry               Application Registry
-     * @param \Magento\Framework\Api\ExtensionAttributesFactory       $extensionFactory       Extension Attributes Factory
-     * @param \Magento\Framework\Api\AttributeValueFactory            $customAttributeFactory Custom Attributes Factory
-     * @param \Magento\Store\Model\StoreManagerInterface              $storeManager           Store Manager
-     * @param \Smile\Seller\Api\AttributeRepositoryInterface          $metadataService        Metadata Service
-     * @param \Magento\Framework\Model\ResourceModel\AbstractResource $resource               Resource Model
-     * @param \Magento\Framework\Data\Collection\AbstractDb           $resourceCollection     Resource Collection
-     * @param array                                                   $data                   Model Data
+     * @param Context                      $context                Application Context
+     * @param Registry                     $registry               Application Registry
+     * @param ExtensionAttributesFactory   $extensionFactory       Extension Attributes Factory
+     * @param AttributeValueFactory        $customAttributeFactory Custom Attributes Factory
+     * @param StoreManagerInterface        $storeManager           Store Manager
+     * @param AttributeRepositoryInterface $metadataService        Metadata Service
+     * @param ?AbstractResource            $resource               Resource Model
+     * @param ?AbstractDb                  $resourceCollection     Resource Collection
+     * @param array                        $data                   Model Data
      */
     public function __construct(
         Context $context,
@@ -158,7 +159,7 @@ class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements
     /**
      * {@inheritDoc}
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->_getData(self::KEY_NAME);
     }
@@ -166,7 +167,7 @@ class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements
     /**
      * {@inheritDoc}
      */
-    public function getSellerCode()
+    public function getSellerCode(): string
     {
         return $this->_getData(self::KEY_SELLER_CODE);
     }
@@ -174,7 +175,7 @@ class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements
     /**
      * {@inheritDoc}
      */
-    public function getCreatedAt()
+    public function getCreatedAt(): ?string
     {
         return $this->getData('created_at');
     }
@@ -182,7 +183,7 @@ class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements
     /**
      * {@inheritDoc}
      */
-    public function getUpdatedAt()
+    public function getUpdatedAt(): ?string
     {
         return $this->getData(self::KEY_UPDATED_AT);
     }
@@ -190,7 +191,7 @@ class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements
     /**
      * {@inheritDoc}
      */
-    public function getIsActive()
+    public function getIsActive(): bool
     {
         return (bool) $this->getData(self::KEY_IS_ACTIVE);
     }
@@ -198,7 +199,7 @@ class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements
     /**
      * {@inheritDoc}
      */
-    public function setName($name)
+    public function setName(string $name): self
     {
         return $this->setData(self::KEY_NAME, $name);
     }
@@ -206,7 +207,7 @@ class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements
     /**
      * {@inheritDoc}
      */
-    public function setSellerCode($sellerCode)
+    public function setSellerCode(string $sellerCode): self
     {
         return $this->setData(self::KEY_SELLER_CODE, $sellerCode);
     }
@@ -214,7 +215,7 @@ class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements
     /**
      * {@inheritDoc}
      */
-    public function setIsActive($isActive)
+    public function setIsActive(bool $isActive): self
     {
         return $this->setData(self::KEY_IS_ACTIVE, (bool) $isActive);
     }
@@ -222,7 +223,7 @@ class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements
     /**
      * {@inheritDoc}
      */
-    public function setCreatedAt($createdAt)
+    public function setCreatedAt(string $createdAt): self
     {
         return $this->setData(self::KEY_CREATED_AT, $createdAt);
     }
@@ -230,7 +231,7 @@ class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements
     /**
     * {@inheritDoc}
     */
-    public function setUpdatedAt($updatedAt)
+    public function setUpdatedAt(string $updatedAt): self
     {
         return $this->setData(self::KEY_UPDATED_AT, $updatedAt);
     }
@@ -240,7 +241,7 @@ class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements
      *
      * @return string
      */
-    public function getDefaultAttributeSourceModel()
+    public function getDefaultAttributeSourceModel(): string
     {
         return 'Magento\Eav\Model\Entity\Attribute\Source\Table';
     }
@@ -250,7 +251,7 @@ class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements
      *
      * @return string
      */
-    public function getAttributeSetName()
+    public function getAttributeSetName(): string
     {
         return 'Default';
     }
@@ -258,7 +259,7 @@ class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements
     /**
      * {@inheritdoc}
      */
-    public function getIdentities()
+    public function getIdentities(): array
     {
         $identities = [self::CACHE_TAG . '_' . $this->getId()];
         if ($this->_appState->getAreaCode() == \Magento\Framework\App\Area::AREA_FRONTEND) {
@@ -273,7 +274,7 @@ class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements
      *
      * @return array
      */
-    protected function getCustomAttributesCodes()
+    protected function getCustomAttributesCodes(): array
     {
         if ($this->customAttributesCodes === null) {
             $this->customAttributesCodes = $this->getEavAttributesCodes($this->metadataService);
@@ -288,7 +289,7 @@ class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements
      *
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      */
-    protected function _construct()
+    protected function _construct(): void
     {
         $this->_init('Smile\Seller\Model\ResourceModel\Seller');
     }
@@ -296,7 +297,7 @@ class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements
     /**
      * {@inheritDoc}
      */
-    public function getMediaPath()
+    public function getMediaPath(): ?string
     {
         return $this->getData(self::MEDIA_PATH);
     }
@@ -304,7 +305,7 @@ class Seller extends \Magento\Framework\Model\AbstractExtensibleModel implements
     /**
      * {@inheritDoc}
      */
-    public function setMediaPath($path)
+    public function setMediaPath(string $path): self
     {
         return $this->setData(self::MEDIA_PATH, $path);
     }

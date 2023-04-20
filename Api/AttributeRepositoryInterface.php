@@ -13,6 +13,11 @@
 
 namespace Smile\Seller\Api;
 
+use Magento\Eav\Api\Data\AttributeInterface;
+use Magento\Eav\Api\Data\AttributeSearchResultsInterface;
+use Magento\Framework\Api\SearchCriteriaInterface;
+use Smile\Seller\Api\Data\SellerAttributeInterface;
+
 /**
  * Seller Attributes Repository Interface
  *
@@ -25,18 +30,18 @@ interface AttributeRepositoryInterface extends \Magento\Framework\Api\MetadataSe
     /**
      * Retrieve all attributes for entity type
      *
-     * @param \Magento\Framework\Api\SearchCriteriaInterface $searchCriteria Search Criteria
+     * @param SearchCriteriaInterface $searchCriteria Search Criteria
      *
-     * @return \Magento\Eav\Api\Data\AttributeSearchResultsInterface
+     * @return AttributeSearchResultsInterface
      */
-    public function getList(\Magento\Framework\Api\SearchCriteriaInterface $searchCriteria);
+    public function getList(SearchCriteriaInterface $searchCriteria): AttributeSearchResultsInterface;
 
     /**
      * Retrieve specific attribute
      *
      * @param string $attributeCode The attribute code
      *
-     * @return \Smile\Seller\Api\Data\SellerAttributeInterface
+     * @return AttributeInterface|SellerAttributeInterface
      */
-    public function get($attributeCode);
+    public function get(string $attributeCode): AttributeInterface|SellerAttributeInterface;
 }

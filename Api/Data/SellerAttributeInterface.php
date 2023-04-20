@@ -14,6 +14,8 @@
 
 namespace Smile\Seller\Api\Data;
 
+use Magento\Eav\Api\Data\AttributeInterface;
+
 /**
  * Seller Attributes Interface
  *
@@ -21,7 +23,7 @@ namespace Smile\Seller\Api\Data;
  * @package  Smile\Seller
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-interface SellerAttributeInterface extends \Magento\Eav\Api\Data\AttributeInterface
+interface SellerAttributeInterface extends AttributeInterface
 {
     const ENTITY_TYPE_CODE = 'smile_seller';
 
@@ -30,19 +32,19 @@ interface SellerAttributeInterface extends \Magento\Eav\Api\Data\AttributeInterf
      *
      * @return bool
      */
-    public function isScopeGlobal();
+    public function isScopeGlobal(): bool;
 
     /**
      * Check if attribute has a website scope
      *
      * @return bool
      */
-    public function isScopeWebsite();
+    public function isScopeWebsite(): bool;
 
     /**
      * Retrieve attribute has a store scope
      *
      * @return bool
      */
-    public function isScopeStore();
+    public function isScopeStore(): bool;
 }

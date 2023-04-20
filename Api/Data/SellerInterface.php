@@ -13,6 +13,8 @@
  */
 namespace Smile\Seller\Api\Data;
 
+use Magento\Framework\Api\CustomAttributesDataInterface;
+
 /**
  * Seller Interface
  *
@@ -20,7 +22,7 @@ namespace Smile\Seller\Api\Data;
  * @package  Smile\Seller
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-interface SellerInterface extends \Magento\Framework\Api\CustomAttributesDataInterface
+interface SellerInterface extends CustomAttributesDataInterface
 {
     /**
      * Entity type code
@@ -35,14 +37,14 @@ interface SellerInterface extends \Magento\Framework\Api\CustomAttributesDataInt
     /**
      * Get Seller Id
      *
-     * @return int|null
+     * @return mixed
      */
     public function getId();
 
     /**
      * Set Seller Id
      *
-     * @param int $entityId The id
+     * @param mixed $entityId The id
      *
      * @return $this
      */
@@ -53,7 +55,7 @@ interface SellerInterface extends \Magento\Framework\Api\CustomAttributesDataInt
      *
      * @return string
      */
-    public function getName();
+    public function getName(): string;
 
     /**
      * Set seller name
@@ -62,21 +64,21 @@ interface SellerInterface extends \Magento\Framework\Api\CustomAttributesDataInt
      *
      * @return $this
      */
-    public function setName($name);
+    public function setName(string $name): self;
 
     /**
      * Check whether seller is active
      *
      * @return bool|null
      */
-    public function getIsActive();
+    public function getIsActive(): bool|null;
 
     /**
      * Retrieve Seller Code
      *
      * @return string
      */
-    public function getSellerCode();
+    public function getSellerCode(): string;
 
     /**
      * Set Seller Code
@@ -85,7 +87,7 @@ interface SellerInterface extends \Magento\Framework\Api\CustomAttributesDataInt
      *
      * @return $this
      */
-    public function setSellerCode($sellerCode);
+    public function setSellerCode(string $sellerCode): self;
 
     /**
      * Set whether category is active
@@ -94,14 +96,14 @@ interface SellerInterface extends \Magento\Framework\Api\CustomAttributesDataInt
      *
      * @return $this
      */
-    public function setIsActive($isActive);
+    public function setIsActive(bool $isActive): self;
 
     /**
      * Retrieve Seller creation date
      *
-     * @return string|null
+     * @return ?string
      */
-    public function getCreatedAt();
+    public function getCreatedAt(): ?string;
 
     /**
      * Set Seller creation date
@@ -110,14 +112,14 @@ interface SellerInterface extends \Magento\Framework\Api\CustomAttributesDataInt
      *
      * @return $this
      */
-    public function setCreatedAt($createdAt);
+    public function setCreatedAt(string $createdAt): self;
 
     /**
      * Get Seller update date
      *
-     * @return string|null
+     * @return ?string
      */
-    public function getUpdatedAt();
+    public function getUpdatedAt(): ?string;
 
     /**
      * Set seller update date
@@ -126,27 +128,26 @@ interface SellerInterface extends \Magento\Framework\Api\CustomAttributesDataInt
      *
      * @return $this
      */
-    public function setUpdatedAt($updatedAt);
+    public function setUpdatedAt(string $updatedAt): self;
 
     /**
      * Retrieve AttributeSetName
      *
      * @return string
      */
-    public function getAttributeSetName();
+    public function getAttributeSetName(): string;
 
     /**
      * Get Image name
      *
-     * @return string
+     * @return ?string
      */
-    public function getMediaPath();
+    public function getMediaPath(): ?string;
 
     /**
      * Set Image name
      *
-     * @return string
+     * @return $this
      */
-
-    public function setMediaPath($path);
+    public function setMediaPath(string $path): self;
 }

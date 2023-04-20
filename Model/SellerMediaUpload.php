@@ -37,33 +37,33 @@ class SellerMediaUpload
      *
      * @var ImageUploader
      */
-    protected $imageUploader;
+    protected ImageUploader $imageUploader;
 
     /**
      * Directory List.
      *
      * @var DirectoryList
      */
-    protected $directoryList;
+    protected DirectoryList $directoryList;
 
     /**
      * Core file storage database
      *
      * @var Database
      */
-    protected $coreFileStorageDatabase;
+    protected Database $coreFileStorageDatabase;
 
     /**
      * Media directory object (writable).
      *
      * @var WriteInterface
      */
-    protected $mediaDirectory;
+    protected WriteInterface $mediaDirectory;
 
     /**
      * @var Mime
      */
-    protected $mime;
+    protected Mime $mime;
 
     /**
      * SellerMediaUpload constructor.
@@ -86,9 +86,7 @@ class SellerMediaUpload
         $this->imageUploader           = $imageUploader;
         $this->directoryList           = $directoryList;
         $this->coreFileStorageDatabase = $coreFileStorageDatabase;
-        $this->mediaDirectory          = $filesystem->getDirectoryWrite(
-            \Magento\Framework\App\Filesystem\DirectoryList::MEDIA
-        );
+        $this->mediaDirectory          = $filesystem->getDirectoryWrite(DirectoryList::MEDIA);
         $this->mime                    = $mime;
     }
 
@@ -100,7 +98,7 @@ class SellerMediaUpload
      * @return void
      * @throws \Magento\Framework\Exception\LocalizedException
      */
-    public function removeMediaFromTmp(SellerInterface $seller)
+    public function removeMediaFromTmp(SellerInterface $seller): void
     {
         $media = str_replace($seller->getRetailerId().'_', '', $seller->getMediaPath());
         $baseTmpPath = $this->imageUploader->getBaseTmpPath();
@@ -117,7 +115,7 @@ class SellerMediaUpload
      *
      * @throws \Magento\Framework\Exception\LocalizedException
      */
-    public function moveFileFromTmp($imageName, $seller)
+    public function moveFileFromTmp(string $imageName, SellerInterface $seller): void
     {
         $baseTmpPath = $this->imageUploader->getBaseTmpPath();
         $basePath = $this->imageUploader->getBasePath();
@@ -152,7 +150,7 @@ class SellerMediaUpload
      * @return void
      * @throws FileSystemException
      */
-    public function removeMedia(SellerInterface $seller)
+    public function removeMedia(SellerInterface $seller): void
     {
         $media = $seller->getRetailerId().'_'.$seller->getMediaPath();
         $basePath = $this->imageUploader->getBasePath();
@@ -170,7 +168,7 @@ class SellerMediaUpload
      * @return bool
      * @throws FileSystemException
      */
-    public function pathExist($basePath, $fileName)
+    public function pathExist(string $basePath, string $fileName): bool
     {
         return file_exists($this->getPath($basePath, $fileName));
     }
@@ -184,7 +182,7 @@ class SellerMediaUpload
      * @return string
      * @throws FileSystemException
      */
-    public function getPath($basePath, $fileName)
+    public function getPath(string $basePath, string $fileName): string
     {
         return $this->directoryList->getPath(DirectoryList::MEDIA) .
             '/'
@@ -200,7 +198,7 @@ class SellerMediaUpload
      *
      * @throws FileSystemException
      */
-    public function removeFile($fileName)
+    public function removeFile(string $fileName): void
     {
         unlink($this->getPath($this->imageUploader->getBasePath(), $fileName));
     }
@@ -211,7 +209,7 @@ class SellerMediaUpload
      * @param string $fileName
      * @return string
      */
-    public function getMimeType($fileName)
+    public function getMimeType(string $fileName): string
     {
         $filePath = $this->getPath($this->imageUploader->getBasePath(), $fileName);
         $absoluteFilePath = $this->mediaDirectory->getAbsolutePath($filePath);
@@ -227,12 +225,10 @@ class SellerMediaUpload
      * @param string $fileName
      * @return array
      */
-    public function getStat($fileName)
+    public function getStat(string $fileName): array
     {
         $filePath = $this->getPath($this->imageUploader->getBasePath(), $fileName);
 
-        $result = $this->mediaDirectory->stat($filePath);
-
-        return $result;
+        return $this->mediaDirectory->stat($filePath);
     }
 }

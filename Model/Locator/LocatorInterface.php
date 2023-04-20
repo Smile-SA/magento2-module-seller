@@ -25,12 +25,12 @@ use Smile\Seller\Api\Data\SellerInterface;
 interface LocatorInterface
 {
     /**
-     * @return SellerInterface
+     * @return SellerInterface|null
      */
-    public function getSeller();
+    public function getSeller(): SellerInterface|null;
 
     /**
-     * @return StoreInterface
+     * @return StoreInterface|null
      */
-    public function getStore();
+    public function getStore(): StoreInterface|null;
 }

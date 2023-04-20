@@ -32,13 +32,13 @@ class AttributePersistor extends \Magento\Eav\Model\ResourceModel\AttributePersi
      *
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
-     * @param \Magento\Framework\Model\Entity\ScopeInterface        $scope      The scope
-     * @param \Magento\Eav\Model\Entity\Attribute\AbstractAttribute $attribute  The attribute
-     * @param bool                                                  $useDefault If should use default
+     * @param ScopeInterface    $scope      The scope
+     * @param AbstractAttribute $attribute  The attribute
+     * @param bool              $useDefault If should use default
      *
      * @return string
      */
-    protected function getScopeValue(ScopeInterface $scope, AbstractAttribute $attribute, $useDefault = false)
+    protected function getScopeValue(ScopeInterface $scope, AbstractAttribute $attribute, $useDefault = false): string
     {
         if ($attribute instanceof SellerAttributeInterface) {
             $useDefault = $useDefault || $attribute->isScopeGlobal();

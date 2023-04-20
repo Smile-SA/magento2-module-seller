@@ -30,7 +30,7 @@ class AddStoreFieldToCollection implements AddFilterToCollectionInterface
      *
      * @var StoreManagerInterface
      */
-    protected $storeManager;
+    protected StoreManagerInterface $storeManager;
 
     /**
      * Construct
@@ -45,7 +45,7 @@ class AddStoreFieldToCollection implements AddFilterToCollectionInterface
     /**
      * {@inheritdoc}
      */
-    public function addFilter(Collection $collection, $field, $condition = null)
+    public function addFilter(Collection $collection, $field, $condition = null): void
     {
         if (isset($condition['eq']) && $condition['eq']) {
             /** @var \Smile\Seller\Model\ResourceModel\Seller\Collection $collection  */

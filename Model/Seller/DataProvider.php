@@ -13,10 +13,14 @@
  */
 namespace Smile\Seller\Model\Seller;
 
-class DataProvider extends \Magento\Catalog\Model\Category\DataProvider
-{
+use Magento\Catalog\Model\Category\DataProvider as CatalogCategoryDataProvider;
 
-    protected function getFieldsMap()
+class DataProvider extends CatalogCategoryDataProvider
+{
+    /**
+     * @return array
+     */
+    protected function getFieldsMap(): array
     {
         $fields = parent::getFieldsMap();
         $fields['content'][] = 'image';

@@ -12,8 +12,9 @@
  */
 namespace Smile\Seller\Ui\Component\Seller\Form;
 
-use Magento\Ui\DataProvider\AbstractDataProvider;
+use Magento\Framework\Data\Collection;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Ui\DataProvider\AbstractDataProvider;
 use Magento\Ui\DataProvider\EavValidationRules;
 use Magento\Ui\DataProvider\Modifier\ModifierInterface;
 use Magento\Ui\DataProvider\Modifier\PoolInterface;
@@ -31,17 +32,17 @@ class DataProvider extends AbstractDataProvider
     /**
      * @var mixed
      */
-    private $collectionFactory;
+    private mixed $collectionFactory;
 
     /**
-     * @var \Smile\Seller\Model\Locator\LocatorInterface
+     * @var LocatorInterface
      */
-    private $locator;
+    private LocatorInterface $locator;
 
     /**
-     * @var \Magento\Ui\DataProvider\Modifier\PoolInterface
+     * @var PoolInterface
      */
-    private $pool;
+    private PoolInterface $pool;
 
     /**
      * @param string           $name              DataProvider name.
@@ -54,10 +55,10 @@ class DataProvider extends AbstractDataProvider
      * @param array            $data              Default data.
      */
     public function __construct(
-        $name,
-        $primaryFieldName,
-        $requestFieldName,
-        $collectionFactory,
+        string $name,
+        string $primaryFieldName,
+        string $requestFieldName,
+        mixed $collectionFactory,
         PoolInterface $pool,
         LocatorInterface $locator,
         array $meta = [],
@@ -74,7 +75,7 @@ class DataProvider extends AbstractDataProvider
     /**
      * {@inheritDoc}
      */
-    public function getData()
+    public function getData(): array
     {
         $data = parent::getData();
 
@@ -89,7 +90,7 @@ class DataProvider extends AbstractDataProvider
     /**
      * {@inheritDoc}
      */
-    public function getCollection()
+    public function getCollection(): Collection
     {
         if ($this->collection === null) {
             $this->collection = $this->collectionFactory->create();
@@ -109,7 +110,7 @@ class DataProvider extends AbstractDataProvider
      *
      * @return array
      */
-    private function prepareMeta($meta)
+    private function prepareMeta(array $meta): array
     {
         /** @var ModifierInterface $modifier */
         foreach ($this->pool->getModifiersInstances() as $modifier) {

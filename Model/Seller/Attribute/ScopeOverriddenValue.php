@@ -12,12 +12,17 @@
  */
 namespace Smile\Seller\Model\Seller\Attribute;
 
+use Magento\Eav\Api\Data\AttributeInterface;
+use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 use Magento\Framework\Api\FilterBuilder;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\App\ResourceConnection;
+use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Select;
 use Magento\Framework\DB\Sql\UnionExpression;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Store\Model\Store;
+use Smile\Seller\Api\Data\SellerInterface;
 use Smile\Seller\Model\Seller\Attribute\Repository as AttributeRepository;
 
 /**
@@ -32,22 +37,27 @@ class ScopeOverriddenValue
     /**
      * @var AttributeRepository
      */
-    private $attributeRepository;
+    private AttributeRepository $attributeRepository;
 
     /**
      * @var SearchCriteriaBuilder
      */
-    private $searchCriteriaBuilder;
+    private SearchCriteriaBuilder $searchCriteriaBuilder;
 
     /**
-     * @var array
+     * @var ?array
      */
-    private $attributesValues;
+    private ?array $attributesValues;
 
     /**
-     * @var \Magento\Framework\DB\Adapter\AdapterInterface
+     * @var AdapterInterface
      */
-    private $resourceConnection;
+    private AdapterInterface $resourceConnection;
+
+    /**
+     * @var FilterBuilder
+     */
+    private FilterBuilder $filterBuilder;
 
     /**
      * ScopeOverriddenValue constructor.
@@ -72,13 +82,14 @@ class ScopeOverriddenValue
     /**
      * Whether attribute value is overridden in specific store
      *
-     * @param \Smile\Seller\Api\Data\SellerInterface $entity        The seller
-     * @param string                                 $attributeCode The attribute code
-     * @param int                                    $storeId       The Store Id
+     * @param SellerInterface   $entity         The seller
+     * @param string            $attributeCode  The attribute code
+     * @param int               $storeId        The Store Id
      *
+     * @throws LocalizedException
      * @return bool
      */
-    public function containsValue($entity, $attributeCode, $storeId)
+    public function containsValue(SellerInterface $entity, string $attributeCode, int $storeId): bool
     {
         if ((int) $storeId === Store::DEFAULT_STORE_ID) {
             return false;
@@ -94,15 +105,15 @@ class ScopeOverriddenValue
     /**
      * Init Attributes Values
      *
-     * @param \Smile\Seller\Api\Data\SellerInterface $entity  The seller
-     * @param int                                    $storeId The Store Id
+     * @param SellerInterface   $entity  The seller
+     * @param int               $storeId The Store Id
      *
-     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws LocalizedException
      * @return void
      */
-    private function initAttributeValues($entity, $storeId)
+    private function initAttributeValues(SellerInterface $entity, int $storeId): void
     {
-        /** @var \Magento\Eav\Model\Entity\Attribute\AbstractAttribute $attribute */
+        /** @var AbstractAttribute $attribute */
         $attributeTables = [];
 
         foreach ($this->getScopedAttributes() as $attribute) {
@@ -142,9 +153,9 @@ class ScopeOverriddenValue
     /**
      * Retrieve a list of attributes that can be scoped by store.
      *
-     * @return \Magento\Eav\Api\Data\AttributeInterface[]
+     * @return AttributeInterface[]
      */
-    private function getScopedAttributes()
+    private function getScopedAttributes(): array
     {
         $searchResult = $this->attributeRepository->getList(
             $this->searchCriteriaBuilder->addFilters([])->create()

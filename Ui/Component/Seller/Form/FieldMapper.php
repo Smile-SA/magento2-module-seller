@@ -12,6 +12,7 @@
  */
 namespace Smile\Seller\Ui\Component\Seller\Form;
 
+use Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection;
 use Smile\Seller\Api\Data\SellerInterface;
 use Magento\Eav\Api\AttributeGroupRepositoryInterface;
 use Smile\Seller\Model\ResourceModel\Seller\Attribute\CollectionFactory as AttributeCollectionFactory;
@@ -28,23 +29,23 @@ class FieldMapper
     /**
      * @var AttributeGroupRepositoryInterface
      */
-    private $attributeGroupRepository;
+    private AttributeGroupRepositoryInterface $attributeGroupRepository;
 
     /**
-     * @var \Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection
+     * @var Collection
      */
-    private $attributesCollection;
+    private Collection $attributesCollection;
 
     /**
      * @var string[]
      */
-    private $fieldsMap = [];
+    private array $fieldsMap = [];
 
     /**
      *
      * @var array
      */
-    private $fieldsets = [];
+    private array $fieldsets = [];
 
     /**
      * Constructor.
@@ -56,7 +57,7 @@ class FieldMapper
     public function __construct(
         AttributeCollectionFactory $attributeCollectionFactory,
         AttributeGroupRepositoryInterface $attributeGroupRepository,
-        $attributeSetId
+        string $attributeSetId
     ) {
         $this->attributeGroupRepository = $attributeGroupRepository;
         $this->initFieldsMap($attributeCollectionFactory, $attributeSetId);
@@ -65,9 +66,9 @@ class FieldMapper
     /**
      * Attribute collection for the current mapper.
      *
-     * @return \Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection
+     * @return Collection
      */
-    public function getAttributesCollection()
+    public function getAttributesCollection(): Collection
     {
         return $this->attributesCollection;
     }
@@ -77,7 +78,7 @@ class FieldMapper
      *
      * @return string[]
      */
-    public function getFieldsMap()
+    public function getFieldsMap(): array
     {
         return $this->fieldsMap;
     }
@@ -87,7 +88,7 @@ class FieldMapper
      *
      * @return array
      */
-    public function getFieldsets()
+    public function getFieldsets(): array
     {
         return $this->fieldsets;
     }
@@ -98,9 +99,9 @@ class FieldMapper
      * @param AttributeCollectionFactory $attributeCollectionFactory Seller attribute collection factory.
      * @param string                     $attributeSetId             Mapper attribute set identifier.
      *
-     * @return \Smile\Seller\Ui\Component\Seller\Form\FieldMapper
+     * @return FieldMapper
      */
-    private function initFieldsMap(AttributeCollectionFactory $attributeCollectionFactory, $attributeSetId)
+    private function initFieldsMap(AttributeCollectionFactory $attributeCollectionFactory, string $attributeSetId): FieldMapper
     {
         $this->fieldsMap            = [];
         $this->attributesCollection = $attributeCollectionFactory->create();

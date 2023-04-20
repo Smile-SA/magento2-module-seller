@@ -13,13 +13,16 @@
 namespace Smile\Seller\Ui\Component\Seller\Form\Modifier;
 
 use Magento\Catalog\Model\Category\Attribute\Backend\Image as ImageBackendModel;
+use Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\UrlInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Ui\DataProvider\EavValidationRules;
 use Magento\Ui\DataProvider\Modifier\ModifierInterface;
 use Smile\Seller\Api\AttributeRepositoryInterface;
 use Smile\Seller\Api\Data\SellerAttributeInterface;
+use Smile\Seller\Api\Data\SellerInterface;
 use Smile\Seller\Model\Locator\LocatorInterface;
 use Smile\Seller\Model\Seller\Attribute\ScopeOverriddenValue;
 use Magento\Eav\Api\Data\AttributeInterface;
@@ -36,51 +39,51 @@ use Smile\Seller\Model\SellerMediaUpload;
 class Eav implements ModifierInterface
 {
     /**
-     * @var \Smile\Seller\Model\Locator\LocatorInterface
+     * @var LocatorInterface
      */
-    private $locator;
+    private LocatorInterface $locator;
 
     /**
-     * @var \Smile\Seller\Model\Seller\Attribute\ScopeOverriddenValue
+     * @var ScopeOverriddenValue
      */
-    private $scopeOverriddenValue;
+    private ScopeOverriddenValue $scopeOverriddenValue;
 
     /**
-     * @var \Magento\Store\Model\StoreManagerInterface
+     * @var StoreManagerInterface
      */
-    private $storeManager;
+    private StoreManagerInterface $storeManager;
 
     /**
      * @var array
      */
-    private $canDisplayUseDefault = [];
+    private array $canDisplayUseDefault = [];
 
     /**
-     * @var \Smile\Seller\Api\AttributeRepositoryInterface
+     * @var AttributeRepositoryInterface
      */
-    private $attributeRepository;
+    private AttributeRepositoryInterface $attributeRepository;
 
     /**
-     * @var \Smile\Seller\Ui\Component\Seller\Form\FieldMapper
+     * @var FieldMapper
      */
-    private $fieldMapper;
+    private FieldMapper $fieldMapper;
 
     /**
-     * @var \Magento\Ui\DataProvider\EavValidationRules
+     * @var EavValidationRules
      */
-    private $eavValidationRules;
+    private EavValidationRules $eavValidationRules;
 
     /**
      * @var SellerMediaUpload
      */
-    private $media;
+    private SellerMediaUpload $media;
 
     /**
      * EAV attribute properties to fetch from meta storage
      *
      * @var array
      */
-    private $metaProperties = [
+    private array $metaProperties = [
         'formElement' => 'frontend_input',
         'required'    => 'is_required',
         'label'       => 'frontend_label',
@@ -95,7 +98,7 @@ class Eav implements ModifierInterface
      *
      * @var array
      */
-    private $formElement = [
+    private array $formElement = [
         'text'    => 'input',
         'boolean' => 'checkbox',
     ];
@@ -103,7 +106,7 @@ class Eav implements ModifierInterface
     /**
      * @var array
      */
-    private $validationRules = [
+    private array $validationRules = [
         'email' => ['validate-email' => true],
         'date'  => ['validate-date'  => true],
     ];
@@ -111,13 +114,13 @@ class Eav implements ModifierInterface
     /**
      * Eav constructor.
      *
-     * @param \Smile\Seller\Model\Locator\LocatorInterface              $locator                      Locator
-     * @param \Smile\Seller\Model\Seller\Attribute\ScopeOverriddenValue $scopeOverriddenValue         Scope Overriden Value checker
-     * @param \Magento\Store\Model\StoreManagerInterface                $storeManagerInterface        Store Manager
-     * @param \Smile\Seller\Api\AttributeRepositoryInterface            $attributeRepositoryInterface Attributes Repository
-     * @param \Magento\Ui\DataProvider\EavValidationRules               $eavValidationRules           EAV Validation rules
-     * @param \Smile\Seller\Ui\Component\Seller\Form\FieldMapper        $fieldMapper                  Field Mapper
-     * @param \Smile\Seller\Model\SellerMediaUpload                     $media                        Seller Media Manager
+     * @param LocatorInterface             $locator                      Locator
+     * @param ScopeOverriddenValue         $scopeOverriddenValue         Scope Overriden Value checker
+     * @param StoreManagerInterface        $storeManagerInterface        Store Manager
+     * @param AttributeRepositoryInterface $attributeRepositoryInterface Attributes Repository
+     * @param EavValidationRules           $eavValidationRules           EAV Validation rules
+     * @param FieldMapper                  $fieldMapper                  Field Mapper
+     * @param SellerMediaUpload            $media                        Seller Media Manager
      */
     public function __construct(
         LocatorInterface $locator,
@@ -140,7 +143,7 @@ class Eav implements ModifierInterface
     /**
      * {@inheritdoc}
      */
-    public function modifyData(array $data)
+    public function modifyData(array $data): array
     {
         if ($this->locator->getSeller()) {
             if (isset($data[$this->locator->getSeller()->getId()])) {
@@ -155,7 +158,7 @@ class Eav implements ModifierInterface
     /**
      * {@inheritdoc}
      */
-    public function modifyMeta(array $meta)
+    public function modifyMeta(array $meta): array
     {
         $meta = array_replace_recursive($meta, $this->prepareFieldsMeta($this->getFieldsMap(), $this->getAttributesMeta()));
 
@@ -168,7 +171,7 @@ class Eav implements ModifierInterface
      * @throws \Magento\Framework\Exception\LocalizedException
      * @return array
      */
-    private function getAttributesMeta()
+    private function getAttributesMeta(): array
     {
         $meta = [];
 
@@ -210,9 +213,9 @@ class Eav implements ModifierInterface
     /**
      * List of EAV attributes of the current model.
      *
-     * @return \Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection
+     * @return Collection
      */
-    private function getAttributes()
+    private function getAttributes(): Collection
     {
         return $this->fieldMapper->getAttributesCollection();
     }
@@ -222,7 +225,7 @@ class Eav implements ModifierInterface
      *
      * @return array
      */
-    private function getFieldsMap()
+    private function getFieldsMap(): array
     {
         return $this->fieldMapper->getFieldsMap();
     }
@@ -235,7 +238,7 @@ class Eav implements ModifierInterface
      *
      * @return array
      */
-    private function prepareFieldsMeta($fieldsMap, $fieldsMeta)
+    private function prepareFieldsMeta(array $fieldsMap, array $fieldsMeta): array
     {
         $result = [];
         $fieldsets = $this->fieldMapper->getFieldsets();
@@ -269,7 +272,7 @@ class Eav implements ModifierInterface
      *
      * @return string
      */
-    private function getScopeLabel($attribute)
+    private function getScopeLabel(mixed $attribute): string
     {
         $html = '';
         if (!$attribute || $this->storeManager->isSingleStoreMode()
@@ -296,7 +299,7 @@ class Eav implements ModifierInterface
      *
      * @return array
      */
-    private function addUseDefaultValueCheckbox(SellerAttributeInterface $attribute)
+    private function addUseDefaultValueCheckbox(SellerAttributeInterface $attribute): array
     {
         $canDisplayService = $this->canDisplayUseDefault($attribute);
         $meta = [];
@@ -320,7 +323,7 @@ class Eav implements ModifierInterface
      *
      * @return bool
      */
-    private function canDisplayUseDefault(SellerAttributeInterface $attribute)
+    private function canDisplayUseDefault(SellerAttributeInterface $attribute): bool
     {
         $attributeCode = $attribute->getAttributeCode();
 
@@ -345,7 +348,7 @@ class Eav implements ModifierInterface
      *
      * @return array
      */
-    private function customizeCheckbox(SellerAttributeInterface $attribute)
+    private function customizeCheckbox(SellerAttributeInterface $attribute): array
     {
         $meta = [];
 
@@ -363,12 +366,12 @@ class Eav implements ModifierInterface
     /**
      * Converts category image data to acceptable for rendering format
      *
-     * @param \Smile\Seller\Api\Data\SellerInterface $seller The seller
+     * @param SellerInterface $seller The seller
      * @param array                                  $data   Seller Data
      *
      * @return array
      */
-    private function convertValues($seller, $data)
+    private function convertValues(SellerInterface $seller, array $data): array
     {
         foreach ($this->getAttributes() as $attribute) {
             $attributeCode = $attribute->getAttributeCode();
@@ -395,10 +398,10 @@ class Eav implements ModifierInterface
     /**
      * @return string
      */
-    public function getBaseImageUrl()
+    public function getBaseImageUrl(): string
     {
         $currentStore = $this->storeManager->getStore();
-        $mediaUrl     = $currentStore->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA);
+        $mediaUrl     = $currentStore->getBaseUrl(UrlInterface::URL_TYPE_MEDIA);
 
         return $mediaUrl . 'seller/';
     }
