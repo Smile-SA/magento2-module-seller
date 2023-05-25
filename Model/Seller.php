@@ -1,107 +1,41 @@
 <?php
-/**
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade this module to newer
- * versions in the future.
- *
- * @category  Smile
- * @package   Smile\Seller
- * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2016 Smile
- * @license   Open Software License ("OSL") v. 3.0
- */
 
 namespace Smile\Seller\Model;
 
+use Magento\Eav\Model\Entity\Attribute\Source\Table;
 use Magento\Framework\Api\AttributeValueFactory;
 use Magento\Framework\Api\ExtensionAttributesFactory;
+use Magento\Framework\App\Area;
 use Magento\Framework\Data\Collection\AbstractDb;
 use Magento\Framework\DataObject\IdentityInterface;
 use Magento\Framework\Model\AbstractExtensibleModel;
 use Magento\Framework\Model\Context;
 use Magento\Framework\Model\ResourceModel\AbstractResource;
 use Magento\Framework\Registry;
-use Magento\Store\Model\StoreManagerInterface;
 use Smile\Seller\Api\AttributeRepositoryInterface;
 use Smile\Seller\Api\Data\SellerInterface;
+use Smile\Seller\Model\ResourceModel\Seller as SellerResource;
 
 /**
- * Seller Model
- *
- * @SuppressWarnings(PHPMD.CamelCasePropertyName) The properties are inherited
- *
- * @category Smile
- * @package  Smile\Seller
- * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * Seller Model.
  */
 class Seller extends AbstractExtensibleModel implements SellerInterface, IdentityInterface
 {
-    /**
-     * Default cache tag
-     */
-    const CACHE_TAG = SellerInterface::ENTITY;
+    public const CACHE_TAG = SellerInterface::ENTITY;
+    public const KEY_NAME = 'name';
+    public const KEY_IS_ACTIVE = 'is_active';
+    public const KEY_UPDATED_AT = 'updated_at';
+    public const KEY_CREATED_AT = 'created_at';
+    public const KEY_SELLER_CODE = 'seller_code';
 
-    /**
-     * "Name" attribute code
-     */
-    const KEY_NAME        = 'name';
-
-    /**
-     * "Is active" attribute code
-     */
-    const KEY_IS_ACTIVE   = 'is_active';
-
-    /**
-     * "Update At" attribute code
-     */
-    const KEY_UPDATED_AT  = 'updated_at';
-
-    /**
-     * "Created At" attribute code
-     */
-    const KEY_CREATED_AT  = 'created_at';
-
-    /**
-     * "Seller code" attribute code
-     */
-    const KEY_SELLER_CODE = 'seller_code';
-
-    /**
-     * Prefix of model events names.
-     *
-     * @var string
-     */
+    // phpcs:disable SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingAnyTypeHint
     protected $_eventPrefix = SellerInterface::ENTITY;
-
-    /**
-     * Parameter name in event.
-     *
-     * @var string
-     */
     protected $_eventObject = 'seller';
-
-    /**
-     * Model cache tag for clear cache in after save and after delete.
-     *
-     * @var string
-     */
     protected $_cacheTag = self::CACHE_TAG;
+    // phpcs:enable
 
     /**
      * @var string[]
-     */
-    protected $customAttributesCodes = null;
-
-    /**
-     * @var AttributeRepositoryInterface
-     */
-    private AttributeRepositoryInterface $metadataService;
-
-    /**
-     * Attributes are that part of interface
-     *
-     * @var array
      */
     protected array $interfaceAttributes = [
         'id',
@@ -113,38 +47,16 @@ class Seller extends AbstractExtensibleModel implements SellerInterface, Identit
         self::MEDIA_PATH,
     ];
 
-    /**
-     * @var StoreManagerInterface
-     */
-    private StoreManagerInterface $storeManager;
-
-    /**
-     * Seller constructor.
-     *
-     * @param Context                      $context                Application Context
-     * @param Registry                     $registry               Application Registry
-     * @param ExtensionAttributesFactory   $extensionFactory       Extension Attributes Factory
-     * @param AttributeValueFactory        $customAttributeFactory Custom Attributes Factory
-     * @param StoreManagerInterface        $storeManager           Store Manager
-     * @param AttributeRepositoryInterface $metadataService        Metadata Service
-     * @param ?AbstractResource            $resource               Resource Model
-     * @param ?AbstractDb                  $resourceCollection     Resource Collection
-     * @param array                        $data                   Model Data
-     */
     public function __construct(
         Context $context,
         Registry $registry,
         ExtensionAttributesFactory $extensionFactory,
         AttributeValueFactory $customAttributeFactory,
-        StoreManagerInterface $storeManager,
-        AttributeRepositoryInterface $metadataService,
-        AbstractResource $resource = null,
-        AbstractDb $resourceCollection = null,
+        private AttributeRepositoryInterface $metadataService,
+        ?AbstractResource $resource = null,
+        ?AbstractDb $resourceCollection = null,
         array $data = []
     ) {
-        $this->storeManager = $storeManager;
-        $this->metadataService = $metadataService;
-
         parent::__construct(
             $context,
             $registry,
@@ -157,7 +69,15 @@ class Seller extends AbstractExtensibleModel implements SellerInterface, Identit
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
+     */
+    protected function _construct()
+    {
+        $this->_init(SellerResource::class);
+    }
+
+    /**
+     * @inheritdoc
      */
     public function getName(): string
     {
@@ -165,7 +85,7 @@ class Seller extends AbstractExtensibleModel implements SellerInterface, Identit
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function getSellerCode(): string
     {
@@ -173,7 +93,7 @@ class Seller extends AbstractExtensibleModel implements SellerInterface, Identit
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function getCreatedAt(): ?string
     {
@@ -181,7 +101,7 @@ class Seller extends AbstractExtensibleModel implements SellerInterface, Identit
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function getUpdatedAt(): ?string
     {
@@ -189,7 +109,7 @@ class Seller extends AbstractExtensibleModel implements SellerInterface, Identit
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function getIsActive(): bool
     {
@@ -197,7 +117,7 @@ class Seller extends AbstractExtensibleModel implements SellerInterface, Identit
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function setName(string $name): self
     {
@@ -205,7 +125,7 @@ class Seller extends AbstractExtensibleModel implements SellerInterface, Identit
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function setSellerCode(string $sellerCode): self
     {
@@ -213,7 +133,7 @@ class Seller extends AbstractExtensibleModel implements SellerInterface, Identit
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function setIsActive(bool $isActive): self
     {
@@ -221,7 +141,7 @@ class Seller extends AbstractExtensibleModel implements SellerInterface, Identit
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function setCreatedAt(string $createdAt): self
     {
@@ -229,8 +149,8 @@ class Seller extends AbstractExtensibleModel implements SellerInterface, Identit
     }
 
     /**
-    * {@inheritDoc}
-    */
+     * @inheritdoc
+     */
     public function setUpdatedAt(string $updatedAt): self
     {
         return $this->setData(self::KEY_UPDATED_AT, $updatedAt);
@@ -238,18 +158,14 @@ class Seller extends AbstractExtensibleModel implements SellerInterface, Identit
 
     /**
      * Get default attribute source model
-     *
-     * @return string
      */
     public function getDefaultAttributeSourceModel(): string
     {
-        return 'Magento\Eav\Model\Entity\Attribute\Source\Table';
+        return Table::class;
     }
 
     /**
-     * Retrieve AttributeSetName
-     *
-     * @return string
+     * @inheritdoc
      */
     public function getAttributeSetName(): string
     {
@@ -257,12 +173,12 @@ class Seller extends AbstractExtensibleModel implements SellerInterface, Identit
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getIdentities(): array
     {
         $identities = [self::CACHE_TAG . '_' . $this->getId()];
-        if ($this->_appState->getAreaCode() == \Magento\Framework\App\Area::AREA_FRONTEND) {
+        if ($this->_appState->getAreaCode() == Area::AREA_FRONTEND) {
             $identities[] = self::CACHE_TAG;
         }
 
@@ -270,9 +186,7 @@ class Seller extends AbstractExtensibleModel implements SellerInterface, Identit
     }
 
     /**
-     * Retrieve custom attributes codes list
-     *
-     * @return array
+     * @inheritdoc
      */
     protected function getCustomAttributesCodes(): array
     {
@@ -285,17 +199,7 @@ class Seller extends AbstractExtensibleModel implements SellerInterface, Identit
     }
 
     /**
-     * Internal Constructor
-     *
-     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
-     */
-    protected function _construct(): void
-    {
-        $this->_init('Smile\Seller\Model\ResourceModel\Seller');
-    }
-
-    /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function getMediaPath(): ?string
     {
@@ -303,7 +207,7 @@ class Seller extends AbstractExtensibleModel implements SellerInterface, Identit
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function setMediaPath(string $path): self
     {

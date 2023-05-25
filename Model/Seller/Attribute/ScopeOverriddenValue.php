@@ -1,20 +1,9 @@
 <?php
-/**
- * DISCLAIMER
- * Do not edit or add to this file if you wish to upgrade this module to newer
- * versions in the future.
- *
- * @category  Smile
- * @package   Smile\Seller
- * @author    Romain Ruaud <romain.ruaud@smile.fr>
- * @copyright 2017 Smile
- * @license   Open Software License ("OSL") v. 3.0
- */
+
 namespace Smile\Seller\Model\Seller\Attribute;
 
 use Magento\Eav\Api\Data\AttributeInterface;
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
-use Magento\Framework\Api\FilterBuilder;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
@@ -27,67 +16,28 @@ use Smile\Seller\Model\Seller\Attribute\Repository as AttributeRepository;
 
 /**
  * Scope Overridden value finder for Seller entities.
- *
- * @category Smile
- * @package  Smile\Seller
- * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class ScopeOverriddenValue
 {
-    /**
-     * @var AttributeRepository
-     */
-    private AttributeRepository $attributeRepository;
-
-    /**
-     * @var SearchCriteriaBuilder
-     */
-    private SearchCriteriaBuilder $searchCriteriaBuilder;
-
     /**
      * @var ?array
      */
     private ?array $attributesValues;
 
-    /**
-     * @var AdapterInterface
-     */
     private AdapterInterface $resourceConnection;
 
-    /**
-     * @var FilterBuilder
-     */
-    private FilterBuilder $filterBuilder;
-
-    /**
-     * ScopeOverriddenValue constructor.
-     *
-     * @param AttributeRepository   $attributeRepository   Attribute Repository
-     * @param SearchCriteriaBuilder $searchCriteriaBuilder Search Criteria builder
-     * @param FilterBuilder         $filterBuilder         Filter Builder
-     * @param ResourceConnection    $resourceConnection    Resource Connection
-     */
     public function __construct(
-        AttributeRepository $attributeRepository,
-        SearchCriteriaBuilder $searchCriteriaBuilder,
-        FilterBuilder $filterBuilder,
+        private AttributeRepository $attributeRepository,
+        private SearchCriteriaBuilder $searchCriteriaBuilder,
         ResourceConnection $resourceConnection
     ) {
-        $this->attributeRepository = $attributeRepository;
-        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
-        $this->filterBuilder = $filterBuilder;
         $this->resourceConnection = $resourceConnection->getConnection();
     }
 
     /**
-     * Whether attribute value is overridden in specific store
-     *
-     * @param SellerInterface   $entity         The seller
-     * @param string            $attributeCode  The attribute code
-     * @param int               $storeId        The Store Id
+     * Whether attribute value is overridden in specific store.
      *
      * @throws LocalizedException
-     * @return bool
      */
     public function containsValue(SellerInterface $entity, string $attributeCode, int $storeId): bool
     {
@@ -103,13 +53,9 @@ class ScopeOverriddenValue
     }
 
     /**
-     * Init Attributes Values
-     *
-     * @param SellerInterface   $entity  The seller
-     * @param int               $storeId The Store Id
+     * Init Attributes Values.
      *
      * @throws LocalizedException
-     * @return void
      */
     private function initAttributeValues(SellerInterface $entity, int $storeId): void
     {

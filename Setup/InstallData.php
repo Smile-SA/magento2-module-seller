@@ -1,16 +1,4 @@
 <?php
-/**
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade this module to newer
- * versions in the future.
- *
- * @category  Smile
- * @package   Smile\Seller
- * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2016 Smile
- * @license   Open Software License ("OSL") v. 3.0
- */
 
 namespace Smile\Seller\Setup;
 
@@ -20,32 +8,17 @@ use Magento\Framework\Setup\ModuleDataSetupInterface;
 
 /**
  * Seller Data install class.
- *
- * @category Smile
- * @package  Smile\Seller
- * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class InstallData implements InstallDataInterface
 {
-    /**
-     * @var SellerSetupFactory
-     */
-    private SellerSetupFactory $sellerSetupFactory;
-
-    /**
-     * InstallData constructor
-     *
-     * @param SellerSetupFactory $sellerSetupFactory The Seller Setup factory
-     */
-    public function __construct(SellerSetupFactory $sellerSetupFactory)
+    public function __construct(private SellerSetupFactory $sellerSetupFactory)
     {
-        $this->sellerSetupFactory = $sellerSetupFactory;
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
-    public function install(ModuleDataSetupInterface $setup, ModuleContextInterface $context): void
+    public function install(ModuleDataSetupInterface $setup, ModuleContextInterface $context)
     {
         $setup->startSetup();
 

@@ -1,20 +1,10 @@
 <?php
-/**
- * DISCLAIMER
- * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
- * versions in the future.
- *
- * @category  Smile
- * @package   Smile\Seller
- * @author    Romain Ruaud <romain.ruaud@smile.fr>
- * @copyright 2016 Smile
- * @license   Open Software License ("OSL") v. 3.0
- */
+
 namespace Smile\Seller\Model\ResourceModel\Seller;
 
 use Magento\Eav\Model\Config;
-use Magento\Eav\Model\EntityFactory as EavEntityFactory;
 use Magento\Eav\Model\Entity\Collection\AbstractCollection;
+use Magento\Eav\Model\EntityFactory as EavEntityFactory;
 use Magento\Eav\Model\ResourceModel\Helper;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\Data\Collection\Db\FetchStrategyInterface;
@@ -23,96 +13,45 @@ use Magento\Framework\Data\CollectionDataSourceInterface;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Select;
 use Magento\Framework\Event\ManagerInterface;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Validator\UniversalFactory;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use Psr\Log\LoggerInterface;
+use Smile\Seller\Model\ResourceModel\Seller as SellerResource;
+use Smile\Seller\Model\Seller;
 
 /**
- * Sellers Collection
+ * Sellers Collection.
  *
- * @SuppressWarnings(PHPMD.CamelCasePropertyName) The properties are inherited
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects) The parent class had already too much coupling.
- *
- * @category Smile
- * @package  Smile\Seller
- * @author   Romain Ruaud <romain.ruaud@smile.fr>
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects) The parent class had already too much coupling
  */
 class Collection extends AbstractCollection implements CollectionDataSourceInterface
 {
-    /**
-     * Event prefix
-     *
-     * @var string
-     */
     protected string $_eventPrefix = 'smile_seller_entity_collection';
-
-    /**
-     * Event object name
-     *
-     * @var string
-     */
     protected string $_eventObject = 'smile_seller_entity_collection';
-
-    /**
-     * @var ?string Attribute set id of the entity
-     */
     protected ?string $sellerAttributeSetId = null;
-
-    /**
-     * @var ?string Attribute set name of the entity
-     */
     protected ?string $sellerAttributeSetName = null;
-
-    /**
-     * Current scope (store Id)
-     *
-     * @var ?int
-     */
     private ?int $storeId = null;
 
     /**
-     * Store manager
-     *
-     * @var StoreManagerInterface
-     */
-    private StoreManagerInterface $storeManager;
-
-    /**
-     * Collection constructor.
-     *
-     * @SuppressWarnings(PHPMD.ExcessiveParameterList) Parent construct already has 10 arguments.
-     *
-     * @param EntityFactory          $entityFactory    Entity Factory
-     * @param LoggerInterface        $logger           Logger
-     * @param FetchStrategyInterface $fetchStrategy    Fetch Strategy
-     * @param ManagerInterface       $eventManager     Event Manager
-     * @param Config                 $eavConfig        EAV Config
-     * @param ResourceConnection     $resource         Resource Connection
-     * @param EavEntityFactory       $eavEntityFactory EAV Entity Factory
-     * @param Helper                 $resourceHelper   Resource Helper
-     * @param StoreManagerInterface  $storeManager     The Store Manager
-     * @param UniversalFactory       $universalFactory Universal Factory
-     * @param AdapterInterface|null  $connection       Database Connection
-     * @param string|NULL            $attributeSetName Seller Attribute Set Name
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
-        EntityFactory          $entityFactory,
-        LoggerInterface        $logger,
+        EntityFactory $entityFactory,
+        LoggerInterface $logger,
         FetchStrategyInterface $fetchStrategy,
-        ManagerInterface       $eventManager,
-        Config                 $eavConfig,
-        ResourceConnection     $resource,
-        EavEntityFactory       $eavEntityFactory,
-        Helper                 $resourceHelper,
-        StoreManagerInterface  $storeManager,
-        UniversalFactory       $universalFactory,
-        AdapterInterface       $connection = null,
-        ?string                $attributeSetName = null
+        ManagerInterface $eventManager,
+        Config $eavConfig,
+        ResourceConnection $resource,
+        EavEntityFactory $eavEntityFactory,
+        Helper $resourceHelper,
+        private StoreManagerInterface $storeManager,
+        UniversalFactory $universalFactory,
+        ?AdapterInterface $connection = null,
+        ?string $attributeSetName = null
     ) {
         $this->sellerAttributeSetName = $attributeSetName;
-        $this->storeManager           = $storeManager;
-
         parent::__construct(
             $entityFactory,
             $logger,
@@ -128,11 +67,22 @@ class Collection extends AbstractCollection implements CollectionDataSourceInter
     }
 
     /**
-     * Set store scope
-     *
-     * @param int|string|Store $store The store
-     *
-     * @return $this
+     * @inheritdoc
+     */
+    protected function _construct()
+    {
+        $this->_init(Seller::class, SellerResource::class);
+
+        if ($this->sellerAttributeSetId == null) {
+            if ($this->sellerAttributeSetName !== null) {
+                $this->sellerAttributeSetId = $this->getResource()
+                    ->getAttributeSetIdByName($this->sellerAttributeSetName);
+            }
+        }
+    }
+
+    /**
+     * Set store scope.
      */
     public function setStore(int|string|Store $store): self
     {
@@ -142,11 +92,7 @@ class Collection extends AbstractCollection implements CollectionDataSourceInter
     }
 
     /**
-     * Set store scope
-     *
-     * @param mixed $storeId The store Id or Store
-     *
-     * @return $this
+     * Set store scope.
      */
     public function setStoreId(mixed $storeId): self
     {
@@ -159,9 +105,7 @@ class Collection extends AbstractCollection implements CollectionDataSourceInter
     }
 
     /**
-     * Return current store id
-     *
-     * @return int
+     * Return current store id.
      */
     public function getStoreId(): int
     {
@@ -173,9 +117,7 @@ class Collection extends AbstractCollection implements CollectionDataSourceInter
     }
 
     /**
-     * Retrieve default store id
-     *
-     * @return int
+     * Retrieve default store id.
      */
     public function getDefaultStoreId(): int
     {
@@ -183,34 +125,13 @@ class Collection extends AbstractCollection implements CollectionDataSourceInter
     }
 
     /**
-     * Init collection and determine table names
-     *
-     * @SuppressWarnings(PHPMD.CamelCaseMethodName) The method is inherited
-     *
-     * @return void
+     * @inheritdoc
      */
-    protected function _construct(): void
-    {
-        $this->_init('Smile\Seller\Model\Seller', 'Smile\Seller\Model\ResourceModel\Seller');
-
-        if ($this->sellerAttributeSetId == null) {
-            if ($this->sellerAttributeSetName !== null) {
-                $this->sellerAttributeSetId = $this->getResource()->getAttributeSetIdByName($this->sellerAttributeSetName);
-            }
-        }
-    }
-
-    /**
-     * Init select. Retrieve only sellers of current attribute set if specified.
-     *
-     * @SuppressWarnings(PHPMD.CamelCaseMethodName) The method is inherited
-     *
-     * @return $this
-     */
-    protected function _initSelect(): self
+    protected function _initSelect()
     {
         parent::_initSelect();
 
+        // Retrieve only sellers of current attribute set if specified.
         if ($this->sellerAttributeSetId !== null) {
             $this->addFieldToFilter('attribute_set_id', (int) $this->sellerAttributeSetId);
         }
@@ -219,22 +140,15 @@ class Collection extends AbstractCollection implements CollectionDataSourceInter
     }
 
     /**
-     * Retrieve attributes load select
-     *
-     * @SuppressWarnings(PHPMD.CamelCaseMethodName) The method is inherited
-     *
-     * @param string    $table        The table to load attributes from
-     * @param array|int $attributeIds The attribute ids to load
-     *
-     * @return Select
+     * @inheritdoc
      */
-    protected function _getLoadAttributesSelect($table, $attributeIds = []): Select
+    protected function _getLoadAttributesSelect($table, $attributeIds = [])
     {
         if (empty($attributeIds)) {
             $attributeIds = $this->_selectAttributes;
         }
 
-        $storeId    = $this->getStoreId();
+        $storeId = $this->getStoreId();
         $connection = $this->getConnection();
 
         $entityIdField = $this->getEntityPkName($this->getEntity());
@@ -261,22 +175,11 @@ class Collection extends AbstractCollection implements CollectionDataSourceInter
     }
 
     /**
-     * Adding join statement to collection select instance
-     *
-     * @SuppressWarnings(PHPMD.CamelCaseMethodName) The method is inherited
-     * @SuppressWarnings(PHPMD.ExcessiveParameterList) The method is inherited
-     * @SuppressWarnings(PHPMD.ElseExpression) The method is inspired from \Magento\Catalog\Model\ResourceModel\Collection\AbstractCollection
-     *
-     * @param string $method     The join method
-     * @param object $attribute  The attribute to join
-     * @param string $tableAlias The table alias
-     * @param array  $condition  The condition
-     * @param string $fieldCode  The field code
-     * @param string $fieldAlias The field alias
-     *
-     * @return AbstractCollection
+     * @inheritdoc
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     * @SuppressWarnings(PHPMD.ElseExpression) cf. \Magento\Catalog\Model\ResourceModel\Collection\AbstractCollection
      */
-    protected function _joinAttributeToSelect($method, $attribute, $tableAlias, $condition, $fieldCode, $fieldAlias): AbstractCollection
+    protected function _joinAttributeToSelect($method, $attribute, $tableAlias, $condition, $fieldCode, $fieldAlias)
     {
         $storeId = $this->getStoreId();
         if (isset($this->_joinAttributes[$fieldCode]['store_id'])) {
@@ -298,7 +201,7 @@ class Collection extends AbstractCollection implements CollectionDataSourceInter
 
             $defCondition = str_replace($tableAlias, $defAlias, $defCondition);
             $defCondition .= $connection->quoteInto(
-                " AND " . $connection->quoteColumnAs("{$defAlias}.store_id", null) . " = ?",
+                ' AND ' . $connection->quoteColumnAs("{$defAlias}.store_id", null) . " = ?",
                 $this->getDefaultStoreId()
             );
 
@@ -331,12 +234,7 @@ class Collection extends AbstractCollection implements CollectionDataSourceInter
     /**
      * Retrieve Base select for attributes of this collection.
      *
-     * @param string $table        The attribute table
-     * @param array  $attributeIds The attribute ids
-     *
-     * @throws \Magento\Framework\Exception\LocalizedException
-     *
-     * @return Select
+     * @throws LocalizedException
      */
     private function getBaseAttributesSelect(string $table, array $attributeIds = []): Select
     {
@@ -345,7 +243,7 @@ class Collection extends AbstractCollection implements CollectionDataSourceInter
 
         $entityIdField = $this->getEntityPkName($this->getEntity());
 
-        $select = $connection->select()->from(
+        return $connection->select()->from(
             ['t_d' => $table],
             ['attribute_id']
         )->join(
@@ -359,7 +257,5 @@ class Collection extends AbstractCollection implements CollectionDataSourceInter
             't_d.attribute_id IN (?)',
             $attributeIds
         );
-
-        return $select;
     }
 }

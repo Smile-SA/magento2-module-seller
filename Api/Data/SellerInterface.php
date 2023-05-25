@@ -1,38 +1,16 @@
 <?php
-/**
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade this module to newer
- * versions in the future.
- *
- * @category  Smile
- * @package   Smile\Seller
- * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2016 Smile
- * @license   Open Software License ("OSL") v. 3.0
- */
+
 namespace Smile\Seller\Api\Data;
 
 use Magento\Framework\Api\CustomAttributesDataInterface;
 
 /**
- * Seller Interface
- *
- * @category Smile
- * @package  Smile\Seller
- * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @api
  */
 interface SellerInterface extends CustomAttributesDataInterface
 {
-    /**
-     * Entity type code
-     */
-    const ENTITY = 'smile_seller';
-
-    /**
-     * The seller media_path field
-     */
-    const MEDIA_PATH  = 'image';
+    public const ENTITY = 'smile_seller';
+    public const MEDIA_PATH  = 'image';
 
     /**
      * Get Seller Id
@@ -45,7 +23,6 @@ interface SellerInterface extends CustomAttributesDataInterface
      * Set Seller Id
      *
      * @param mixed $entityId The id
-     *
      * @return $this
      */
     public function setId($entityId);
@@ -61,7 +38,6 @@ interface SellerInterface extends CustomAttributesDataInterface
      * Set seller name
      *
      * @param string $name The seller name
-     *
      * @return $this
      */
     public function setName(string $name): self;
@@ -71,7 +47,7 @@ interface SellerInterface extends CustomAttributesDataInterface
      *
      * @return bool|null
      */
-    public function getIsActive(): bool|null;
+    public function getIsActive(): ?bool;
 
     /**
      * Retrieve Seller Code
@@ -84,7 +60,6 @@ interface SellerInterface extends CustomAttributesDataInterface
      * Set Seller Code
      *
      * @param string $sellerCode The seller code
-     *
      * @return $this
      */
     public function setSellerCode(string $sellerCode): self;
@@ -93,7 +68,6 @@ interface SellerInterface extends CustomAttributesDataInterface
      * Set whether category is active
      *
      * @param bool $isActive If seller is active
-     *
      * @return $this
      */
     public function setIsActive(bool $isActive): self;
@@ -109,7 +83,6 @@ interface SellerInterface extends CustomAttributesDataInterface
      * Set Seller creation date
      *
      * @param string $createdAt The creation date
-     *
      * @return $this
      */
     public function setCreatedAt(string $createdAt): self;
@@ -125,7 +98,6 @@ interface SellerInterface extends CustomAttributesDataInterface
      * Set seller update date
      *
      * @param string $updatedAt Update date
-     *
      * @return $this
      */
     public function setUpdatedAt(string $updatedAt): self;

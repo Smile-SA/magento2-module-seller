@@ -1,18 +1,7 @@
 <?php
-/**
- * DISCLAIMER
- * Do not edit or add to this file if you wish to upgrade this module to newer
- * versions in the future.
- *
- * @category  Smile
- * @package   Smile\Seller
- * @author    Romain Ruaud <romain.ruaud@smile.fr>
- * @copyright 2016 Smile
- * @license   Open Software License ("OSL") v. 3.0
- */
+
 namespace Smile\Seller\Model\Locator;
 
-use Magento\Framework\Exception\NotFoundException;
 use Magento\Framework\Registry;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\Store;
@@ -20,52 +9,23 @@ use Magento\Store\Model\StoreManagerInterface;
 use Smile\Seller\Api\Data\SellerInterface;
 
 /**
- * Registry Locator for offers
- *
- * @category Smile
- * @package  Smile\Seller
- * @author   Romain Ruaud <romain.ruaud@smile.fr>
+ * Registry Locator for offers.
  */
 class RegistryLocator implements LocatorInterface
 {
-    /**
-     * @var Registry
-     */
-    private Registry $registry;
-
-    /**
-     * @var ?SellerInterface
-     */
     private ?SellerInterface $seller = null;
-
-    /**
-     * @var ?StoreInterface
-     */
     private ?StoreInterface $store = null;
 
-    /**
-     * @var StoreManagerInterface
-     */
-    private StoreManagerInterface $storeManager;
-
-    /**
-     * @param Registry              $registry     The application registry
-     * @param StoreManagerInterface $storeManager The Store Manager
-     */
     public function __construct(
-        Registry $registry,
-        StoreManagerInterface $storeManager
+        private Registry $registry,
+        private StoreManagerInterface $storeManager
     ) {
-        $this->storeManager = $storeManager;
-        $this->registry = $registry;
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @throws NotFoundException
+     * @inheritdoc
      */
-    public function getSeller(): SellerInterface|null
+    public function getSeller(): ?SellerInterface
     {
         if (null !== $this->seller) {
             return $this->seller;
@@ -78,10 +38,9 @@ class RegistryLocator implements LocatorInterface
         return null;
     }
     /**
-     * {@inheritdoc}
-     * @throws NotFoundException
+     * @inheritdoc
      */
-    public function getStore(): StoreInterface|null
+    public function getStore(): ?StoreInterface
     {
         if (null !== $this->store) {
             return $this->store;
