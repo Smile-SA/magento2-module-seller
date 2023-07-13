@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smile\Seller\Model;
 
 use Exception;
@@ -37,7 +39,7 @@ class SellerMediaUpload
      */
     public function removeMediaFromTmp(SellerInterface $seller): void
     {
-        $media = str_replace($seller->getRetailerId() . '_', '', $seller->getMediaPath());
+        $media = str_replace($seller->getData('retailer_id') . '_', '', $seller->getMediaPath());
         $baseTmpPath = $this->imageUploader->getBaseTmpPath();
         if (!empty($media) && $this->pathExist($baseTmpPath, $media)) {
             $this->moveFileFromTmp($media, $seller);
@@ -56,7 +58,7 @@ class SellerMediaUpload
 
         $baseImagePath = $this->imageUploader->getFilePath(
             $basePath,
-            $seller->getRetailerId() . '_' . $imageName
+            $seller->getData('retailer_id') . '_' . $imageName
         );
         $baseTmpImagePath = $this->imageUploader->getFilePath($baseTmpPath, $imageName);
 
@@ -83,9 +85,9 @@ class SellerMediaUpload
      */
     public function removeMedia(SellerInterface $seller): void
     {
-        $media = $seller->getRetailerId() . '_' . $seller->getMediaPath();
+        $media = $seller->getData('retailer_id') . '_' . $seller->getMediaPath();
         $basePath = $this->imageUploader->getBasePath();
-        if (!empty($media) && $this->pathExist($basePath, $media)) {
+        if ($seller->getData('retailer_id') && $seller->getMediaPath() && $this->pathExist($basePath, $media)) {
             $this->removeFile($media);
         }
     }

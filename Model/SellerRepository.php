@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smile\Seller\Model;
 
 use Magento\Framework\EntityManager\EntityManager;
@@ -11,6 +13,7 @@ use Smile\Retailer\Api\Data\RetailerInterfaceFactory;
 use Smile\Seller\Api\Data\SellerInterface;
 use Smile\Seller\Api\Data\SellerInterfaceFactory;
 use Smile\Seller\Model\ResourceModel\Seller as ResourceModel;
+use Smile\Seller\Model\Seller as SellerModel;
 
 /**
  * Seller repository implementation.
@@ -34,6 +37,7 @@ class SellerRepository
      */
     public function save(SellerInterface $seller): SellerInterface
     {
+        /** @var SellerModel $seller */
         $this->applyAttributeSet($seller);
 
         $this->resourceModel->beforeSave($seller);
@@ -55,10 +59,11 @@ class SellerRepository
         $cacheKey = $storeId ?? 'all';
 
         if (!isset($this->sellerRepositoryById[$sellerId][$cacheKey])) {
+            /** @var SellerModel $sellerModel */
             $sellerModel = $this->sellerFactory->create();
 
             if (null !== $storeId) {
-                $sellerModel->setStoreId($storeId);
+                $sellerModel->setData('store_id', $storeId);
             }
 
             $seller = $this->entityManager->load($sellerModel, $sellerId);
@@ -99,6 +104,7 @@ class SellerRepository
      */
     public function delete(SellerInterface $seller): bool
     {
+        /** @var SellerModel $seller */
         $sellerId = $seller->getId();
 
         $this->resourceModel->beforeDelete($seller);
@@ -134,8 +140,11 @@ class SellerRepository
         $attributeSetId = null;
 
         if (null !== $this->sellerAttributeSetName) {
+            /** @var SellerModel $sellerModel */
             $sellerModel    = $this->sellerFactory->create();
-            $attributeSetId = $sellerModel->getResource()->getAttributeSetIdByName($this->sellerAttributeSetName);
+            /** @var ResourceModel $resourceModel */
+            $resourceModel  = $sellerModel->getResource();
+            $attributeSetId = $resourceModel->getAttributeSetIdByName($this->sellerAttributeSetName);
         }
 
         return $attributeSetId;
@@ -146,9 +155,14 @@ class SellerRepository
      */
     private function applyAttributeSet(SellerInterface $seller): SellerInterface
     {
+        // add a fallback in case retailer attribute_set_id is not correctly returned from Retailer entity
+        if (null === $this->sellerAttributeSetName && $seller->getAttributeSetName()) {
+            $this->sellerAttributeSetName = $seller->getAttributeSetName();
+        }
+
         $attributeSetId = $this->getEntityAttributeSetId();
         if (null !== $attributeSetId) {
-            $seller->setAttributeSetId($attributeSetId);
+            $seller->setData('attribute_set_id', $attributeSetId);
         }
 
         return $seller;

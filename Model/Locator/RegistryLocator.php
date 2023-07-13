@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smile\Seller\Model\Locator;
 
 use Magento\Framework\Registry;
@@ -46,8 +48,8 @@ class RegistryLocator implements LocatorInterface
             return $this->store;
         }
 
-        if ($this->getSeller() && $this->getSeller()->getStoreId()) {
-            $this->store = $this->storeManager->getStore($this->getSeller()->getStoreId());
+        if ($this->getSeller() && $this->getSeller()->getData('store_id')) {
+            $this->store = $this->storeManager->getStore($this->getSeller()->getData('store_id'));
 
             return $this->store;
         }

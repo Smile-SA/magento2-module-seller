@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smile\Seller\Ui\Component\Seller\Form;
 
 use Magento\Eav\Api\AttributeGroupRepositoryInterface;
+use Magento\Eav\Model\Entity\Attribute\Group;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection;
 use Smile\Seller\Api\Data\SellerInterface;
 use Smile\Seller\Model\ResourceModel\Seller\Attribute\CollectionFactory as AttributeCollectionFactory;
@@ -63,6 +66,7 @@ class FieldMapper
 
         foreach ($this->attributesCollection as $attribute) {
             $attributeGroupId = $attribute->getAttributeGroupId();
+            /** @var Group $attributeGroup */
             $attributeGroup = $this->attributeGroupRepository->get($attributeGroupId);
             $fieldsetCode = str_replace('-', '_', $attributeGroup->getAttributeGroupCode());
             $this->fieldsets[$fieldsetCode] = [

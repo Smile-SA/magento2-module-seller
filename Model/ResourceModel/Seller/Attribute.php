@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smile\Seller\Model\ResourceModel\Seller;
 
 use Magento\Eav\Model\Entity\Attribute as BaseAttribute;

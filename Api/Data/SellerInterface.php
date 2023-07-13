@@ -1,14 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smile\Seller\Api\Data;
 
 use Magento\Framework\Api\CustomAttributesDataInterface;
 
 /**
  * @api
+ * @method mixed getData(...$key)
+ * @method mixed setData(...$data)
  */
 interface SellerInterface extends CustomAttributesDataInterface
 {
+    public const ENTITY_TYPE_CODE = 'smile_seller';
     public const ENTITY = 'smile_seller';
     public const MEDIA_PATH  = 'image';
 

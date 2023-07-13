@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smile\Seller\Api;
 
 use Magento\Eav\Api\Data\AttributeInterface;

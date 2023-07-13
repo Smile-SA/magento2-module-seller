@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smile\Seller\Model\Seller\Attribute;
 
 use Magento\Eav\Api\AttributeRepositoryInterface as EavAttributeRepositoryInterface;

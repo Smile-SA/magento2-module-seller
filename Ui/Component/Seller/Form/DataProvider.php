@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smile\Seller\Ui\Component\Seller\Form;
 
 use Magento\Ui\DataProvider\AbstractDataProvider;

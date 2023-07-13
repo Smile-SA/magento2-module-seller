@@ -1,6 +1,8 @@
 <?php
 
-namespace Smile\Seller\Setup;
+declare(strict_types=1);
+
+namespace Smile\Seller\Setup\Patch;
 
 use Magento\Eav\Model\Entity\Attribute\Source\Boolean;
 use Magento\Eav\Setup\EavSetup;
@@ -17,10 +19,10 @@ class SellerSetup extends EavSetup
     /**
      * @inheritdoc
      */
-    public function getDefaultEntities()
+    public function getDefaultEntities(): array
     {
         return [
-            SellerInterface::ENTITY => [
+            SellerInterface::ENTITY_TYPE_CODE => [
                 'entity_model' => Seller::class,
                 'attribute_model' => Attribute::class,
                 'table' => 'smile_seller_entity',

@@ -1,22 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smile\Seller\Ui\Component\Seller\Listing;
 
 use Magento\Framework\Api\Filter;
 use Magento\Ui\DataProvider\AbstractDataProvider;
-use Smile\Retailer\Model\ResourceModel\Retailer\CollectionFactory as RetailerCollectionFactory;
-use Smile\Seller\Model\ResourceModel\Seller\CollectionFactory as SellerCollectionFactory;
 
 /**
  * Data Provider for UI components based on Sellers.
+ * $collectionFactory cannot be typed, due to compilation error, with 2 Factory class without inheritance
+ * Futhermore, Retailer inherit from Seller, not the reverse
+ *
+ * @phpcs:disable SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingAnyTypeHint
  */
 class DataProvider extends AbstractDataProvider
 {
+    // $collectionFactory cannot be typed, due to compilation error, with 2 Factory class without inheritance
+    // @phpstan-ignore-next-line
     public function __construct(
         string $name,
         string $primaryFieldName,
         string $requestFieldName,
-        SellerCollectionFactory|RetailerCollectionFactory $collectionFactory,
+        $collectionFactory,
         protected array $addFieldStrategies = [],
         protected array $addFilterStrategies = [],
         array $meta = [],
@@ -58,7 +64,7 @@ class DataProvider extends AbstractDataProvider
     /**
      * @inheritdoc
      */
-    public function addFilter(Filter $filter)
+    public function addFilter(Filter $filter): void
     {
         if (isset($this->addFilterStrategies[$filter->getField()])) {
             $this->addFilterStrategies[$filter->getField()]

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smile\Seller\Model\Locator;
 
 use Magento\Store\Api\Data\StoreInterface;

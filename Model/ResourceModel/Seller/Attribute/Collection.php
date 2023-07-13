@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smile\Seller\Model\ResourceModel\Seller\Attribute;
 
 use Magento\Eav\Model\ResourceModel\Entity\Attribute;
@@ -9,7 +11,7 @@ use Smile\Seller\Model\ResourceModel\Seller\Attribute as SellerAttribute;
 /**
  * Seller Attributes Collection.
  */
-class Collection extends \Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection
+class Collection extends Attribute\Collection
 {
     /**
      * @inheritdoc
@@ -25,7 +27,7 @@ class Collection extends \Magento\Eav\Model\ResourceModel\Entity\Attribute\Colle
     /**
      * @inheritdoc
      */
-    protected function _initSelect()
+    protected function _initSelect(): self
     {
         $this->getSelect()->from(['main_table' => $this->getResource()->getMainTable()])
             ->where(

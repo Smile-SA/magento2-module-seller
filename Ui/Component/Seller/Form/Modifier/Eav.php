@@ -1,12 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smile\Seller\Ui\Component\Seller\Form\Modifier;
 
 use Magento\Catalog\Model\Category\Attribute\Backend\Image as ImageBackendModel;
 use Magento\Eav\Api\Data\AttributeInterface;
+use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\UrlInterface;
+use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Ui\Component\Form\Field;
 use Magento\Ui\Component\Form\Fieldset;
@@ -16,6 +20,7 @@ use Smile\Seller\Api\AttributeRepositoryInterface;
 use Smile\Seller\Api\Data\SellerAttributeInterface;
 use Smile\Seller\Api\Data\SellerInterface;
 use Smile\Seller\Model\Locator\LocatorInterface;
+use Smile\Seller\Model\ResourceModel\Seller as ResourceModelSeller;
 use Smile\Seller\Model\Seller\Attribute\ScopeOverriddenValue;
 use Smile\Seller\Model\SellerMediaUpload;
 use Smile\Seller\Ui\Component\Seller\Form\FieldMapper;
@@ -28,6 +33,9 @@ use Smile\Seller\Ui\Component\Seller\Form\FieldMapper;
 class Eav implements ModifierInterface
 {
     private StoreManagerInterface $storeManager;
+
+    // @phpstan-ignore-next-line as to avoid possible backward compatibility issue
+    private AttributeRepositoryInterface $attributeRepository;
     private array $canDisplayUseDefault = [];
 
     /**
@@ -107,7 +115,7 @@ class Eav implements ModifierInterface
     {
         $meta = [];
 
-        /** @var SellerAttributeInterface $attribute */
+        /** @var SellerAttributeInterface|AbstractAttribute $attribute */
         foreach ($this->getAttributes()->getItems() as $attribute) {
             $code = $attribute->getAttributeCode();
 
@@ -238,6 +246,7 @@ class Eav implements ModifierInterface
     {
         $attributeCode = $attribute->getAttributeCode();
 
+        /** @var ResourceModelSeller|SellerInterface $seller */
         $seller = $this->locator->getSeller();
 
         if (isset($this->canDisplayUseDefault[$attributeCode])) {
@@ -289,7 +298,7 @@ class Eav implements ModifierInterface
 
                 $data[$attributeCode][0]['name'] = $fileName;
                 $data[$attributeCode][0]['url']  = $this->getBaseImageUrl() . $fileName;
-                $data[$attributeCode][0]['size'] = isset($stat) ? $stat['size'] : 0;
+                $data[$attributeCode][0]['size'] = isset($stat['size']) ?: 0;
                 $data[$attributeCode][0]['type'] = $mime;
             }
         }
@@ -302,6 +311,7 @@ class Eav implements ModifierInterface
      */
     public function getBaseImageUrl(): string
     {
+        /** @var Store $currentStore */
         $currentStore = $this->storeManager->getStore();
         $mediaUrl = $currentStore->getBaseUrl(UrlInterface::URL_TYPE_MEDIA);
 

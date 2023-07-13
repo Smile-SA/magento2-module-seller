@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smile\Seller\Model\Seller\Attribute;
 
 use Magento\Eav\Api\Data\AttributeInterface;
@@ -11,6 +13,7 @@ use Magento\Framework\DB\Select;
 use Magento\Framework\DB\Sql\UnionExpression;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Store\Model\Store;
+use Smile\Seller\Api\Data\SellerAttributeInterface;
 use Smile\Seller\Api\Data\SellerInterface;
 use Smile\Seller\Model\Seller\Attribute\Repository as AttributeRepository;
 
@@ -59,9 +62,9 @@ class ScopeOverriddenValue
      */
     private function initAttributeValues(SellerInterface $entity, int $storeId): void
     {
-        /** @var AbstractAttribute $attribute */
         $attributeTables = [];
 
+        /** @var AbstractAttribute $attribute */
         foreach ($this->getScopedAttributes() as $attribute) {
             if (!$attribute->isStatic()) {
                 $attributeTables[$attribute->getBackend()->getTable()][] = $attribute->getAttributeId();
@@ -108,6 +111,7 @@ class ScopeOverriddenValue
         );
 
         return array_filter($searchResult->getItems(), function ($item) {
+            /** @var SellerAttributeInterface $item */
             return !$item->isScopeGlobal();
         });
     }

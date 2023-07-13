@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smile\Seller\Model\ResourceModel;
 
 use Magento\Eav\Model\Entity\AbstractEntity;
@@ -19,6 +21,7 @@ use Smile\Seller\Api\Data\SellerInterface;
  */
 class Seller extends AbstractEntity
 {
+    protected array $_attributes = [];
     protected ?int $isActiveAttributeId = null;
     protected ?int $storeId = null;
 
@@ -38,6 +41,7 @@ class Seller extends AbstractEntity
      */
     public function getEntityType(): Type
     {
+        // @phpstan-ignore-next-line as like inherit method
         if (empty($this->_type)) {
             $this->setType(SellerInterface::ENTITY);
         }
@@ -126,7 +130,7 @@ class Seller extends AbstractEntity
         $this->_attributes = [];
         $this->loadAttributesMetadata($attributes);
 
-        $object = $this->entityManager->load($object, $entityId);
+        $object = $this->entityManager->load($object, (string) $entityId);
 
         if (!$this->entityManager->has($object)) {
             $object->isObjectNew(true);
@@ -164,7 +168,7 @@ class Seller extends AbstractEntity
     /**
      * Retrieve Attribute set data by id or name.
      */
-    public function getAttributeSetIdByName(?string $attributeSetId): string
+    public function getAttributeSetIdByName(?string $attributeSetId): int
     {
         $select = $this->_resource->getConnection()->select();
         $field  = 'attribute_set_name';
@@ -174,13 +178,13 @@ class Seller extends AbstractEntity
             ->where($this->getConnection()->prepareSqlCondition("entity_type_id", ['eq' => $this->getTypeId()]))
             ->where($this->getConnection()->prepareSqlCondition($field, ['eq' => $attributeSetId]));
 
-        return $this->_resource->getConnection()->fetchOne($select);
+        return (int) $this->_resource->getConnection()->fetchOne($select);
     }
 
     /**
      * @inheritdoc
      */
-    public function beforeSave(DataObject $object)
+    public function beforeSave(DataObject $object): void
     {
         // Enforce loading of all attributes to ensure their beforeSave is correctly processed.
         $this->loadAllAttributes($object);

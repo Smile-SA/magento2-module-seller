@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smile\Seller\Model\Seller;
 
 use Magento\Catalog\Model\Category\DataProvider as CatalogCategoryDataProvider;

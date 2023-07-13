@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smile\Seller\Model\ResourceModel\Seller;
 
 use Magento\Eav\Model\Config;
@@ -30,7 +32,7 @@ class Collection extends AbstractCollection implements CollectionDataSourceInter
 {
     protected string $_eventPrefix = 'smile_seller_entity_collection';
     protected string $_eventObject = 'smile_seller_entity_collection';
-    protected ?string $sellerAttributeSetId = null;
+    protected ?int $sellerAttributeSetId = null;
     protected ?string $sellerAttributeSetName = null;
     private ?int $storeId = null;
 
@@ -75,7 +77,9 @@ class Collection extends AbstractCollection implements CollectionDataSourceInter
 
         if ($this->sellerAttributeSetId == null) {
             if ($this->sellerAttributeSetName !== null) {
-                $this->sellerAttributeSetId = $this->getResource()
+                /** @var SellerResource $resource */
+                $resource = $this->getResource();
+                $this->sellerAttributeSetId = $resource
                     ->getAttributeSetIdByName($this->sellerAttributeSetName);
             }
         }
@@ -201,6 +205,7 @@ class Collection extends AbstractCollection implements CollectionDataSourceInter
 
             $defCondition = str_replace($tableAlias, $defAlias, $defCondition);
             $defCondition .= $connection->quoteInto(
+                // @phpstan-ignore-next-line as $alias null value is default
                 ' AND ' . $connection->quoteColumnAs("{$defAlias}.store_id", null) . " = ?",
                 $this->getDefaultStoreId()
             );
@@ -224,6 +229,7 @@ class Collection extends AbstractCollection implements CollectionDataSourceInter
         }
 
         $condition[] = $connection->quoteInto(
+            // @phpstan-ignore-next-line as $alias null value is default
             $connection->quoteColumnAs("{$tableAlias}.store_id", null) . ' = ?',
             $storeId
         );
