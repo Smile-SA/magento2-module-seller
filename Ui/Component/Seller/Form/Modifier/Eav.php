@@ -246,7 +246,7 @@ class Eav implements ModifierInterface
     {
         $attributeCode = $attribute->getAttributeCode();
 
-        /** @var ResourceModelSeller|SellerInterface $seller */
+        /** @var ResourceModelSeller|SellerInterface|null $seller */
         $seller = $this->locator->getSeller();
 
         if (isset($this->canDisplayUseDefault[$attributeCode])) {

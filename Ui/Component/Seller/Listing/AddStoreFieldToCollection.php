@@ -24,6 +24,7 @@ class AddStoreFieldToCollection implements AddFilterToCollectionInterface
      */
     public function addFilter(Collection $collection, $field, $condition = null)
     {
+        // @phpstan-ignore-next-line
         if (isset($condition['eq']) && $condition['eq']) {
             /** @var Store|StoreInterface $store */
             $store = $this->storeManager->getStore($condition['eq']);

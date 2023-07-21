@@ -54,7 +54,7 @@ class SellerRepository
      *
      * @throws NoSuchEntityException
      */
-    public function get(int|string $sellerId, ?int $storeId = null): SellerInterface
+    public function get(int $sellerId, ?int $storeId = null): SellerInterface
     {
         $cacheKey = $storeId ?? 'all';
 
@@ -66,7 +66,7 @@ class SellerRepository
                 $sellerModel->setData('store_id', $storeId);
             }
 
-            $seller = $this->entityManager->load($sellerModel, $sellerId);
+            $seller = $this->entityManager->load($sellerModel, (string) $sellerId);
             $this->resourceModel->afterLoad($sellerModel);
 
             if (!$seller->getId()) {

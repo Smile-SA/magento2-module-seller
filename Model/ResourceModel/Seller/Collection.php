@@ -88,7 +88,7 @@ class Collection extends AbstractCollection implements CollectionDataSourceInter
     /**
      * Set store scope.
      */
-    public function setStore(int|string|Store $store): self
+    public function setStore(Store $store): self
     {
         $this->setStoreId($this->storeManager->getStore($store)->getId());
 
