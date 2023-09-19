@@ -1,26 +1,8 @@
 <?xml version="1.0"?>
-<!--
-/**
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade this module to newer
- * versions in the future.
- *
- * @category  Smile
- * @package   Smile\Seller
- * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2016 Smile
- * @license   Open Software License ("OSL") v. 3.0
- */
--->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
-
-    <preference for="Smile\Seller\Api\Data\SellerInterface" type="Smile\Seller\Model\Seller" />
-
-    <preference for="Smile\Seller\Api\Data\SellerAttributeInterface" type="Smile\Seller\Model\ResourceModel\Seller\Attribute" />
-
-    <preference for="Smile\Seller\Api\AttributeRepositoryInterface" type="Smile\Seller\Model\Seller\Attribute\Repository" />
-    
+    <preference for="Smile\Seller\Api\Data\SellerInterface" type="Smile\Seller\Model\Seller"/>
+    <preference for="Smile\Seller\Api\Data\SellerAttributeInterface" type="Smile\Seller\Model\ResourceModel\Seller\Attribute"/>
+    <preference for="Smile\Seller\Api\AttributeRepositoryInterface" type="Smile\Seller\Model\Seller\Attribute\Repository"/>
     <preference for="Smile\Seller\Model\Locator\LocatorInterface" type="Smile\Seller\Model\Locator\RegistryLocator"/>
 
     <virtualType name="Smile\Seller\Model\Entity\CreationScopeResolver" type="Magento\Framework\Model\Entity\ScopeResolver">

@@ -2,22 +2,7 @@
     "name": "smile/module-seller",
     "type": "magento2-component",
     "description": "Smile Retailer Suite - Seller Module",
-    "keywords": ["magento2","retailer suite","retailer","shop","seller"],
-    "repositories": [
-        {
-            "type": "composer",
-            "url": "https://repo.magento.com/"
-        }
-    ],
-    "require": {
-        "magento/framework": "*",
-        "magento/module-store": "*",
-        "magento/module-eav": "*",
-        "magento/magento-composer-installer": "*"
-    },
-    "require-dev": {
-        "smile/magento2-smilelab-quality-suite": "1.0.0"
-    },
+    "keywords": ["magento2", "retailer suite", "retailer", "shop", "seller"],
     "license": "OSL-3.0",
     "authors": [
         {
@@ -29,13 +14,37 @@
             "email": "romain.ruaud@smile.fr"
         }
     ],
+    "require": {
+        "php": "^8.1",
+        "magento/framework": ">=103.0.4",
+        "magento/module-eav": ">=102.1.4",
+        "magento/module-store": ">=101.1.4"
+    },
+    "require-dev": {
+        "smile/magento2-smilelab-quality-suite": "^3.0"
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://repo.magento.com/"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "autoload": {
         "files": [
             "registration.php"
         ],
         "psr-4": {
-            "Smile\\Seller\\" : ""
+            "Smile\\Seller\\": ""
         }
+    },
+    "config": {
+        "allow-plugins": {
+            "magento/composer-dependency-version-audit-plugin": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        },
+        "sort-packages": true
     },
     "extra": {
         "map": [
@@ -44,7 +53,5 @@
                 "lib/web/fonts/retailersuite"
             ]
         ]
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true
+    }
 }

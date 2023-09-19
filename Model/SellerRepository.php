@@ -1,83 +1,43 @@
 <?php
-/**
- * DISCLAIMER
- * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
- * versions in the future.
- *
- * @category  Smile
- * @package   Smile\Seller
- * @author    Romain Ruaud <romain.ruaud@smile.fr>
- * @copyright 2016 Smile
- * @license   Open Software License ("OSL") v. 3.0
- */
+
+declare(strict_types=1);
+
 namespace Smile\Seller\Model;
 
 use Magento\Framework\EntityManager\EntityManager;
-use Smile\Seller\Api\Data\SellerInterfaceFactory;
+use Magento\Framework\Exception\CouldNotSaveException;
+use Magento\Framework\Exception\InputException;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Exception\StateException;
+use Smile\Retailer\Api\Data\RetailerInterfaceFactory;
+use Smile\Seller\Api\Data\SellerInterface;
+use Smile\Seller\Api\Data\SellerInterfaceFactory;
 use Smile\Seller\Model\ResourceModel\Seller as ResourceModel;
+use Smile\Seller\Model\Seller as SellerModel;
 
 /**
- * Seller Repository
- *
- * @category Smile
- * @package  Smile\Seller
- * @author   Romain Ruaud <romain.ruaud@smile.fr>
+ * Seller repository implementation.
  */
 class SellerRepository
 {
-    /**
-     * @var \Magento\Framework\EntityManager\EntityManager
-     */
-    private $entityManager;
+    private array $sellerRepositoryById = [];
 
-    /**
-     * @var array
-     */
-    private $sellerRepositoryById = [];
-
-    /**
-     * @var array
-     */
-    private $sellerFactory;
-
-    /**
-     * @var ResourceModel
-     */
-    private $resourceModel;
-
-    /**
-     * @var null Attribute set name of the entity
-     */
-    private $sellerAttributeSetName = null;
-
-    /**
-     * SellerRepository constructor.
-     *
-     * @param EntityManager          $entityManager    The entity manager.
-     * @param ResourceModel          $resourceModel    Resource model.
-     * @param SellerInterfaceFactory $sellerFactory    The seller factory.
-     * @param string|null            $attributeSetName The seller attribute Set Name, if any.
-     *
-     */
-    public function __construct(EntityManager $entityManager, ResourceModel $resourceModel, $sellerFactory, $attributeSetName = null)
-    {
-        $this->entityManager          = $entityManager;
-        $this->resourceModel          = $resourceModel;
-        $this->sellerFactory          = $sellerFactory;
-        $this->sellerAttributeSetName = $attributeSetName;
+    public function __construct(
+        private EntityManager $entityManager,
+        private ResourceModel $resourceModel,
+        private SellerInterfaceFactory|RetailerInterfaceFactory $sellerFactory,
+        private ?string $sellerAttributeSetName = null
+    ) {
     }
 
     /**
-     * Create seller service
+     * Create seller service.
      *
-     * @param \Smile\Seller\Api\Data\SellerInterface $seller The seller
-     *
-     * @return \Smile\Seller\Api\Data\SellerInterface
-     * @throws \Magento\Framework\Exception\CouldNotSaveException
+     * @throws CouldNotSaveException
      */
-    public function save(\Smile\Seller\Api\Data\SellerInterface $seller)
+    public function save(SellerInterface $seller): SellerInterface
     {
+        /** @var SellerModel $seller */
         $this->applyAttributeSet($seller);
 
         $this->resourceModel->beforeSave($seller);
@@ -85,30 +45,28 @@ class SellerRepository
         $this->resourceModel->afterSave($seller);
 
         unset($this->sellerRepositoryById[$seller->getId()]);
+
+        return $seller;
     }
 
     /**
-     * Get info about seller by seller id
+     * Get info about seller by seller id.
      *
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
-     *
-     * @param int $sellerId The seller Id
-     * @param int $storeId  The store Id
-     *
-     * @return \Smile\Seller\Api\Data\SellerInterface
+     * @throws NoSuchEntityException
      */
-    public function get($sellerId, $storeId = null)
+    public function get(int $sellerId, ?int $storeId = null): SellerInterface
     {
-        $cacheKey = (null !== $storeId) ? $storeId : 'all';
+        $cacheKey = $storeId ?? 'all';
 
         if (!isset($this->sellerRepositoryById[$sellerId][$cacheKey])) {
+            /** @var SellerModel $sellerModel */
             $sellerModel = $this->sellerFactory->create();
 
             if (null !== $storeId) {
-                $sellerModel->setStoreId((int) $storeId);
+                $sellerModel->setData('store_id', $storeId);
             }
 
-            $seller = $this->entityManager->load($sellerModel, $sellerId);
+            $seller = $this->entityManager->load($sellerModel, (string) $sellerId);
             $this->resourceModel->afterLoad($sellerModel);
 
             if (!$seller->getId()) {
@@ -123,19 +81,13 @@ class SellerRepository
     }
 
     /**
-     * Retrieve seller by seller code
+     * Retrieve seller by seller code.
      *
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
-     *
-     * @param int $sellerCode The seller Code
-     * @param int $storeId    The store Id
-     *
-     * @return \Smile\Seller\Api\Data\SellerInterface
+     * @throws NoSuchEntityException
      */
-    public function getByCode($sellerCode, $storeId = null)
+    public function getByCode(string $sellerCode, ?int $storeId = null): SellerInterface
     {
         $sellerId = $this->resourceModel->getIdByCode($sellerCode);
-
         if (!$sellerId) {
             throw new NoSuchEntityException(__('Requested seller doesn\'t exist'));
         }
@@ -144,18 +96,15 @@ class SellerRepository
     }
 
     /**
-     * Delete seller
+     * Delete seller.
      *
-     * @throws \Magento\Framework\Exception\InputException
-     * @throws \Magento\Framework\Exception\StateException
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
-     *
-     * @param \Smile\Seller\Api\Data\SellerInterface $seller seller which will deleted
-     *
-     * @return bool Will returned True if deleted
+     * @throws NoSuchEntityException
+     * @throws InputException
+     * @throws StateException
      */
-    public function delete(\Smile\Seller\Api\Data\SellerInterface $seller)
+    public function delete(SellerInterface $seller): bool
     {
+        /** @var SellerModel $seller */
         $sellerId = $seller->getId();
 
         $this->resourceModel->beforeDelete($seller);
@@ -170,17 +119,13 @@ class SellerRepository
     }
 
     /**
-     * Delete seller by identifier
+     * Delete seller by identifier.
      *
-     * @throws \Magento\Framework\Exception\InputException
-     * @throws \Magento\Framework\Exception\StateException
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
-     *
-     * @param int $sellerId The seller id
-     *
-     * @return bool Will returned True if deleted
+     * @throws NoSuchEntityException
+     * @throws InputException
+     * @throws StateException
      */
-    public function deleteByIdentifier($sellerId)
+    public function deleteByIdentifier(int $sellerId): bool
     {
         $seller = $this->get($sellerId);
 
@@ -188,34 +133,36 @@ class SellerRepository
     }
 
     /**
-     * Retrieve Attribute Set Id to use for this entity, if any
-     *
-     * @return null|int
+     * Retrieve Attribute Set Id to use for this entity, if any.
      */
-    public function getEntityAttributeSetId()
+    public function getEntityAttributeSetId(): ?int
     {
         $attributeSetId = null;
 
         if (null !== $this->sellerAttributeSetName) {
+            /** @var SellerModel $sellerModel */
             $sellerModel    = $this->sellerFactory->create();
-            $attributeSetId = $sellerModel->getResource()->getAttributeSetIdByName($this->sellerAttributeSetName);
+            /** @var ResourceModel $resourceModel */
+            $resourceModel  = $sellerModel->getResource();
+            $attributeSetId = $resourceModel->getAttributeSetIdByName($this->sellerAttributeSetName);
         }
 
         return $attributeSetId;
     }
 
     /**
-     * Apply correct attribute set to the current seller item
-     *
-     * @param \Smile\Seller\Api\Data\SellerInterface $seller The seller
-     *
-     * @return \Smile\Seller\Api\Data\SellerInterface
+     * Apply correct attribute set to the current seller item.
      */
-    private function applyAttributeSet(\Smile\Seller\Api\Data\SellerInterface $seller)
+    private function applyAttributeSet(SellerInterface $seller): SellerInterface
     {
+        // add a fallback in case retailer attribute_set_id is not correctly returned from Retailer entity
+        if (null === $this->sellerAttributeSetName && $seller->getAttributeSetName()) {
+            $this->sellerAttributeSetName = $seller->getAttributeSetName();
+        }
+
         $attributeSetId = $this->getEntityAttributeSetId();
         if (null !== $attributeSetId) {
-            $seller->setAttributeSetId($attributeSetId);
+            $seller->setData('attribute_set_id', $attributeSetId);
         }
 
         return $seller;

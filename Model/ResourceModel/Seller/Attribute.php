@@ -1,72 +1,54 @@
 <?php
-/**
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade this module to newer
- * versions in the future.
- *
- * @category  Smile
- * @package   Smile\Seller
- * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2016 Smile
- * @license   Open Software License ("OSL") v. 3.0
- */
+
+declare(strict_types=1);
 
 namespace Smile\Seller\Model\ResourceModel\Seller;
 
-use Smile\Seller\Model\Seller;
-use Smile\Seller\Api\Data\SellerAttributeInterface;
+use Magento\Eav\Model\Entity\Attribute as BaseAttribute;
 use Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface;
+use Smile\Seller\Api\Data\SellerAttributeInterface;
+use Smile\Seller\Model\Seller;
 
 /**
- * Seller Attributes
- *
- * @category Smile
- * @package  Smile\Seller
- * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * Seller Attributes.
  */
-class Attribute extends \Magento\Eav\Model\Entity\Attribute implements SellerAttributeInterface, ScopedAttributeInterface
+class Attribute extends BaseAttribute implements SellerAttributeInterface, ScopedAttributeInterface
 {
     /**
      * Attributes shared between all entities
-     * @var array
+     *
+     * @var string[]
      */
-    private $globalAttributes = [
+    private array $globalAttributes = [
         Seller::KEY_SELLER_CODE,
     ];
 
     /**
      * Retrieve attribute is global scope flag
-     *
-     * @return bool
      */
-    public function isScopeGlobal()
+    public function isScopeGlobal(): bool
     {
         return in_array($this->getAttributeCode(), $this->globalAttributes);
     }
 
     /**
      * Retrieve attribute is website scope website
-     *
-     * @return bool
      */
-    public function isScopeWebsite()
+    public function isScopeWebsite(): bool
     {
         return $this->getIsGlobal() == self::SCOPE_WEBSITE;
     }
 
     /**
      * Retrieve attribute is store scope flag
-     *
-     * @return bool
      */
-    public function isScopeStore()
+    public function isScopeStore(): bool
     {
         return !$this->isScopeGlobal() && !$this->isScopeWebsite();
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function __sleep()
     {

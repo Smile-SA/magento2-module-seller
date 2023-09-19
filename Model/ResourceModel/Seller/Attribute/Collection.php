@@ -1,38 +1,33 @@
 <?php
-/**
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade this module to newer
- * versions in the future.
- *
- * @category  Smile
- * @package   Smile\Seller
- * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2016 Smile
- * @license   Open Software License ("OSL") v. 3.0
- */
+
+declare(strict_types=1);
 
 namespace Smile\Seller\Model\ResourceModel\Seller\Attribute;
 
+use Magento\Eav\Model\ResourceModel\Entity\Attribute;
 use Smile\Seller\Api\Data\SellerInterface;
+use Smile\Seller\Model\ResourceModel\Seller\Attribute as SellerAttribute;
 
 /**
- * Seller Attributes Collection
- *
- * @category Smile
- * @package  Smile\Seller
- * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * Seller Attributes Collection.
  */
-class Collection extends \Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection
+class Collection extends Attribute\Collection
 {
     /**
-     * Main select object initialization.
-     *
-     * @SuppressWarnings(PHPMD.CamelCaseMethodName) The method is inherited
-     *
-     * @return $this
+     * @inheritdoc
      */
-    protected function _initSelect()
+    protected function _construct()
+    {
+        $this->_init(
+            SellerAttribute::class,
+            Attribute::class
+        );
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function _initSelect(): self
     {
         $this->getSelect()->from(['main_table' => $this->getResource()->getMainTable()])
             ->where(
@@ -41,15 +36,5 @@ class Collection extends \Magento\Eav\Model\ResourceModel\Entity\Attribute\Colle
             );
 
         return $this;
-    }
-
-    /**
-     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
-     *
-     * {@inheritDoc}
-     */
-    protected function _construct()
-    {
-        $this->_init('Smile\Seller\Model\ResourceModel\Seller\Attribute', 'Magento\Eav\Model\ResourceModel\Entity\Attribute');
     }
 }

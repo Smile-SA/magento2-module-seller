@@ -1,21 +1,16 @@
 <?php
 
-/**
- * DISCLAIMER
- * Do not edit or add to this file if you wish to upgrade this module to newer
- * versions in the future.
- *
- * @category  Smile
- * @package   Smile\Seller
- * @author    Ihor KVASNYTSKYI <ihor.kvasnytskyi@smile-ukraine.com>
- * @copyright 2019 Smile
- * @license   Open Software License ("OSL") v. 3.0
- */
+declare(strict_types=1);
+
 namespace Smile\Seller\Model\Seller;
 
-class DataProvider extends \Magento\Catalog\Model\Category\DataProvider
-{
+use Magento\Catalog\Model\Category\DataProvider as CatalogCategoryDataProvider;
 
+class DataProvider extends CatalogCategoryDataProvider
+{
+    /**
+     * @inheritdoc
+     */
     protected function getFieldsMap()
     {
         $fields = parent::getFieldsMap();

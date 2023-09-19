@@ -1,47 +1,32 @@
 <?php
-/**
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade this module to newer
- * versions in the future.
- *
- * @category  Smile
- * @package   Smile\Seller
- * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2016 Smile
- * @license   Open Software License ("OSL") v. 3.0
- */
 
-namespace Smile\Seller\Setup;
+declare(strict_types=1);
 
+namespace Smile\Seller\Setup\Patch;
+
+use Magento\Eav\Model\Entity\Attribute\Source\Boolean;
 use Magento\Eav\Setup\EavSetup;
 use Smile\Seller\Api\Data\SellerInterface;
-use Smile\Retailer\Api\Data\RetailerInterface;
+use Smile\Seller\Model\ResourceModel\Seller;
+use Smile\Seller\Model\ResourceModel\Seller\Attribute;
+use Smile\Seller\Model\ResourceModel\Seller\Attribute\Collection as AttributeCollection;
 
 /**
  * Seller Setup class : contains EAV Attributes declarations.
- *
- * @category Smile
- * @package  Smile\Seller
- * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class SellerSetup extends EavSetup
 {
-
     /**
-     * Default entities and attributes
-     *
-     * @return array
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * @inheritdoc
      */
-    public function getDefaultEntities()
+    public function getDefaultEntities(): array
     {
         return [
-            SellerInterface::ENTITY => [
-                'entity_model' => 'Smile\Seller\Model\ResourceModel\Seller',
-                'attribute_model' => 'Smile\Seller\Model\ResourceModel\Seller\Attribute',
+            SellerInterface::ENTITY_TYPE_CODE => [
+                'entity_model' => Seller::class,
+                'attribute_model' => Attribute::class,
                 'table' => 'smile_seller_entity',
-                'entity_attribute_collection' => 'Smile\Seller\Model\ResourceModel\Seller\Attribute\Collection',
+                'entity_attribute_collection' => AttributeCollection::class,
                 'attributes' => [
                     'name' => [
                         'type' => 'varchar',
@@ -71,7 +56,7 @@ class SellerSetup extends EavSetup
                         'type' => 'int',
                         'label' => 'Is Active',
                         'input' => 'select',
-                        'source' => 'Magento\Eav\Model\Entity\Attribute\Source\Boolean',
+                        'source' => Boolean::class,
                         'sort_order' => 2,
                     ],
                     'description' => [

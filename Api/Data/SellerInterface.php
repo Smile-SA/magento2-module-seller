@@ -1,49 +1,33 @@
 <?php
-/**
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade this module to newer
- * versions in the future.
- *
- * @category  Smile
- * @package   Smile\Seller
- * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2016 Smile
- * @license   Open Software License ("OSL") v. 3.0
- */
+
+declare(strict_types=1);
+
 namespace Smile\Seller\Api\Data;
 
-/**
- * Seller Interface
- *
- * @category Smile
- * @package  Smile\Seller
- * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
- */
-interface SellerInterface extends \Magento\Framework\Api\CustomAttributesDataInterface
-{
-    /**
-     * Entity type code
-     */
-    const ENTITY = 'smile_seller';
+use Magento\Framework\Api\CustomAttributesDataInterface;
 
-    /**
-     * The seller media_path field
-     */
-    const MEDIA_PATH  = 'image';
+/**
+ * @api
+ * @method mixed getData(...$key)
+ * @method mixed setData(...$data)
+ */
+interface SellerInterface extends CustomAttributesDataInterface
+{
+    public const ENTITY_TYPE_CODE = 'smile_seller';
+    public const ENTITY = 'smile_seller';
+    public const MEDIA_PATH  = 'image';
 
     /**
      * Get Seller Id
      *
-     * @return int|null
+     * @return mixed
      */
     public function getId();
 
     /**
      * Set Seller Id
      *
-     * @param int $entityId The id
-     *
+     * @param mixed $entityId The id
      * @return $this
      */
     public function setId($entityId);
@@ -53,100 +37,94 @@ interface SellerInterface extends \Magento\Framework\Api\CustomAttributesDataInt
      *
      * @return string
      */
-    public function getName();
+    public function getName(): string;
 
     /**
      * Set seller name
      *
      * @param string $name The seller name
-     *
      * @return $this
      */
-    public function setName($name);
+    public function setName(string $name): self;
 
     /**
      * Check whether seller is active
      *
      * @return bool|null
      */
-    public function getIsActive();
+    public function getIsActive(): ?bool;
 
     /**
      * Retrieve Seller Code
      *
      * @return string
      */
-    public function getSellerCode();
+    public function getSellerCode(): string;
 
     /**
      * Set Seller Code
      *
      * @param string $sellerCode The seller code
-     *
      * @return $this
      */
-    public function setSellerCode($sellerCode);
+    public function setSellerCode(string $sellerCode): self;
 
     /**
      * Set whether category is active
      *
      * @param bool $isActive If seller is active
-     *
      * @return $this
      */
-    public function setIsActive($isActive);
+    public function setIsActive(bool $isActive): self;
 
     /**
      * Retrieve Seller creation date
      *
-     * @return string|null
+     * @return ?string
      */
-    public function getCreatedAt();
+    public function getCreatedAt(): ?string;
 
     /**
      * Set Seller creation date
      *
      * @param string $createdAt The creation date
-     *
      * @return $this
      */
-    public function setCreatedAt($createdAt);
+    public function setCreatedAt(string $createdAt): self;
 
     /**
      * Get Seller update date
      *
-     * @return string|null
+     * @return ?string
      */
-    public function getUpdatedAt();
+    public function getUpdatedAt(): ?string;
 
     /**
      * Set seller update date
      *
      * @param string $updatedAt Update date
-     *
      * @return $this
      */
-    public function setUpdatedAt($updatedAt);
+    public function setUpdatedAt(string $updatedAt): self;
 
     /**
      * Retrieve AttributeSetName
      *
      * @return string
      */
-    public function getAttributeSetName();
+    public function getAttributeSetName(): string;
 
     /**
      * Get Image name
      *
-     * @return string
+     * @return ?string
      */
-    public function getMediaPath();
+    public function getMediaPath(): ?string;
 
     /**
      * Set Image name
      *
-     * @return string
+     * @return $this
      */
-
-    public function setMediaPath($path);
+    public function setMediaPath(string $path): self;
 }

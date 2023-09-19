@@ -1,81 +1,41 @@
 <?php
-/**
- * DISCLAIMER
- * Do not edit or add to this file if you wish to upgrade this module to newer
- * versions in the future.
- *
- * @category  Smile
- * @package   Smile\Seller
- * @author    Romain Ruaud <romain.ruaud@smile.fr>
- * @copyright 2016 Smile
- * @license   Open Software License ("OSL") v. 3.0
- */
+
+declare(strict_types=1);
+
 namespace Smile\Seller\Ui\Component\Seller\Listing;
 
+use Magento\Framework\Api\Filter;
 use Magento\Ui\DataProvider\AbstractDataProvider;
 
 /**
- * Data Provider for UI components based on Sellers
+ * Data Provider for UI components based on Sellers.
+ * $collectionFactory cannot be typed, due to compilation error, with 2 Factory class without inheritance
+ * Futhermore, Retailer inherit from Seller, not the reverse
  *
- * @category Smile
- * @package  Smile\Seller
- * @author   Romain Ruaud <romain.ruaud@smile.fr>
+ * @phpcs:disable SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingAnyTypeHint
  */
 class DataProvider extends AbstractDataProvider
 {
-    /**
-     * Seller collection
-     *
-     * @var \Smile\Seller\Model\ResourceModel\Seller\Collection
-     */
-    protected $collection;
-
-    /**
-     * @var \Magento\Ui\DataProvider\AddFieldToCollectionInterface[]
-     */
-    protected $addFieldStrategies;
-
-    /**
-     * @var \Magento\Ui\DataProvider\AddFilterToCollectionInterface[]
-     */
-    protected $addFilterStrategies;
-
-    /**
-     * Construct
-     *
-     * @param string                                                    $name                Component name
-     * @param string                                                    $primaryFieldName    Primary field Name
-     * @param string                                                    $requestFieldName    Request field name
-     * @param CollectionFactory                                         $collectionFactory   The collection factory
-     * @param \Magento\Ui\DataProvider\AddFieldToCollectionInterface[]  $addFieldStrategies  Add field Strategy
-     * @param \Magento\Ui\DataProvider\AddFilterToCollectionInterface[] $addFilterStrategies Add filter Strategy
-     * @param array                                                     $meta                Component Meta
-     * @param array                                                     $data                Component extra data
-     */
+    // $collectionFactory cannot be typed, due to compilation error, with 2 Factory class without inheritance
+    // @phpstan-ignore-next-line
     public function __construct(
-        $name,
-        $primaryFieldName,
-        $requestFieldName,
+        string $name,
+        string $primaryFieldName,
+        string $requestFieldName,
         $collectionFactory,
-        array $addFieldStrategies = [],
-        array $addFilterStrategies = [],
+        protected array $addFieldStrategies = [],
+        protected array $addFilterStrategies = [],
         array $meta = [],
         array $data = []
     ) {
         parent::__construct($name, $primaryFieldName, $requestFieldName, $meta, $data);
-
         $this->collection = $collectionFactory->create();
-
-        $this->addFieldStrategies  = $addFieldStrategies;
-        $this->addFilterStrategies = $addFilterStrategies;
     }
 
     /**
-     * Get data
-     *
-     * @return array
+     * Get data.
      */
-    public function getData()
+    public function getData(): array
     {
         if (!$this->getCollection()->isLoaded()) {
             $this->getCollection()->load();
@@ -84,17 +44,12 @@ class DataProvider extends AbstractDataProvider
 
         return [
             'totalRecords' => $this->getCollection()->getSize(),
-            'items'        => array_values($items),
+            'items' => array_values($items),
         ];
     }
 
     /**
-     * Add field to select
-     *
-     * @param string|array $field The field
-     * @param string|null  $alias Alias for the field
-     *
-     * @return void
+     * @inheritdoc
      */
     public function addField($field, $alias = null)
     {
@@ -107,9 +62,9 @@ class DataProvider extends AbstractDataProvider
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function addFilter(\Magento\Framework\Api\Filter $filter)
+    public function addFilter(Filter $filter): void
     {
         if (isset($this->addFilterStrategies[$filter->getField()])) {
             $this->addFilterStrategies[$filter->getField()]
@@ -118,9 +73,9 @@ class DataProvider extends AbstractDataProvider
                     $filter->getField(),
                     [$filter->getConditionType() => $filter->getValue()]
                 );
-
-            return;
         }
-        parent::addFilter($filter);
+        if (!isset($this->addFilterStrategies[$filter->getField()])) {
+            parent::addFilter($filter);
+        }
     }
 }

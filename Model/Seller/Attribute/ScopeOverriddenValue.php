@@ -1,84 +1,48 @@
 <?php
-/**
- * DISCLAIMER
- * Do not edit or add to this file if you wish to upgrade this module to newer
- * versions in the future.
- *
- * @category  Smile
- * @package   Smile\Seller
- * @author    Romain Ruaud <romain.ruaud@smile.fr>
- * @copyright 2017 Smile
- * @license   Open Software License ("OSL") v. 3.0
- */
+
+declare(strict_types=1);
+
 namespace Smile\Seller\Model\Seller\Attribute;
 
-use Magento\Framework\Api\FilterBuilder;
+use Magento\Eav\Api\Data\AttributeInterface;
+use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\App\ResourceConnection;
+use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Select;
 use Magento\Framework\DB\Sql\UnionExpression;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Store\Model\Store;
+use Smile\Seller\Api\Data\SellerAttributeInterface;
+use Smile\Seller\Api\Data\SellerInterface;
 use Smile\Seller\Model\Seller\Attribute\Repository as AttributeRepository;
 
 /**
  * Scope Overridden value finder for Seller entities.
- *
- * @category Smile
- * @package  Smile\Seller
- * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class ScopeOverriddenValue
 {
     /**
-     * @var AttributeRepository
+     * @var ?array
      */
-    private $attributeRepository;
+    private ?array $attributesValues = null;
 
-    /**
-     * @var SearchCriteriaBuilder
-     */
-    private $searchCriteriaBuilder;
+    private AdapterInterface $resourceConnection;
 
-    /**
-     * @var array
-     */
-    private $attributesValues;
-
-    /**
-     * @var \Magento\Framework\DB\Adapter\AdapterInterface
-     */
-    private $resourceConnection;
-
-    /**
-     * ScopeOverriddenValue constructor.
-     *
-     * @param AttributeRepository   $attributeRepository   Attribute Repository
-     * @param SearchCriteriaBuilder $searchCriteriaBuilder Search Criteria builder
-     * @param FilterBuilder         $filterBuilder         Filter Builder
-     * @param ResourceConnection    $resourceConnection    Resource Connection
-     */
     public function __construct(
-        AttributeRepository $attributeRepository,
-        SearchCriteriaBuilder $searchCriteriaBuilder,
-        FilterBuilder $filterBuilder,
+        private AttributeRepository $attributeRepository,
+        private SearchCriteriaBuilder $searchCriteriaBuilder,
         ResourceConnection $resourceConnection
     ) {
-        $this->attributeRepository = $attributeRepository;
-        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
-        $this->filterBuilder = $filterBuilder;
         $this->resourceConnection = $resourceConnection->getConnection();
     }
 
     /**
-     * Whether attribute value is overridden in specific store
+     * Whether attribute value is overridden in specific store.
      *
-     * @param \Smile\Seller\Api\Data\SellerInterface $entity        The seller
-     * @param string                                 $attributeCode The attribute code
-     * @param int                                    $storeId       The Store Id
-     *
-     * @return bool
+     * @throws LocalizedException
      */
-    public function containsValue($entity, $attributeCode, $storeId)
+    public function containsValue(SellerInterface $entity, string $attributeCode, int $storeId): bool
     {
         if ((int) $storeId === Store::DEFAULT_STORE_ID) {
             return false;
@@ -92,19 +56,15 @@ class ScopeOverriddenValue
     }
 
     /**
-     * Init Attributes Values
+     * Init Attributes Values.
      *
-     * @param \Smile\Seller\Api\Data\SellerInterface $entity  The seller
-     * @param int                                    $storeId The Store Id
-     *
-     * @throws \Magento\Framework\Exception\LocalizedException
-     * @return void
+     * @throws LocalizedException
      */
-    private function initAttributeValues($entity, $storeId)
+    private function initAttributeValues(SellerInterface $entity, int $storeId): void
     {
-        /** @var \Magento\Eav\Model\Entity\Attribute\AbstractAttribute $attribute */
         $attributeTables = [];
 
+        /** @var AbstractAttribute $attribute */
         foreach ($this->getScopedAttributes() as $attribute) {
             if (!$attribute->isStatic()) {
                 $attributeTables[$attribute->getBackend()->getTable()][] = $attribute->getAttributeId();
@@ -142,15 +102,16 @@ class ScopeOverriddenValue
     /**
      * Retrieve a list of attributes that can be scoped by store.
      *
-     * @return \Magento\Eav\Api\Data\AttributeInterface[]
+     * @return AttributeInterface[]
      */
-    private function getScopedAttributes()
+    private function getScopedAttributes(): array
     {
         $searchResult = $this->attributeRepository->getList(
             $this->searchCriteriaBuilder->addFilters([])->create()
         );
 
         return array_filter($searchResult->getItems(), function ($item) {
+            /** @var SellerAttributeInterface $item */
             return !$item->isScopeGlobal();
         });
     }

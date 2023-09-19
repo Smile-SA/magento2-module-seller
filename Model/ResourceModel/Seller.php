@@ -1,96 +1,47 @@
 <?php
-/**
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade this module to newer
- * versions in the future.
- *
- * @category  Smile
- * @package   Smile\Seller
- * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2016 Smile
- * @license   Open Software License ("OSL") v. 3.0
- */
+
+declare(strict_types=1);
 
 namespace Smile\Seller\Model\ResourceModel;
 
+use Magento\Eav\Model\Entity\AbstractEntity;
+use Magento\Eav\Model\Entity\Context;
+use Magento\Eav\Model\Entity\Type;
+use Magento\Framework\DataObject;
+use Magento\Framework\EntityManager\EntityManager;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Model\AbstractModel;
+use Magento\Store\Model\StoreManagerInterface;
 use Smile\Seller\Api\Data\SellerInterface;
 
 /**
+ * Seller Resource Model.
+ *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-
-/**
- * Seller Resource Model
- *
- * @category Smile
- * @package  Smile\Seller
- * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
- */
-class Seller extends \Magento\Eav\Model\Entity\AbstractEntity
+class Seller extends AbstractEntity
 {
-    /**
-     * Id of 'is_active' seller attribute
-     *
-     * @var integer
-     */
-    protected $isActiveAttributeId = null;
+    protected array $_attributes = [];
+    protected ?int $isActiveAttributeId = null;
+    protected ?int $storeId = null;
 
-    /**
-     * Store id
-     *
-     * @var integer
-     */
-    protected $storeId = null;
-
-    /**
-     * Core event manager proxy
-     *
-     * @var \Magento\Framework\Event\ManagerInterface
-     */
-    protected $eventManager = null;
-
-    /**
-     * @var \Magento\Store\Model\StoreManagerInterface
-     */
-    protected $storeManager = null;
-
-    /**
-     * @var \Magento\Framework\EntityManager\EntityManager
-     */
-    protected $entityManager;
-
-    /**
-     * Seller constructor.
-     *
-     * @param \Magento\Eav\Model\Entity\Context              $context       Entity Context
-     * @param \Magento\Store\Model\StoreManagerInterface     $storeManager  Store Manager
-     * @param \Magento\Framework\Event\ManagerInterface      $eventManager  Event Manager
-     * @param \Magento\Framework\EntityManager\EntityManager $entityManager Entity Manager
-     * @param array                                          $data          Seller data
-     */
     public function __construct(
-        \Magento\Eav\Model\Entity\Context $context,
-        \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Magento\Framework\Event\ManagerInterface $eventManager,
-        \Magento\Framework\EntityManager\EntityManager $entityManager,
-        $data = []
+        Context $context,
+        protected StoreManagerInterface $storeManager,
+        protected EntityManager $entityManager,
+        array $data = []
     ) {
         parent::__construct($context, $data);
-        $this->storeManager  = $storeManager;
-        $this->eventManager  = $eventManager;
-        $this->entityManager = $entityManager;
     }
 
     /**
-     * Entity type getter and lazy loader
+     * Entity type getter and lazy loader.
      *
-     * @return \Magento\Eav\Model\Entity\Type
-     *
-     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws LocalizedException
      */
-    public function getEntityType()
+    public function getEntityType(): Type
     {
+        // @phpstan-ignore-next-line as like inherit method
         if (empty($this->_type)) {
             $this->setType(SellerInterface::ENTITY);
         }
@@ -99,13 +50,9 @@ class Seller extends \Magento\Eav\Model\Entity\AbstractEntity
     }
 
     /**
-     * Set store Id
-     *
-     * @param integer $storeId The store Id
-     *
-     * @return $this
+     * Set store Id.
      */
-    public function setStoreId($storeId)
+    public function setStoreId(int $storeId): self
     {
         $this->storeId = $storeId;
 
@@ -113,11 +60,9 @@ class Seller extends \Magento\Eav\Model\Entity\AbstractEntity
     }
 
     /**
-     * Return store id
-     *
-     * @return integer
+     * Return store id.
      */
-    public function getStoreId()
+    public function getStoreId(): int
     {
         if ($this->storeId === null) {
             return $this->storeManager->getStore()->getId();
@@ -127,13 +72,9 @@ class Seller extends \Magento\Eav\Model\Entity\AbstractEntity
     }
 
     /**
-     * Check if seller id exist
-     *
-     * @param int $entityId The Seller Id
-     *
-     * @return bool
+     * Check if seller id exist.
      */
-    public function checkId($entityId)
+    public function checkId(int $entityId): string
     {
         $select = $this->getConnection()->select()->from(
             $this->getEntityTable(),
@@ -147,13 +88,9 @@ class Seller extends \Magento\Eav\Model\Entity\AbstractEntity
     }
 
     /**
-     * Check array of seller identifiers
-     *
-     * @param array $ids The seller ids
-     *
-     * @return array
+     * Check array of seller identifiers.
      */
-    public function verifyIds(array $ids)
+    public function verifyIds(array $ids): array
     {
         if (empty($ids)) {
             return [];
@@ -171,11 +108,9 @@ class Seller extends \Magento\Eav\Model\Entity\AbstractEntity
     }
 
     /**
-     * Get "is_active" attribute identifier
-     *
-     * @return int
+     * Get "is_active" attribute identifier.
      */
-    public function getIsActiveAttributeId()
+    public function getIsActiveAttributeId(): int
     {
         if ($this->isActiveAttributeId === null) {
             $this->isActiveAttributeId = (int) $this->_eavConfig
@@ -186,22 +121,16 @@ class Seller extends \Magento\Eav\Model\Entity\AbstractEntity
         return $this->isActiveAttributeId;
     }
 
-
     /**
-     * Reset firstly loaded attributes
-     *
-     * @param \Magento\Framework\DataObject $object     Object being loaded
-     * @param integer                       $entityId   The entity Id
-     * @param array|null                    $attributes The attributes
-     *
-     * @return $this
+     * @inheritdoc
      */
     public function load($object, $entityId, $attributes = [])
     {
+        // Reset firstly loaded attributes
         $this->_attributes = [];
         $this->loadAttributesMetadata($attributes);
 
-        $object = $this->entityManager->load($object, $entityId);
+        $object = $this->entityManager->load($object, (string) $entityId);
 
         if (!$this->entityManager->has($object)) {
             $object->isObjectNew(true);
@@ -213,7 +142,7 @@ class Seller extends \Magento\Eav\Model\Entity\AbstractEntity
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function delete($object)
     {
@@ -225,15 +154,9 @@ class Seller extends \Magento\Eav\Model\Entity\AbstractEntity
     }
 
     /**
-     * Save entity's attributes into the object's resource
-     *
-     * @param \Magento\Framework\Model\AbstractModel $object The Object
-     *
-     * @return $this
-     *
-     * @throws \Exception
+     * @inheritdoc
      */
-    public function save(\Magento\Framework\Model\AbstractModel $object)
+    public function save(AbstractModel $object)
     {
         $this->beforeSave($object);
         $this->entityManager->save($object);
@@ -243,13 +166,9 @@ class Seller extends \Magento\Eav\Model\Entity\AbstractEntity
     }
 
     /**
-     * Retrieve Attribute set data by id or name
-     *
-     * @param int|string|null $attributeSetId The attribute Set Id or Name
-     *
-     * @return mixed
+     * Retrieve Attribute set data by id or name.
      */
-    public function getAttributeSetIdByName($attributeSetId)
+    public function getAttributeSetIdByName(?string $attributeSetId): int
     {
         $select = $this->_resource->getConnection()->select();
         $field  = 'attribute_set_name';
@@ -259,36 +178,29 @@ class Seller extends \Magento\Eav\Model\Entity\AbstractEntity
             ->where($this->getConnection()->prepareSqlCondition("entity_type_id", ['eq' => $this->getTypeId()]))
             ->where($this->getConnection()->prepareSqlCondition($field, ['eq' => $attributeSetId]));
 
-        return $this->_resource->getConnection()->fetchOne($select);
+        return (int) $this->_resource->getConnection()->fetchOne($select);
     }
 
     /**
-     * Before Saving a Seller.
-     * Enforce loading of all attributes to ensure their beforeSave is correctly processed.
-     *
-     * @param \Magento\Framework\DataObject $object The object (seller) being saved.
+     * @inheritdoc
      */
-    public function beforeSave(\Magento\Framework\DataObject $object)
+    public function beforeSave(DataObject $object): void
     {
+        // Enforce loading of all attributes to ensure their beforeSave is correctly processed.
         $this->loadAllAttributes($object);
         parent::beforeSave($object);
     }
 
     /**
-     * Get Seller identifier by code
-     *
-     * @param string $code The Seller Code
-     *
-     * @return int|false
+     * Get Seller identifier by code.
      */
-    public function getIdByCode($code)
+    public function getIdByCode(string $code): int
     {
         $connection = $this->getConnection();
+        $select = $connection->select()
+            ->from($this->getEntityTable(), 'entity_id')
+            ->where('seller_code = :seller_code');
 
-        $select = $connection->select()->from($this->getEntityTable(), 'entity_id')->where('seller_code = :seller_code');
-
-        $bind = [':seller_code' => (string) $code];
-
-        return $connection->fetchOne($select, $bind);
+        return (int) $connection->fetchOne($select, [':seller_code' => $code]);
     }
 }

@@ -1,55 +1,36 @@
 <?php
-/**
- * DISCLAIMER
- * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
- * versions in the future.
- *
- * @category  Smile
- * @package   Smile\Seller
- * @author    Romain Ruaud <romain.ruaud@smile.fr>
- * @copyright 2017 Smile
- * @license   Open Software License ("OSL") v. 3.0
- */
+
+declare(strict_types=1);
+
 namespace Smile\Seller\Ui\Component\Seller\Listing;
 
-use Magento\Ui\DataProvider\AddFilterToCollectionInterface;
 use Magento\Framework\Data\Collection;
+use Magento\Store\Api\Data\StoreInterface;
+use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Ui\DataProvider\AddFilterToCollectionInterface;
 
 /**
  * Filter Strategy for store_id field.
- *
- * @category Smile
- * @package  Smile\Seller
- * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class AddStoreFieldToCollection implements AddFilterToCollectionInterface
 {
-    /**
-     * Store manager
-     *
-     * @var StoreManagerInterface
-     */
-    protected $storeManager;
-
-    /**
-     * Construct
-     *
-     * @param StoreManagerInterface $storeManager Store Manager
-     */
-    public function __construct(StoreManagerInterface $storeManager)
+    public function __construct(protected StoreManagerInterface $storeManager)
     {
-        $this->storeManager = $storeManager;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function addFilter(Collection $collection, $field, $condition = null)
     {
+        // @phpstan-ignore-next-line
         if (isset($condition['eq']) && $condition['eq']) {
-            /** @var \Smile\Seller\Model\ResourceModel\Seller\Collection $collection  */
-            $collection->setStore($this->storeManager->getStore($condition['eq']));
+            /** @var Store|StoreInterface $store */
+            $store = $this->storeManager->getStore($condition['eq']);
+            /** @var \Smile\Seller\Model\ResourceModel\Seller\Collection $collection */
+            // @phpstan-ignore-next-line as generated object
+            $collection->setStore($store);
         }
     }
 }

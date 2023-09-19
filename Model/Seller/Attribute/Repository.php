@@ -1,53 +1,31 @@
 <?php
-/**
- * DISCLAIMER
- * Do not edit or add to this file if you wish to upgrade this module to newer
- * versions in the future.
- *
- * @category  Smile
- * @package   Smile\Seller
- * @author    Romain Ruaud <romain.ruaud@smile.fr>
- * @copyright 2017 Smile
- * @license   Open Software License ("OSL") v. 3.0
- */
+
+declare(strict_types=1);
+
 namespace Smile\Seller\Model\Seller\Attribute;
 
+use Magento\Eav\Api\AttributeRepositoryInterface as EavAttributeRepositoryInterface;
+use Magento\Eav\Api\Data\AttributeInterface;
+use Magento\Eav\Api\Data\AttributeSearchResultsInterface;
+use Magento\Framework\Api\SearchCriteriaBuilder;
+use Magento\Framework\Api\SearchCriteriaInterface;
 use Smile\Seller\Api\AttributeRepositoryInterface;
+use Smile\Seller\Api\Data\SellerAttributeInterface;
 use Smile\Seller\Api\Data\SellerInterface;
 
 /**
- * Seller Attributes Repository
- *
- * @category Smile
- * @package  Smile\Seller
- * @author   Romain Ruaud <romain.ruaud@smile.fr>
+ * Seller Attributes Repository.
  */
 class Repository implements AttributeRepositoryInterface
 {
-    /**
-     * @var \Magento\Framework\Api\SearchCriteriaBuilder
-     */
-    private $searchCriteriaBuilder;
-
-    /**
-     * @var \Magento\Eav\Api\AttributeRepositoryInterface
-     */
-    private $eavAttributeRepository;
-
-    /**
-     * @param \Magento\Eav\Api\AttributeRepositoryInterface $eavAttributeRepository EAV Attributes Repository
-     * @param \Magento\Framework\Api\SearchCriteriaBuilder  $searchCriteriaBuilder  Search Criteria Builder
-     */
     public function __construct(
-        \Magento\Eav\Api\AttributeRepositoryInterface $eavAttributeRepository,
-        \Magento\Framework\Api\SearchCriteriaBuilder $searchCriteriaBuilder
+        private EavAttributeRepositoryInterface $eavAttributeRepository,
+        private SearchCriteriaBuilder $searchCriteriaBuilder
     ) {
-        $this->eavAttributeRepository = $eavAttributeRepository;
-        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getCustomAttributesMetadata($dataObjectClassName = null)
     {
@@ -55,9 +33,9 @@ class Repository implements AttributeRepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function getList(\Magento\Framework\Api\SearchCriteriaInterface $searchCriteria)
+    public function getList(SearchCriteriaInterface $searchCriteria): AttributeSearchResultsInterface
     {
         return $this->eavAttributeRepository->getList(
             SellerInterface::ENTITY,
@@ -66,9 +44,9 @@ class Repository implements AttributeRepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function get($attributeCode)
+    public function get(string $attributeCode): AttributeInterface|SellerAttributeInterface
     {
         return $this->eavAttributeRepository->get(
             SellerInterface::ENTITY,
