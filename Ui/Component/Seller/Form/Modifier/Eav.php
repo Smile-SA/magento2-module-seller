@@ -232,7 +232,7 @@ class Eav implements ModifierInterface
             $meta['disabled'] = !$this->scopeOverriddenValue->containsValue(
                 $this->locator->getSeller(),
                 $attribute->getAttributeCode(),
-                $this->locator->getStore()->getId()
+                (int) $this->locator->getStore()->getId()
             );
         }
 

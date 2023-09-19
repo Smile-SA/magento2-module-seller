@@ -25,7 +25,7 @@ class ScopeOverriddenValue
     /**
      * @var ?array
      */
-    private ?array $attributesValues;
+    private ?array $attributesValues = null;
 
     private AdapterInterface $resourceConnection;
 
