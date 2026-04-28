@@ -2,7 +2,8 @@
 
 All notable changes to this project will be documented in this file.
 
-## WIP
+## [2.0.1] - 2026-04-28
+[2.0.1]: https://github.com/Smile-SA/magento2-module-seller/compare/2.0.0...2.0.1
 
 - Fix type error `Return value must be of type string, null returned` when calling Seller::getName() on an empty object
 
