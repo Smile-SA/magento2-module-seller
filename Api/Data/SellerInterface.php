@@ -51,6 +51,7 @@ interface SellerInterface extends CustomAttributesDataInterface
      * Check whether seller is active
      *
      * @return bool|null
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName) Public API name kept for backward compatibility
      */
     public function getIsActive(): ?bool;
 
