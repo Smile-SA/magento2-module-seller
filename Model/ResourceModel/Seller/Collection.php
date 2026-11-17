@@ -205,6 +205,7 @@ class Collection extends AbstractCollection implements CollectionDataSourceInter
 
             $defCondition = str_replace($tableAlias, $defAlias, $defCondition);
             $defCondition .= $connection->quoteInto(
+                // @phpstan-ignore-next-line as $alias null value is default
                 ' AND ' . $connection->quoteColumnAs("{$defAlias}.store_id", null) . " = ?",
                 $this->getDefaultStoreId()
             );
@@ -228,6 +229,7 @@ class Collection extends AbstractCollection implements CollectionDataSourceInter
         }
 
         $condition[] = $connection->quoteInto(
+            // @phpstan-ignore-next-line as $alias null value is default
             $connection->quoteColumnAs("{$tableAlias}.store_id", null) . ' = ?',
             $storeId
         );
