@@ -198,7 +198,7 @@ class Eav implements ModifierInterface
     /**
      * Retrieve label of attribute scope (global, website, store).
      */
-    private function getScopeLabel(mixed $attribute): string
+    private function getScopeLabel($attribute): string
     {
         $html = '';
         if (

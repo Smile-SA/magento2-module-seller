@@ -29,5 +29,5 @@ interface AttributeRepositoryInterface extends MetadataServiceInterface
      * @param string $attributeCode The attribute code
      * @return AttributeInterface|SellerAttributeInterface
      */
-    public function get(string $attributeCode): AttributeInterface|SellerAttributeInterface;
+    public function get(string $attributeCode);
 }

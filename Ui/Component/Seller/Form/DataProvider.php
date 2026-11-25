@@ -17,7 +17,7 @@ class DataProvider extends AbstractDataProvider
         string $name,
         string $primaryFieldName,
         string $requestFieldName,
-        private mixed $collectionFactory,
+        private $collectionFactory,
         private PoolInterface $pool,
         private LocatorInterface $locator,
         array $meta = [],

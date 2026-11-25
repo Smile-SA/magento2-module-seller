@@ -9,9 +9,7 @@ use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Framework\Exception\InputException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Exception\StateException;
-use Smile\Retailer\Api\Data\RetailerInterfaceFactory;
 use Smile\Seller\Api\Data\SellerInterface;
-use Smile\Seller\Api\Data\SellerInterfaceFactory;
 use Smile\Seller\Model\ResourceModel\Seller as ResourceModel;
 use Smile\Seller\Model\Seller as SellerModel;
 
@@ -25,7 +23,7 @@ class SellerRepository
     public function __construct(
         private EntityManager $entityManager,
         private ResourceModel $resourceModel,
-        private SellerInterfaceFactory|RetailerInterfaceFactory $sellerFactory,
+        private $sellerFactory,
         private ?string $sellerAttributeSetName = null
     ) {
     }

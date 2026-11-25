@@ -17,6 +17,13 @@ parameters:
             identifier: empty.property
             path: Model/ResourceModel/Seller.php
             reportUnmatched: false
+        -
+            # The native "mixed" type is not used: the code generator of Magento 2.4.4 and 2.4.5 cannot handle it
+            identifier: missingType.parameter
+            reportUnmatched: false
+        -
+            identifier: missingType.return
+            reportUnmatched: false
     paths:
         - .
     excludePaths:
