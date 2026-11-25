@@ -1,6 +1,6 @@
 parameters:
     level: 6
-    phpVersion: 80300
+    phpVersion: 80100
     # Ignores needed on older Magento versions (PHP 8.1 CI) are unmatched on 2.4.9
     reportUnmatchedIgnoredErrors: false
     ignoreErrors:
@@ -11,6 +11,11 @@ parameters:
             reportUnmatched: false
         -
             identifier: missingType.iterableValue
+            reportUnmatched: false
+        -
+            # The property is documented as non-nullable before Magento 2.4.7
+            identifier: empty.property
+            path: Model/ResourceModel/Seller.php
             reportUnmatched: false
     paths:
         - .
