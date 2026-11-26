@@ -5,12 +5,10 @@ declare(strict_types=1);
 namespace Smile\Seller\Model\Seller\Attribute;
 
 use Magento\Eav\Api\AttributeRepositoryInterface as EavAttributeRepositoryInterface;
-use Magento\Eav\Api\Data\AttributeInterface;
 use Magento\Eav\Api\Data\AttributeSearchResultsInterface;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Api\SearchCriteriaInterface;
 use Smile\Seller\Api\AttributeRepositoryInterface;
-use Smile\Seller\Api\Data\SellerAttributeInterface;
 use Smile\Seller\Api\Data\SellerInterface;
 
 /**
@@ -46,7 +44,7 @@ class Repository implements AttributeRepositoryInterface
     /**
      * @inheritdoc
      */
-    public function get(string $attributeCode): AttributeInterface|SellerAttributeInterface
+    public function get(string $attributeCode)
     {
         return $this->eavAttributeRepository->get(
             SellerInterface::ENTITY,

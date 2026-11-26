@@ -98,7 +98,7 @@ class Collection extends AbstractCollection implements CollectionDataSourceInter
     /**
      * Set store scope.
      */
-    public function setStoreId(mixed $storeId): self
+    public function setStoreId($storeId): self
     {
         if ($storeId instanceof Store) {
             $storeId = $storeId->getId();

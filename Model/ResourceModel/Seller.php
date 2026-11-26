@@ -41,7 +41,6 @@ class Seller extends AbstractEntity
      */
     public function getEntityType(): Type
     {
-        // @phpstan-ignore-next-line as like inherit method
         if (empty($this->_type)) {
             $this->setType(SellerInterface::ENTITY);
         }

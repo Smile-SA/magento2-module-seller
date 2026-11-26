@@ -83,7 +83,7 @@ class Seller extends AbstractExtensibleModel implements SellerInterface, Identit
      */
     public function getName(): string
     {
-        return $this->_getData(self::KEY_NAME);
+        return (string) $this->_getData(self::KEY_NAME);
     }
 
     /**
@@ -91,7 +91,7 @@ class Seller extends AbstractExtensibleModel implements SellerInterface, Identit
      */
     public function getSellerCode(): string
     {
-        return $this->_getData(self::KEY_SELLER_CODE);
+        return (string) $this->_getData(self::KEY_SELLER_CODE);
     }
 
     /**
@@ -111,7 +111,9 @@ class Seller extends AbstractExtensibleModel implements SellerInterface, Identit
     }
 
     /**
-     * @inheritdoc
+     * Check whether seller is active.
+     *
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName) Public API name kept for backward compatibility
      */
     public function getIsActive(): bool
     {
