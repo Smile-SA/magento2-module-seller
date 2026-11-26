@@ -111,7 +111,9 @@ class Seller extends AbstractExtensibleModel implements SellerInterface, Identit
     }
 
     /**
-     * @inheritdoc
+     * Check whether seller is active.
+     *
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName) Public API name kept for backward compatibility
      */
     public function getIsActive(): bool
     {

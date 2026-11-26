@@ -1,7 +1,22 @@
 parameters:
     level: 6
     phpVersion: 80100
-    checkMissingIterableValueType: false
+    # Ignores needed on older Magento versions (PHP 8.1 CI) are unmatched on 2.4.9
+    reportUnmatchedIgnoredErrors: false
+    ignoreErrors:
+        -
+            # phpstan 2.3 no longer parses PHPMD suppressions such as @SuppressWarnings(PHPMD.Xxx)
+            message: '#PHPDoc tag @SuppressWarnings has invalid value#'
+            identifier: phpDoc.parseError
+            reportUnmatched: false
+        -
+            identifier: missingType.iterableValue
+            reportUnmatched: false
+        -
+            # The property is documented as non-nullable before Magento 2.4.7
+            identifier: empty.property
+            path: Model/ResourceModel/Seller.php
+            reportUnmatched: false
     paths:
         - .
     excludePaths:

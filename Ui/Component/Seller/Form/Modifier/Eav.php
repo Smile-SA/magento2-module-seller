@@ -20,7 +20,7 @@ use Smile\Seller\Api\AttributeRepositoryInterface;
 use Smile\Seller\Api\Data\SellerAttributeInterface;
 use Smile\Seller\Api\Data\SellerInterface;
 use Smile\Seller\Model\Locator\LocatorInterface;
-use Smile\Seller\Model\ResourceModel\Seller as ResourceModelSeller;
+use Smile\Seller\Model\Seller as SellerModel;
 use Smile\Seller\Model\Seller\Attribute\ScopeOverriddenValue;
 use Smile\Seller\Model\SellerMediaUpload;
 use Smile\Seller\Ui\Component\Seller\Form\FieldMapper;
@@ -246,7 +246,7 @@ class Eav implements ModifierInterface
     {
         $attributeCode = $attribute->getAttributeCode();
 
-        /** @var ResourceModelSeller|SellerInterface|null $seller */
+        /** @var SellerModel|null $seller */
         $seller = $this->locator->getSeller();
 
         if (isset($this->canDisplayUseDefault[$attributeCode])) {
